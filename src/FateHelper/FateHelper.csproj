@@ -18,6 +18,21 @@
   </ItemGroup>
 
   <!--
+    The plugin icon, packaged into the zip.
+
+    Dalamud resolves the icon along two separate paths, and a plugin that only feeds one of them
+    shows a different picture depending on where you look. For an installed plugin it reads
+    images/icon.png out of the plugin's own directory; for the list of available plugins it
+    downloads IconUrl from the manifest. Both have to be filled in, with the same picture.
+
+    The file has to be exactly 512 x 512: Dalamud loads the icon with a square requirement and a
+    512 limit, and anything else is dropped in favour of the default icon rather than scaled.
+  -->
+  <ItemGroup Condition="Exists('images\icon.png')">
+    <Content Include="images\icon.png" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <!--
     Native UI nodes. Everything drawn into the game's own map window goes through this, and
     every call to it is behind NativeMapMarkers, which switches the whole feature off for the
     session at the first sign of trouble (FH-12).

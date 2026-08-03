@@ -53,6 +53,16 @@ foreach ($file in $supporting) {
     Copy-Item $file.FullName (Join-Path $dist $file.Name) -Force
 }
 
+# The icon, if there is one. A dev plugin gets its icon from its own directory rather than from
+# the manifest's IconUrl, so without this the locally installed build shows the default picture
+# while the plugin list shows the real one, and the two never agree.
+$images = Join-Path $output 'images'
+if (Test-Path $images) {
+    $target = Join-Path $dist 'images'
+    New-Item -ItemType Directory -Force -Path $target | Out-Null
+    Copy-Item (Join-Path $images '*') $target -Force -Recurse
+}
+
 # Last, and only once everything else is in place.
 Copy-Item $dll (Join-Path $dist $mainAssembly) -Force
 
