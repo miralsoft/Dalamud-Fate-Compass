@@ -1,7 +1,7 @@
 {
   "versions": [
     {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "date": "2026-08-03",
       "summary": "First public version. The helper finds, ranks, and routes to FATEs. The playing is still yours. The Changed and Fixed entries refer to the test builds that came before.",
       "added": [
@@ -22,6 +22,7 @@
         "This window."
       ],
       "changed": [
+        "The plugin is now called Fate Compass. The old name was already taken in the official directory, which made the plugin impossible to install at all. The command is now /fatecompass, or /fate for short.",
         "The settings were reorganised: five tabs with headed sections, and each explanation now sits behind a (?) instead of permanently under its switch.",
         "Travel speed is measured and stored per zone. Eureka, Bozja, and the Crescent have their own figures, separated by whether the riding map has been bought.",
         "Routing through exploratory zones now counts the return to camp, instead of assuming a teleport from wherever you stand.",
@@ -34,6 +35,7 @@
         "The Crescent tower's remaining time counts down instead of standing still.",
         "Map numbers no longer vanish when the map is opened, and no longer skip the four.",
         "<flag> is no longer written into the chat box twice.",
+        "The minimap icon is no longer cut off on two sides.",
         "Remounting and level sync work again inside instanced content.",
         "The window keeps its position and size across a zone change.",
         "The compact view no longer shifts when there is nothing on the left."

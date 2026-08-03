@@ -1,7 +1,7 @@
 {
   "versions": [
     {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "date": "2026-08-03",
       "summary": "Erste öffentliche Fassung. Der Helfer sucht, bewertet und findet FATEs, gespielt wird weiterhin von dir. Die Punkte unter Geändert und Behoben beziehen sich auf die Testfassungen davor.",
       "added": [
@@ -22,6 +22,7 @@
         "Dieses Fenster."
       ],
       "changed": [
+        "Das Plugin heißt jetzt Fate Compass. Der alte Name war im offiziellen Verzeichnis bereits vergeben, wodurch sich das Plugin gar nicht installieren ließ. Der Befehl lautet nun /fatecompass, kurz /fate.",
         "Einstellungen neu geordnet: fünf Registerkarten mit Überschriften, und jede Erklärung sitzt hinter einem (?) statt dauerhaft unter dem Schalter.",
         "Reisegeschwindigkeit wird gemessen und je Zone gespeichert. Eureka, Bozja und Kreszentia haben eigene Werte, getrennt nach gekaufter Reitwegekarte.",
         "Wegplanung in Erkundungsgebieten rechnet jetzt den Rückruf ins Lager mit ein, statt einen Port an Ort und Stelle anzunehmen.",
@@ -34,6 +35,7 @@
         "Die Restzeit des Turms in Kreszentia läuft, statt stehenzubleiben.",
         "Kartennummern verschwinden nicht mehr beim Öffnen der Karte und überspringen die Vier nicht mehr.",
         "<flag> wird nicht mehr doppelt in die Chatzeile geschrieben.",
+        "Das Symbol an der Minikarte wird nicht mehr an zwei Seiten abgeschnitten.",
         "Aufsteigen und Stufenangleich funktionieren in Instanzinhalten wieder.",
         "Fenster behält Position und Größe über einen Gebietswechsel hinweg.",
         "Die kompakte Ansicht verrutscht nicht mehr, wenn links kein Ziel steht."

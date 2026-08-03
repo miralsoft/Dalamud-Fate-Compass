@@ -6,6 +6,11 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-08-03
+
+The release 1.0.0 should have been is. That version carried an internal name nobody could install
+under, so this is the first one that actually reaches a plugin list.
+
 ### Changed
 
 - **Renamed from Fate Helper to Fate Compass**, internal name `FateCompass`. Not a preference: the
@@ -29,19 +34,27 @@ All notable changes to this project are recorded here. The format follows
   512 by 512, which is a hard requirement and not visible in an image viewer.
 - A test binding `CHANGELOG.md` to the version being built: the newest section has to name it,
   and every version described to players in the release notes has to appear here.
+- `IconUrl` in the manifest, written in exactly one place and reaching both the installed entry
+  and the repository listing from there. Two hand-kept copies is how the two views end up showing
+  different pictures. Details in `docs/decisions.md`.
+- The minimap defaults are the values dialled in against a live HUD and read back out of the
+  saved configuration, rather than the first estimate: size 36, offset 60 by 18.
 
-### Changed
+### Fixed
 
-- `IconUrl` is written in exactly one place, the plugin manifest, and reaches both the installed
-  entry and the repository listing from there. Two hand-kept copies is how the two views end up
-  showing different pictures. Details in `docs/decisions.md`.
+- The minimap button was cut off on its right and bottom edges. The window is sized to the icon
+  exactly, but ImGui insets the content by the window padding while still clipping at the
+  window's edge, so an image drawn at the window's own size lost a fifth of itself on two sides.
+  A plain game glyph survived that well enough to hide it.
 
-## [1.0.0] - 2026-08-03
+## [1.0.0] - 2026-08-03 [RETIRED]
 
-First public release, published through
-[miralsoft/Dalamud-Plugins](https://github.com/miralsoft/Dalamud-Plugins). The developer surface
-(`DebugWindow.Enabled`) is off in this build; the `/fate debug` probes still write to the Dalamud
-log, which is what a problem report is built from.
+First public release, and unusable. Its internal name `FateHelper` collides with the official
+plugin `FATEhelper`, so Dalamud refused the repository entry and nobody could install it. Kept
+here as a record rather than deleted; the release itself is withdrawn. Superseded by 1.0.1.
+
+The developer surface (`DebugWindow.Enabled`) is off from this build onwards; the `/fate debug`
+probes still write to the Dalamud log, which is what a problem report is built from.
 
 ### Added
 
