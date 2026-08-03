@@ -1,11 +1,11 @@
-# Project: Fate Helper
+# Project: Fate Compass
 
 Purpose: the identity card of the project. Who it is, what it is, which rules apply to it.
 
 ## Identity
 
-- **Name:** Fate Helper
-- **Slug:** dalamud-fate-helper
+- **Name:** Fate Compass
+- **Slug:** dalamud-fate-compass
 - **Owner:** Sanaka (in-game name), GitHub `miralsoft`
 - **Summary:** A Dalamud plugin for Final Fantasy XIV that removes the repetitive manual steps
   around FATE farming. It shows which FATEs are active in the current zone, ranks them by how
@@ -34,7 +34,7 @@ project (M-05). The foundation's PHP, JavaScript, and WordPress profiles do not 
 
 ## Code repositories
 
-- `miralsoft/Dalamud-Fate-Helper`: the plugin. Single repository, no split.
+- `miralsoft/Dalamud-Fate-Compass`: the plugin. Single repository, no split.
 
 ## Hosting and deploy summary
 

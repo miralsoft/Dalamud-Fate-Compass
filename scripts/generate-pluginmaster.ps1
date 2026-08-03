@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-  Generates the standalone Dalamud repository index (pluginmaster.json) for Fate Helper.
+  Generates the standalone Dalamud repository index (pluginmaster.json) for Fate Compass.
 .DESCRIPTION
   Builds a one-entry pluginmaster **array** from the *built* plugin manifest, the one
   DalamudPackager emits into bin/Release, which already carries DalamudApiLevel, AssemblyVersion,
@@ -12,21 +12,21 @@
   Dalamud hides the plugin as "outdated". Wrapping in an array is equally load-bearing: Dalamud
   rejects a bare object.
 
-  This file is for anyone who wants Fate Helper on its own, without the aggregate index at
+  This file is for anyone who wants Fate Compass on its own, without the aggregate index at
   miralsoft/Dalamud-Plugins. That index builds its own entry from the release asset and does not
   read this file.
 #>
 param(
     [string]$Tag = "",
     [string]$Repository = $env:GITHUB_REPOSITORY,
-    [string]$Manifest = "src/FateHelper/bin/Release/FateHelper/FateHelper.json",
+    [string]$Manifest = "src/FateCompass/bin/Release/FateCompass/FateCompass.json",
     [string]$Output = "pluginmaster.json"
 )
 
 $ErrorActionPreference = "Stop"
 
 if ([string]::IsNullOrWhiteSpace($Repository)) {
-    $Repository = "miralsoft/Dalamud-Fate-Helper"
+    $Repository = "miralsoft/Dalamud-Fate-Compass"
 }
 
 if (-not (Test-Path $Manifest)) {

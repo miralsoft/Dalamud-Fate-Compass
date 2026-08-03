@@ -1,4 +1,4 @@
-# Test plan: Fate Helper 0.1.0
+# Test plan: Fate Compass 0.1.0
 
 Purpose: the manual checks that close Phase 5 in `todos.md`. Nothing here can be automated,
 because all of it needs a running game.
@@ -29,17 +29,17 @@ Remember that `try`/`catch` does not catch an access violation. A block of unsaf
 
 1. `.\build.ps1`
 2. `/xlsettings`, Experimental, Dev Plugin Locations, add:
-   `src\FateHelper\bin\Release\FateHelper.dll`
-3. `/xlplugins`, dev section, enable Fate Helper
+   `src\FateCompass\bin\Release\FateCompass.dll`
+3. `/xlplugins`, dev section, enable Fate Compass
 4. After each later build: reload from the dev section. The path stays registered.
 
 ## 0. Does it load at all
 
 - [ ] Plugin appears and enables without an error
-- [ ] `/fh` opens the window
-- [ ] `/fh cfg` opens the settings
-- [ ] `/xllog` shows no exception from FateHelper
-- [ ] `/fh help` prints the command list
+- [ ] `/fate` opens the window
+- [ ] `/fate cfg` opens the settings
+- [ ] `/xllog` shows no exception from FateCompass
+- [ ] `/fate help` prints the command list
 
 If the window opens but stays empty in an open-world zone with active FATEs, stop here and
 report it. That points at the FATE reading rather than at anything below.
@@ -52,7 +52,7 @@ says the action was "unavailable" rather than throwing.
 
 ### 1.1 Tank stance
 
-Per tank job, stance **off**, then `/fh engage`:
+Per tank job, stance **off**, then `/fate engage`:
 
 - [ ] Paladin: Iron Will goes up
 - [ ] Warrior: Defiance goes up
@@ -66,13 +66,13 @@ the plugin keeps trying again, the **status** id is wrong. The log distinguishes
 
 ### 1.2 Dismount and mount
 
-- [ ] Mounted, `/fh engage`: the character dismounts
+- [ ] Mounted, `/fate engage`: the character dismounts
 - [ ] Settings, enable "Remount automatically after a FATE", finish a FATE: the character mounts
 - [ ] Same, but stay in combat as the FATE ends: no mount attempt, log says `InCombat`
 
 ### 1.3 Level sync
 
-- [ ] Enter a FATE well below your level, `/fh engage`: level sync applies
+- [ ] Enter a FATE well below your level, `/fate engage`: level sync applies
 - [ ] Repeat while already synced: nothing is sent, log says "already synced"
 - [ ] German client: the command still works (it should, `/levelsync` is identical in every
       language, but this is the check that proves it)
@@ -116,10 +116,10 @@ If types are wrong, say which FATE showed which type.
 
 ## 5. Settings and commands
 
-- [ ] `/fh auto on`, `/fh auto off`, `/fh auto toggle` each confirm in chat
+- [ ] `/fate auto on`, `/fate auto off`, `/fate auto toggle` each confirm in chat
 - [ ] With auto on, walking into a FATE runs the sequence without pressing anything
 - [ ] With auto off, walking into a FATE does nothing until you press Prepare or run
-      `/fh engage`
+      `/fate engage`
 - [ ] Switching the language to German changes the window immediately
 - [ ] Switching to Automatic follows the Dalamud interface language
 - [ ] Excluding a type hides those FATEs, shown as filtered rather than vanishing
@@ -156,7 +156,7 @@ documented anywhere.
 
 ## 7. Performance
 
-- [ ] `/xldev`, Plugins, Open Plugin Stats: Fate Helper's per-frame cost stays low
+- [ ] `/xldev`, Plugins, Open Plugin Stats: Fate Compass's per-frame cost stays low
 - [ ] The window open in a busy zone does not cause noticeable stutter
 
 ## What to report back

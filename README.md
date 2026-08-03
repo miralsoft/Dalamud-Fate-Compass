@@ -1,4 +1,4 @@
-# Fate Helper
+# Fate Compass
 
 **Find, rank and reach FATEs without the busywork.**
 
@@ -6,14 +6,14 @@ FATE farming is mostly bookkeeping. Which of the six FATEs in this zone is worth
 one already at 80 %? Will it still be there by the time I arrive, or should I teleport? Did I
 remember to sync down before hitting the first mob?
 
-Fate Helper answers all of that in one small window, and takes the two-second chores off your
+Fate Compass answers all of that in one small window, and takes the two-second chores off your
 hands. It does not play for you: see [What it will not do](#what-it-will-not-do).
 
 ---
 
 ## Install
 
-All of my plugins come from one address. Add it once and Fate Helper appears in the plugin list.
+All of my plugins come from one address. Add it once and Fate Compass appears in the plugin list.
 
 ```
 https://xivarsenal.app/plugins.json
@@ -22,8 +22,8 @@ https://xivarsenal.app/plugins.json
 1. In game, open `/xlsettings` and go to the **Experimental** tab.
 2. Under *Custom Plugin Repositories*, paste the address above.
 3. Click **+**, then **Save**.
-4. Open `/xlplugins`, search for **Fate Helper** and install it.
-5. Type `/fh` to open the window.
+4. Open `/xlplugins`, search for **Fate Compass** and install it.
+5. Type `/fate` to open the window.
 
 More plugins and the same instructions in full:
 **[miralsoft/Dalamud-Plugins](https://github.com/miralsoft/Dalamud-Plugins)**
@@ -143,12 +143,12 @@ installation, and never twice. The icon stays lit until you have looked.
 
 | Command | What it does |
 | --- | --- |
-| `/fh` | Open or close the FATE list |
-| `/fh cfg` | Open the settings |
-| `/fh engage` | Get ready right now: dismount, level sync, tank stance |
-| `/fh auto on \| off \| toggle` | Switch the automatic preparation |
-| `/fh news` | Show what changed |
-| `/fh help` | The list above |
+| `/fate` | Open or close the FATE list |
+| `/fate cfg` | Open the settings |
+| `/fate engage` | Get ready right now: dismount, level sync, tank stance |
+| `/fate auto on \| off \| toggle` | Switch the automatic preparation |
+| `/fate news` | Show what changed |
+| `/fate help` | The list above |
 
 Everything switchable has a command, so you can drive the plugin from a macro without opening a
 window.
@@ -185,7 +185,7 @@ without worrying about what it might do on its own.
 
 ## Your data
 
-There is none to speak of. Fate Helper has no account, no server and **no network access
+There is none to speak of. Fate Compass has no account, no server and **no network access
 whatsoever**. The FATE history it records, used only to estimate when something might come back,
 is a file on your own machine and never goes anywhere.
 
@@ -201,7 +201,7 @@ complete: no half-translated windows.
 ## Problems or requests?
 
 Open an issue here:
-**[github.com/miralsoft/Dalamud-Fate-Helper/issues](https://github.com/miralsoft/Dalamud-Fate-Helper/issues)**
+**[github.com/miralsoft/Dalamud-Fate-Compass/issues](https://github.com/miralsoft/Dalamud-Fate-Compass/issues)**
 
 The more useful the report, the faster it gets fixed: which zone, which FATE, and what you
 expected instead.

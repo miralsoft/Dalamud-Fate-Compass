@@ -47,7 +47,7 @@ jobs:
         run: dotnet test -c Release --no-build --verbosity normal
 
       - name: Format check
-        run: dotnet format FateHelper.slnx --verify-no-changes --verbosity minimal
+        run: dotnet format FateCompass.slnx --verify-no-changes --verbosity minimal
 
       - name: Vulnerable dependency scan
         shell: pwsh

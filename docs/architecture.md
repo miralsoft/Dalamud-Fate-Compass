@@ -1,4 +1,4 @@
-# Architecture: Fate Helper
+# Architecture: Fate Compass
 
 Purpose: the technical architecture of the project.
 
@@ -95,7 +95,7 @@ The one feature that sits on the automation boundary, so it is designed explicit
 `EngagePlanner` produces the plan. `IGameActions` executes it. Two triggers exist for the same
 plan:
 
-- **Manual:** the `/fh engage` command. The player pressed a key, so this is direct user
+- **Manual:** the `/fate engage` command. The player pressed a key, so this is direct user
   interaction and is unrestricted.
 - **Automatic:** the FATE-entered event. This is reactive automation and is the case the
   Dalamud restrictions describe. It ships **disabled by default** and has to be switched on
@@ -114,10 +114,10 @@ The plugin has to be controllable from a macro without opening a window.
 
 | Command | Effect |
 |---|---|
-| `/fh` | Open or close the main window |
-| `/fh cfg` | Open the configuration window |
-| `/fh engage` | Run the engage sequence once, manually |
-| `/fh auto on` / `off` / `toggle` | Switch the automatic trigger |
+| `/fate` | Open or close the main window |
+| `/fate cfg` | Open the configuration window |
+| `/fate engage` | Run the engage sequence once, manually |
+| `/fate auto on` / `off` / `toggle` | Switch the automatic trigger |
 
 ## Data model and persistence
 

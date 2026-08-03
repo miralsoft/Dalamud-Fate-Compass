@@ -1,4 +1,4 @@
-# Status: Fate Helper
+# Status: Fate Compass
 
 Purpose: the current state of the project. The shared handover channel between sessions and
 between different people or tools. Update at the end of every working session (M-08, R-02).
@@ -13,7 +13,7 @@ Runs the format check, the build, and the tests, then prints the path to registe
 `/xlsettings` in Dalamud, Experimental, Dev Plugin Locations:
 
 ```
-src\FateHelper\bin\Release\FateHelper.dll
+src\FateCompass\bin\Release\FateCompass.dll
 ```
 
 Registering it once is enough. After every later build, reload the plugin from the dev section
@@ -138,7 +138,7 @@ the plugin still does nothing in game.
 
 ## Localization (done)
 
-- **Done:** `FateHelper.Core/Localization` with `StringKeys` (the key constants),
+- **Done:** `FateCompass.Core/Localization` with `StringKeys` (the key constants),
   `Localizer` (fallback chain), `LanguageResolver` (auto mode against Dalamud's
   `UiLanguage`), `DictionaryCatalog`, and `EmbeddedCatalogs`. German and English catalogues
   ship as embedded JSON.
@@ -149,7 +149,7 @@ the plugin still does nothing in game.
 
 ## Repository and enforcement
 
-- **Done:** Repository connected to `miralsoft/Dalamud-Fate-Helper`, branch `main`, tracking
+- **Done:** Repository connected to `miralsoft/Dalamud-Fate-Compass`, branch `main`, tracking
   `origin/main`. Foundation cloned to `.foundation-docs/` and locally excluded. Git identity
   set locally to `Sanaka <20637644+miralsoft@users.noreply.github.com>`. Both foundation hooks
   installed and verified by direct invocation. `.miralsoft-enforcement` configured.
@@ -168,18 +168,18 @@ the plugin still does nothing in game.
   standard, `.gitattributes`, `.gitignore`, `NuGet.config` limited to nuget.org, and
   `Directory.Build.props` carrying the shared settings (nullable on, warnings as errors,
   analyzers at `latest-recommended`, lock files on).
-- Three projects in `FateHelper.slnx`: `FateHelper.Core`, `FateHelper` (the plugin), and
-  `FateHelper.Core.Tests`.
+- Three projects in `FateCompass.slnx`: `FateCompass.Core`, `FateCompass` (the plugin), and
+  `FateCompass.Core.Tests`.
 - Verified: build clean with zero warnings, `dotnet format --verify-no-changes` clean, no
   vulnerable packages, generated manifest carries `AssemblyVersion 0.1.0.0` and
   `DalamudApiLevel 15`, and `latest.zip` is produced.
 - **Note:** `dotnet new sln` on .NET 10 produces the newer `.slnx` format, so the solution
-  file is `FateHelper.slnx`, not `.sln`.
+  file is `FateCompass.slnx`, not `.sln`.
 
 ## Core logic (Phase 2, done)
 
 - **Done:** `Model` (WorldPosition, FateSnapshot, PlayerSnapshot, FateKind,
-  FateProgressState, TankJob), `Configuration` (FateHelperSettings, RankingWeights),
+  FateProgressState, TankJob), `Configuration` (FateCompassSettings, RankingWeights),
   `Ranking` (FateFilter, FateRanker, RankedFate, FateExclusionReason), `Engage`
   (EngagePlanner, EngagePlan, EngageStep, PlanBlockedReason), `Routing` (Aetheryte,
   RouteHint, RouteHintCalculator), `History` (FateHistoryStore, FateSighting,
@@ -187,7 +187,7 @@ the plugin still does nothing in game.
 - 60 xUnit tests, all passing, covering the required edge cases: a FATE that would expire
   before arrival, a nearly complete FATE, an empty zone, an unclassified FATE kind, and a full
   gemstone purse.
-- FH-04 verified by inspection of the built assembly: `FateHelper.Core` references only
+- FH-04 verified by inspection of the built assembly: `FateCompass.Core` references only
   `System.Collections`, `System.Linq`, and `System.Runtime`.
 
 ## Plugin (Phases 3 and 4 written, not yet run in game)
@@ -195,11 +195,11 @@ the plugin still does nothing in game.
 - **Adapters:** `GameActions` (the sole server gate), `TankStanceResolver`,
   `TextCommandResolver`, `GameSnapshotProvider`, `AetheryteProvider`, `MapService`,
   `NotificationService`.
-- **Orchestration:** `FateHelperController`, polling every 500 ms rather than per frame,
+- **Orchestration:** `FateCompassController`, polling every 500 ms rather than per frame,
   detecting new FATEs, FATE entry and exit, and running the engage and remount plans.
 - **UI:** `MainWindow` (ranked list, flag and teleport buttons per row, excluded FATEs greyed
   out with their reason on hover), `ConfigWindow` (every setting including the language
-  picker), and the `/fh` command family.
+  picker), and the `/fate` command family.
 - **Everything compiles against the installed Dalamud 15.0.3 and packages cleanly. None of it
   has been executed in game yet.** The first run is the real test.
 

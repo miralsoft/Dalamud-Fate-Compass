@@ -42,7 +42,7 @@ jobs:
       - name: Check the tag against the built version
         shell: pwsh
         run: |
-          $manifest = Get-Content "src/FateHelper/bin/Release/FateHelper/FateHelper.json" -Raw | ConvertFrom-Json
+          $manifest = Get-Content "src/FateCompass/bin/Release/FateCompass/FateCompass.json" -Raw | ConvertFrom-Json
           $built = ([version]$manifest.AssemblyVersion).ToString(3)
           $tagged = "${{ github.ref_name }}".TrimStart("v")
           if ($built -ne $tagged) {
@@ -54,7 +54,7 @@ jobs:
       - name: Stage artifact
         shell: pwsh
         run: |
-          $zip = "src/FateHelper/bin/Release/FateHelper/latest.zip"
+          $zip = "src/FateCompass/bin/Release/FateCompass/latest.zip"
           if (-not (Test-Path $zip)) { Write-Error "Packaged zip not found at $zip"; exit 1 }
           Copy-Item $zip -Destination "latest.zip" -Force
 
@@ -65,7 +65,7 @@ jobs:
       # Both the manifest and the binary are published as release assets and served via the stable
       # `releases/latest/download/<asset>` redirect. This means the workflow never pushes to `main`
       # (so `main` can be fully branch-protected) and the standalone repository URL never changes:
-      #   https://github.com/miralsoft/Dalamud-Fate-Helper/releases/latest/download/pluginmaster.json
+      #   https://github.com/miralsoft/Dalamud-Fate-Compass/releases/latest/download/pluginmaster.json
       #
       # The aggregate index at miralsoft/Dalamud-Plugins does not use that file. It reads the zip
       # attached to the newest release, which is why `latest.zip` has to be here under that name.

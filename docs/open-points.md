@@ -1,4 +1,4 @@
-# Open points: Fate Helper
+# Open points: Fate Compass
 
 Purpose: open questions and unresolved items. Distinct from `todos.md`, which is planned work.
 These still need a decision or a verification.

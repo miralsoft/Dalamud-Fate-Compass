@@ -13,7 +13,7 @@
   Running it twice is harmless.
 #>
 param(
-    [string]$Directory = "src/FateHelper/images"
+    [string]$Directory = "src/FateCompass/images"
 )
 
 $ErrorActionPreference = "Stop"

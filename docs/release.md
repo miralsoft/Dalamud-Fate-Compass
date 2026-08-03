@@ -16,7 +16,7 @@ Purpose: how a version gets from this repository into a player's plugin list.
 
 `pluginmaster.json` is the second, independent route: it lets somebody add this repository on its
 own, without the aggregate index, through
-`https://github.com/miralsoft/Dalamud-Fate-Helper/releases/latest/download/pluginmaster.json`.
+`https://github.com/miralsoft/Dalamud-Fate-Compass/releases/latest/download/pluginmaster.json`.
 The aggregate index does not read it. It is generated rather than committed, because a committed
 copy would go stale the moment a release is cut.
 
@@ -24,7 +24,7 @@ copy would go stale the moment a release is cut.
 
 1. Raise `<Version>` in `Directory.Build.props`.
 2. Add the version to `CHANGELOG.md` (for whoever works on this) **and** to
-   `src/FateHelper.Core/News/Notes/*.json`, in every language (for whoever plays with it). A test
+   `src/FateCompass.Core/News/Notes/*.json`, in every language (for whoever plays with it). A test
    fails the build when the newest notes do not describe the version being built, which is
    deliberate: the "What's new" window is the only place a player can find out what changed, so
    shipping a version it does not mention would make it a liar.
@@ -54,7 +54,7 @@ Then one line in the index's `plugins.json` and one section in its README.
 
 ## When the artwork changes
 
-Drop the new files into `src/FateHelper/images` and run:
+Drop the new files into `src/FateCompass/images` and run:
 
 ```powershell
 ./scripts/prepare-icons.ps1

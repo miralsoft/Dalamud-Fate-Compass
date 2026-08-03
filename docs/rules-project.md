@@ -1,4 +1,4 @@
-# Project rules: Fate Helper
+# Project rules: Fate Compass
 
 Purpose: project-specific rules that extend or tighten the global rules, plus the additional
 rule prefix this project introduces.
@@ -8,7 +8,7 @@ rule prefix this project introduces.
 
 ## Added prefixes
 
-- **`FH`** Fate Helper project rules. Global prefixes are defined in the foundation's
+- **`FH`** Fate Compass project rules. Global prefixes are defined in the foundation's
   `rules/06-numbering.md`.
 
 ## Rules

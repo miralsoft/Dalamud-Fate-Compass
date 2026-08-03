@@ -6,6 +6,19 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- **Renamed from Fate Helper to Fate Compass**, internal name `FateCompass`. Not a preference: the
+  official Dalamud repository already carries `FATEhelper`, "FATE Helper" by Teechep Bird, and
+  Dalamud compares internal names without regard to case. It therefore refused our repository
+  entry outright, which the client log recorded four times, and 1.0.0 could not be installed by
+  anybody. It worked here only because a development plugin bypasses the index. The display name
+  changed too: two plugins with the same name in one list is a problem for the player whichever
+  one is technically allowed, and we are the second. Full account in `docs/decisions.md`.
+- The command is now `/fatecompass`, with `/fate` as a short form. `/fc` was not available, the
+  game uses it for free company chat. The short form is registered but allowed to fail, so
+  another plugin owning `/fate` costs a convenience rather than the plugin.
+
 ### Added
 
 - Licensed under AGPL-3.0-or-later, with the reasoning recorded in `docs/decisions.md`.
@@ -27,7 +40,7 @@ All notable changes to this project are recorded here. The format follows
 
 First public release, published through
 [miralsoft/Dalamud-Plugins](https://github.com/miralsoft/Dalamud-Plugins). The developer surface
-(`DebugWindow.Enabled`) is off in this build; the `/fh debug` probes still write to the Dalamud
+(`DebugWindow.Enabled`) is off in this build; the `/fate debug` probes still write to the Dalamud
 log, which is what a problem report is built from.
 
 ### Added
@@ -50,7 +63,7 @@ log, which is what a problem report is built from.
 - Game adapters: FATE and player state reading, aetheryte lookup from local game data, the map
   flag, notifications, and a single gated component for everything that reaches the game
   server.
-- Windows for the ranked FATE list and the settings, plus the `/fh` command family so the
+- Windows for the ranked FATE list and the settings, plus the `/fate` command family so the
   plugin can be driven from a macro without opening anything.
 - `build.ps1`, which runs the format check, the build, and the tests, then prints the path to
   register as a Dalamud dev plugin.
@@ -60,12 +73,12 @@ log, which is what a problem report is built from.
   ranked ahead of everything else, because it is the one thing that can be missed outright.
   Eureka notorious monsters were already covered, being ordinary FATEs.
 - A "What's new" window, reached from a scroll icon in the main window's title bar or with
-  `/fh news`. It lists the releases newest first and labels every line as new, changed, fixed, or
+  `/fate news`. It lists the releases newest first and labels every line as new, changed, fixed, or
   removed, so the three questions people arrive with are answered by sorting rather than reading.
   It opens by itself once after an update, never on a first installation, and the icon is
   highlighted until the notes have been looked at.
 - Player-facing release notes as embedded data, one JSON file per language under
-  `src/FateHelper.Core/News/Notes`, deliberately separate from this file: this one is written for
+  `src/FateCompass.Core/News/Notes`, deliberately separate from this file: this one is written for
   whoever works on the plugin, that one for whoever plays with it. A test fails the build when the
   newest notes do not describe the version being built, or when the languages disagree about which
   versions exist.

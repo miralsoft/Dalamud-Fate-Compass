@@ -13,22 +13,22 @@ Set-Location $PSScriptRoot
 
 if (-not $SkipChecks) {
     Write-Host '--- format ---' -ForegroundColor Cyan
-    dotnet format FateHelper.slnx --verify-no-changes
-    if ($LASTEXITCODE -ne 0) { throw 'Formatting check failed. Run: dotnet format FateHelper.slnx' }
+    dotnet format FateCompass.slnx --verify-no-changes
+    if ($LASTEXITCODE -ne 0) { throw 'Formatting check failed. Run: dotnet format FateCompass.slnx' }
 }
 
 Write-Host '--- build ---' -ForegroundColor Cyan
-dotnet build FateHelper.slnx -c $Configuration --nologo
+dotnet build FateCompass.slnx -c $Configuration --nologo
 if ($LASTEXITCODE -ne 0) { throw 'Build failed.' }
 
 if (-not $SkipChecks) {
     Write-Host '--- tests ---' -ForegroundColor Cyan
-    dotnet test FateHelper.slnx -c $Configuration --nologo
+    dotnet test FateCompass.slnx -c $Configuration --nologo
     if ($LASTEXITCODE -ne 0) { throw 'Tests failed.' }
 }
 
-$output = Join-Path $PSScriptRoot "src\FateHelper\bin\$Configuration"
-$dll = Join-Path $output 'FateHelper.dll'
+$output = Join-Path $PSScriptRoot "src\FateCompass\bin\$Configuration"
+$dll = Join-Path $output 'FateCompass.dll'
 
 if (-not (Test-Path $dll)) { throw "Expected plugin assembly not found at $dll" }
 
@@ -36,8 +36,8 @@ if (-not (Test-Path $dll)) { throw "Expected plugin assembly not found at $dll" 
 #
 # Dalamud reloads a dev plugin as soon as its main assembly changes on disk. This plugin
 # ships two assemblies, and MSBuild writes them one after another straight into bin/.
-# Pointing Dalamud at bin/ therefore lets a reload fire while FateHelper.dll is new and
-# FateHelper.Core.dll is still the old one, or still being written, which loads a plugin
+# Pointing Dalamud at bin/ therefore lets a reload fire while FateCompass.dll is new and
+# FateCompass.Core.dll is still the old one, or still being written, which loads a plugin
 # against a dependency that does not match it and takes the game down.
 #
 # Staging fixes the ordering: everything is copied here with the main assembly LAST, so by
@@ -46,7 +46,7 @@ if (-not (Test-Path $dll)) { throw "Expected plugin assembly not found at $dll" 
 $dist = Join-Path $PSScriptRoot 'dist'
 New-Item -ItemType Directory -Force -Path $dist | Out-Null
 
-$mainAssembly = 'FateHelper.dll'
+$mainAssembly = 'FateCompass.dll'
 $supporting = Get-ChildItem $output -File | Where-Object { $_.Name -ne $mainAssembly }
 
 foreach ($file in $supporting) {

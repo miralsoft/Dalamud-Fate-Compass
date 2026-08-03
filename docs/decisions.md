@@ -1,4 +1,4 @@
-# Decisions: Fate Helper
+# Decisions: Fate Compass
 
 Purpose: append-only decision log. Never edit or delete past decisions, only add new ones. A
 later decision may supersede an earlier one, but the history stays (M-08).
@@ -67,7 +67,7 @@ Each entry: date, decision, short rationale.
   Retrofitting translation into a finished UI is expensive, so it went in before the UI rather
   than after.
 
-- (2026-08-01) Translation lives in `FateHelper.Core`, not in the plugin project: string keys
+- (2026-08-01) Translation lives in `FateCompass.Core`, not in the plugin project: string keys
   as constants in `StringKeys`, catalogues as embedded JSON under
   `Localization/Catalogs/<code>.json`, resolution in `Localizer` with the chain active
   language, then English, then the key itself. Adding a language means adding one JSON file
@@ -129,7 +129,7 @@ Each entry: date, decision, short rationale.
   is not a surprise later: nobody can lift parts of this into a closed plugin, and relicensing
   would need the agreement of everyone whose contributions were accepted.
 
-- (2026-08-03) The plugin icon is one file, `src/FateHelper/images/icon.png`, feeding three
+- (2026-08-03) The plugin icon is one file, `src/FateCompass/images/icon.png`, feeding three
   destinations: copied beside the packaged plugin for Dalamud's list, referenced by `IconUrl` in
   the manifest for the repository index, and embedded into the assembly for the minimap button.
   Rationale: Dalamud resolves plugin icons two ways and layers its own status badges on top, so
@@ -178,3 +178,29 @@ Each entry: date, decision, short rationale.
   seconds what otherwise takes a rebuild and a look in game. An ornate emblem spends its pixels
   on frames and interiors; a HUD glyph is one shape with a hard outline, and that difference only
   becomes visible in a small render.
+
+- (2026-08-03) The plugin is renamed from Fate Helper to Fate Compass, internal name
+  `FateCompass`. Rationale: not taste, a collision. The official Dalamud repository already
+  carries `FATEhelper`, "FATE Helper" by Teechep Bird, and Dalamud compares internal names
+  without regard to case. The evidence was in the client's own log, four times over:
+  "The repository https://xivarsenal.app/plugins.json tried to replace the plugin FateHelper,
+  which is already installed through the official repo - this is no longer allowed for security
+  reasons." So the v1.0.0 release could not be installed by anybody; it only worked here because
+  it was loaded as a development plugin, which bypasses the index. The display name is changed
+  as well as the internal one: two plugins of the same name in one list is a problem for the
+  player regardless of which one is technically allowed, and we are the second.
+
+  The new name says what the plugin does rather than what it is, and it matches the artwork that
+  already existed: a needle pointing into a ring.
+
+- (2026-08-03) The command is `/fatecompass`, with `/fate` registered as a short form and
+  allowed to fail. Rationale: `/fc` is the game's free company chat and cannot be taken. A short
+  command is worth having and is exactly the kind another plugin may already own, so the long
+  form is the one the plugin relies on and the short one is a convenience that is checked rather
+  than assumed.
+
+- (2026-08-03) The name collision was found by reading the client log rather than by inspecting
+  our own code. The visible symptom was a missing icon, and two rounds of looking at icon
+  plumbing found nothing because the plumbing was correct. Worth remembering: when something
+  displays wrongly and the code that produces it checks out, the next place to look is what the
+  host says about us, not what we say about ourselves.

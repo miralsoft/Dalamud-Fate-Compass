@@ -1,4 +1,4 @@
-# To-dos: Fate Helper
+# To-dos: Fate Compass
 
 Purpose: the project to-do list, grouped per phase. Each phase names the gates its work has to
 pass before the phase counts as done (R-14). The gates are stated here on purpose, so they
@@ -31,7 +31,7 @@ version match (C-06).
 - [x] `EngagePlanner`: decides the needed steps from a player state snapshot
 - [x] `FateHistoryStore`: sighting log and respawn estimation
 - [x] `GemstoneTracker`: count against cap and warning threshold
-- [x] `FateHelperSettings`: versioned settings model
+- [x] `FateCompassSettings`: versioned settings model
 
 **Gates:** no Dalamud or FFXIVClientStructs reference anywhere under `src/Core/` (FH-04).
 xUnit covers each type above, including the edge cases that matter: a FATE that expires before
@@ -63,7 +63,7 @@ rather than trusting the names (I-10).
 - [x] Excluded FATEs shown greyed out, with the reason and the respawn estimate on hover
 - [x] Gemstone purse line, coloured by how close the cap is
 - [x] `ConfigWindow`: all settings including the automation toggles and the language picker
-- [x] Text commands `/fh`, `/fh cfg`, `/fh engage`, `/fh auto on|off|toggle`
+- [x] Text commands `/fate`, `/fate cfg`, `/fate engage`, `/fate auto on|off|toggle`
 
 **Gates:** both windows registered through the Dalamud Windowing API, not drawn ad hoc. Every
 automatic behaviour has a visible toggle and a command (FH-02). User-facing strings collected
