@@ -33,22 +33,6 @@
   </ItemGroup>
 
   <!--
-    The same emblem again, cut out and without its frame, compiled into the assembly so the
-    minimap button can draw it over the game's own interface.
-
-    Two files rather than one, because the two places genuinely want different pictures: in a
-    list the icon stands on a tile of its own and needs its frame, on the minimap it lies on the
-    HUD and a frame would fight with it.
-
-    Embedded rather than read from disk. The packaged zip does not carry the images, so a
-    path-based load would work in a development build and silently fall back to a game glyph for
-    everybody who installed the plugin normally. See Adapters/PluginIcon.cs.
-  -->
-  <ItemGroup Condition="Exists('images\minimap.png')">
-    <EmbeddedResource Include="images\minimap.png" />
-  </ItemGroup>
-
-  <!--
     Native UI nodes. Everything drawn into the game's own map window goes through this, and
     every call to it is behind NativeMapMarkers, which switches the whole feature off for the
     session at the first sign of trouble (FH-12).

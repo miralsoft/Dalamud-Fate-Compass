@@ -1,7 +1,6 @@
 using System.Numerics;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Windowing;
-using FateHelper.Adapters;
 using FateHelper.Configuration;
 using FateHelper.Core.Localization;
 using FateHelper.Services;
@@ -35,6 +34,22 @@ internal sealed unsafe class MinimapButton : Window, IDisposable
         | ImGuiWindowFlags.NoNav;
 
     private const string MinimapAddonName = "_NaviMap";
+
+    /// <summary>
+    /// The game's own FATE marker, used for the button face.
+    /// </summary>
+    /// <remarks>
+    /// The plugin's own emblem was tried here and dropped. Two reasons, and the second is the
+    /// one that decided it. A borrowed glyph is drawn by the people who drew the rest of the
+    /// interface, for exactly this size, so it sits on the HUD without effort. And it already
+    /// means something: every player reads it as "FATE" without learning anything, where an own
+    /// mark means nothing until it has been used for a while.
+    /// <para>
+    /// The plugin's identity does not live here. It lives in the plugin list, the window title
+    /// and the settings, where the emblem is big enough to work.
+    /// </para>
+    /// </remarks>
+    private const uint IconId = 60093;
 
     private readonly PluginConfiguration configuration;
     private readonly Localizer localizer;
@@ -255,9 +270,7 @@ internal sealed unsafe class MinimapButton : Window, IDisposable
         }
 
         var size = configuration.Settings.MinimapButtonSize * scale;
-        // The plugin's own icon, the same picture the plugin list shows. A control stuck to the
-        // HUD should be recognisable as this plugin rather than as a borrowed game glyph.
-        var texture = PluginIcon.Texture();
+        var texture = DalamudServices.TextureProvider.GetFromGameIcon(IconId).GetWrapOrDefault();
 
         // While repositioning, draw a plain image rather than a button. A button would swallow
         // the click and force the player to grab an invisible strip above the icon, which is

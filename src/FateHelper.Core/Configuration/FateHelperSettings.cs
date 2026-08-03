@@ -81,7 +81,7 @@ public sealed class FateHelperSettings
     /// and then read back out of the saved configuration, so a fresh install starts where the
     /// tuning ended rather than where the first estimate was.
     /// </remarks>
-    public float MinimapButtonSize { get; set; } = 32f;
+    public float MinimapButtonSize { get; set; } = 38f;
 
     // --- Engage sequence -------------------------------------------------------------
 

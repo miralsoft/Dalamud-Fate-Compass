@@ -160,3 +160,21 @@ Each entry: date, decision, short rationale.
   felt like, so the cut-out version has to be found by its alpha channel and squared before it is
   scaled. Written down as a script because those are exactly the rules nobody remembers a year
   later.
+
+- (2026-08-03) Supersedes the two-file icon decision above: the minimap button uses the game's
+  own FATE marker again, and the plugin's emblem exists only as `images/icon.png` for the plugin
+  list. Rationale: two reasons, and the second decided it. A borrowed glyph is drawn by the
+  people who drew the rest of the interface, for exactly that size, so it sits on the HUD without
+  effort; an own mark is always a little foreign there. And it already means something. Every
+  player reads the FATE marker as "FATE" without learning anything, where an own emblem means
+  nothing until it has been used for a while, and a HUD is read in a quarter of a second. The
+  plugin's identity does not need that button: it lives in the plugin list, the window title and
+  the settings, where the emblem is large enough to work. What we give up is that nothing on the
+  HUD distinguishes this plugin from another, which is the right trade at 32 pixels.
+
+- (2026-08-03) Icons are judged at the size they are drawn at, not at the size they arrive in.
+  Three rounds of artwork were needed here, and each one looked fine at 1024 and failed at 32.
+  Rendering a candidate at 24, 32 and 44, in colour and in the greyed-out state, answers in
+  seconds what otherwise takes a rebuild and a look in game. An ornate emblem spends its pixels
+  on frames and interiors; a HUD glyph is one shape with a hard outline, and that difference only
+  becomes visible in a small render.

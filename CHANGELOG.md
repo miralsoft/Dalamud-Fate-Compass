@@ -10,12 +10,10 @@ All notable changes to this project are recorded here. The format follows
 
 - Licensed under AGPL-3.0-or-later, with the reasoning recorded in `docs/decisions.md`.
 - The plugin has an icon: a gold emblem on deep violet, a needle pointing into a glowing ring.
-  Framed for Dalamud's plugin list, cut out for the minimap button, which now draws it instead of
-  a borrowed game glyph. The minimap version comes from an embedded resource, because the
-  packaged zip does not carry the image file and a path-based load would work in a development
-  build while quietly falling back for everybody else.
-- `scripts/prepare-icons.ps1`, which brings new artwork into the shape both places need: exactly
-  512 by 512 for the plugin list, and cropped to its alpha channel and squared for the minimap.
+  It appears wherever Dalamud shows the plugin. The minimap button keeps the game's own FATE
+  marker, which players already read as "FATE" and which is drawn for that size.
+- `scripts/prepare-icons.ps1`, which brings new artwork into the shape Dalamud needs: exactly
+  512 by 512, which is a hard requirement and not visible in an image viewer.
 - A test binding `CHANGELOG.md` to the version being built: the newest section has to name it,
   and every version described to players in the release notes has to appear here.
 
