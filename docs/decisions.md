@@ -118,3 +118,27 @@ Each entry: date, decision, short rationale.
   `rules/dalamud.md`. Rationale: I-10. This immediately caught one error that would otherwise
   have been written into the adapters: `IClientState.LocalPlayer` no longer exists in v15, the
   local player now comes from `IObjectTable.LocalPlayer`.
+
+- (2026-08-03) The plugin is licensed AGPL-3.0-or-later. Rationale: copyleft rather than a
+  permissive licence, because the failure mode this ecosystem actually sees is somebody taking
+  an open plugin, renaming it and putting it behind a paywall or a closed community, which MIT
+  expressly permits. AGPL rather than GPL because of the network clause: the plugin does no
+  networking today, so the clause costs nothing, but the cross-zone FATE awareness noted in
+  `open-points.md` as impossible without a backend is exactly the case it covers. It is also the
+  licence Eorzea Arsenal uses, so one answer covers every plugin here. The cost, recorded so it
+  is not a surprise later: nobody can lift parts of this into a closed plugin, and relicensing
+  would need the agreement of everyone whose contributions were accepted.
+
+- (2026-08-03) The plugin icon is one file, `src/FateHelper/images/icon.png`, feeding three
+  destinations: copied beside the packaged plugin for Dalamud's list, referenced by `IconUrl` in
+  the manifest for the repository index, and embedded into the assembly for the minimap button.
+  Rationale: Dalamud resolves plugin icons two ways and layers its own status badges on top, so
+  the same picture has to arrive through more than one route. Keeping several copies of it, or
+  writing `IconUrl` in both the plugin manifest and the index, is how the routes end up
+  disagreeing. The index entry is generated from the built manifest for the same reason.
+
+- (2026-08-03) The minimap button reads its icon from an embedded resource rather than from a
+  file next to the plugin. Rationale: the packaged zip does not carry the image, so a
+  path-based load works in a development build and silently falls back to a game glyph for
+  everyone who installed the plugin normally. That difference is invisible to whoever built it,
+  which is the worst kind.

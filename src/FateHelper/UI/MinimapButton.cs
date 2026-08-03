@@ -1,6 +1,7 @@
 using System.Numerics;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Windowing;
+using FateHelper.Adapters;
 using FateHelper.Configuration;
 using FateHelper.Core.Localization;
 using FateHelper.Services;
@@ -34,10 +35,6 @@ internal sealed unsafe class MinimapButton : Window, IDisposable
         | ImGuiWindowFlags.NoNav;
 
     private const string MinimapAddonName = "_NaviMap";
-
-    /// <summary>Game icon used for the button face.</summary>
-    private const uint IconId = 60093;
-
 
     private readonly PluginConfiguration configuration;
     private readonly Localizer localizer;
@@ -242,7 +239,9 @@ internal sealed unsafe class MinimapButton : Window, IDisposable
         }
 
         var size = configuration.Settings.MinimapButtonSize * scale;
-        var texture = DalamudServices.TextureProvider.GetFromGameIcon(IconId).GetWrapOrDefault();
+        // The plugin's own icon, the same picture the plugin list shows. A control stuck to the
+        // HUD should be recognisable as this plugin rather than as a borrowed game glyph.
+        var texture = PluginIcon.Texture();
 
         // While repositioning, draw a plain image rather than a button. A button would swallow
         // the click and force the player to grab an invisible strip above the icon, which is

@@ -30,6 +30,14 @@
   -->
   <ItemGroup Condition="Exists('images\icon.png')">
     <Content Include="images\icon.png" CopyToOutputDirectory="PreserveNewest" />
+
+    <!--
+      The same file again, this time compiled into the assembly, so the minimap button can draw
+      the plugin's own icon. It cannot read the copy above: the packaged zip does not carry it,
+      so a path-based load would work for a development build and silently fall back to a game
+      glyph for everybody who installed the plugin normally. See Adapters/PluginIcon.cs.
+    -->
+    <EmbeddedResource Include="images\icon.png" />
   </ItemGroup>
 
   <!--

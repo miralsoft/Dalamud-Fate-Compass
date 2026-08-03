@@ -208,6 +208,19 @@ expected instead.
 
 ---
 
+## Licence
+
+[GNU Affero General Public License v3.0 or later](LICENSE).
+
+In plain terms: use it, read it, change it, pass it on. If you pass on a changed version, or run
+one as a service, the people who get it have the same rights you did, including the source. What
+this rules out is somebody taking the code, closing it, and selling it back to you.
+
+FINAL FANTASY XIV is a trademark of Square Enix Holdings Co., Ltd. This plugin is an independent
+project and is not affiliated with, endorsed by or connected to Square Enix in any way.
+
+---
+
 ## Building it yourself
 
 Requires the .NET SDK and an installed Dalamud.
