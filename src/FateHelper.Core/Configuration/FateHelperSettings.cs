@@ -70,10 +70,10 @@ public sealed class FateHelperSettings
     /// inset depends on the HUD layout and is easier for the player to nudge than for anyone to
     /// calculate.
     /// </remarks>
-    public float MinimapButtonOffsetX { get; set; } = 58f;
+    public float MinimapButtonOffsetX { get; set; } = 60f;
 
     /// <summary>Vertical nudge for the minimap icon, in pixels. Positive moves it down.</summary>
-    public float MinimapButtonOffsetY { get; set; } = 12f;
+    public float MinimapButtonOffsetY { get; set; } = 18f;
 
     /// <summary>Edge length of the minimap icon in pixels, before HUD scaling.</summary>
     /// <remarks>
@@ -81,7 +81,7 @@ public sealed class FateHelperSettings
     /// and then read back out of the saved configuration, so a fresh install starts where the
     /// tuning ended rather than where the first estimate was.
     /// </remarks>
-    public float MinimapButtonSize { get; set; } = 38f;
+    public float MinimapButtonSize { get; set; } = 36f;
 
     // --- Engage sequence -------------------------------------------------------------
 
