@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    The pure core. This project must never reference Dalamud, FFXIVClientStructs,
+    or Lumina (FH-04). That constraint is what makes this logic testable without a
+    running game, and keeping it a separate project means the compiler enforces it
+    instead of a reviewer having to notice.
+  -->
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <AssemblyName>FateHelper.Core</AssemblyName>
+    <RootNamespace>FateHelper.Core</RootNamespace>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!--
+      Language files. Adding a language means dropping another <code>.json</code> in here;
+      nothing in the code needs to change (C-05).
+    -->
+    <EmbeddedResource Include="Localization\Catalogs\*.json" />
+
+    <!--
+      Release notes, one file per language, same arrangement as the catalogues. Writing the
+      notes for a version is a data change, not a code change.
+    -->
+    <EmbeddedResource Include="News\Notes\*.json" />
+  </ItemGroup>
+
+</Project>

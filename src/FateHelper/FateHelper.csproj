@@ -1,0 +1,32 @@
+<Project Sdk="Dalamud.NET.Sdk/15.0.0">
+
+  <!--
+    The plugin assembly. The Dalamud SDK supplies the target framework, the platform
+    target, the Dalamud references, and the packaging step, so none of that is
+    restated here (see docs/rules/dalamud.md).
+  -->
+
+  <PropertyGroup>
+    <AssemblyName>FateHelper</AssemblyName>
+    <RootNamespace>FateHelper</RootNamespace>
+    <PackageProjectUrl>https://github.com/miralsoft/Dalamud-Fate-Helper</PackageProjectUrl>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FateHelper.Core\FateHelper.Core.csproj" />
+  </ItemGroup>
+
+  <!--
+    Native UI nodes. Everything drawn into the game's own map window goes through this, and
+    every call to it is behind NativeMapMarkers, which switches the whole feature off for the
+    session at the first sign of trouble (FH-12).
+
+    A pinned version on purpose: this is the one dependency that touches native UI memory, so it
+    moves when we decide to move it and not when a restore happens to run.
+  -->
+  <ItemGroup>
+    <PackageReference Include="KamiToolKit" Version="2.2.9" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,11 @@
+# MIRAL Soft enforcement configuration.
+# Read by the git hooks in .git/hooks/ (see foundation-docs/enforcement/README.md).
+
+# Expected committer identity (R-03). This is a private game plugin, so the project
+# identity is the owner's in-game name and a GitHub noreply address. No personal
+# address is exposed in the repository.
+OWNER_NAME=Sanaka
+OWNER_EMAIL=20637644+miralsoft@users.noreply.github.com
+
+# Space-separated globs whose staged files are checked for em-dash characters (I-02).
+CONTENT_GLOBS=*.md docs/*.md docs/*/*.md

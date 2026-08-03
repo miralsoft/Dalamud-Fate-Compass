@@ -1,0 +1,32 @@
+# Build output
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+*.user
+*.suo
+
+# IDE
+.vs/
+.idea/
+*.DotSettings.user
+
+# Test and analysis output
+TestResults/
+*.coverage
+*.trx
+
+# Local packaging output
+dist/
+*.zip
+
+# Generated during a release from the built manifest and uploaded as a release asset.
+# A committed copy could only ever be stale.
+pluginmaster.json
+
+# Dalamud assemblies are resolved from the local installation and must never be
+# committed. This guard exists in case an output path is ever misconfigured.
+Dalamud*.dll
+FFXIVClientStructs*.dll
+Lumina*.dll
+ImGui*.dll

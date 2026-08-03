@@ -1,0 +1,78 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  DOTNET_NOLOGO: "1"
+  # Run JS-based actions on Node 24 (Node 20 is deprecated; Node 24 is the default from 2026-06-16).
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+jobs:
+  release:
+    name: Package & publish
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Download Dalamud dev libraries
+        shell: pwsh
+        run: |
+          $dest = "$env:AppData\XIVLauncher\addon\Hooks\dev"
+          New-Item -ItemType Directory -Force -Path $dest | Out-Null
+          Invoke-WebRequest -Uri "https://goatcorp.github.io/dalamud-distrib/latest.zip" -OutFile dalamud.zip
+          Expand-Archive -Path dalamud.zip -DestinationPath $dest -Force
+
+      - name: Build (Release)
+        run: dotnet build -c Release
+
+      # The build has to agree with the tag. A tag pushed before the version was raised would
+      # otherwise publish a release whose name and contents disagree, and the plugin list would
+      # show a version nobody can install.
+      - name: Check the tag against the built version
+        shell: pwsh
+        run: |
+          $manifest = Get-Content "src/FateHelper/bin/Release/FateHelper/FateHelper.json" -Raw | ConvertFrom-Json
+          $built = ([version]$manifest.AssemblyVersion).ToString(3)
+          $tagged = "${{ github.ref_name }}".TrimStart("v")
+          if ($built -ne $tagged) {
+            Write-Error "Tag ${{ github.ref_name }} does not match the built version $built. Raise <Version> in Directory.Build.props, or retag."
+            exit 1
+          }
+          Write-Host "Tag and build agree on $built."
+
+      - name: Stage artifact
+        shell: pwsh
+        run: |
+          $zip = "src/FateHelper/bin/Release/FateHelper/latest.zip"
+          if (-not (Test-Path $zip)) { Write-Error "Packaged zip not found at $zip"; exit 1 }
+          Copy-Item $zip -Destination "latest.zip" -Force
+
+      - name: Generate pluginmaster.json
+        shell: pwsh
+        run: ./scripts/generate-pluginmaster.ps1 -Tag "${{ github.ref_name }}"
+
+      # Both the manifest and the binary are published as release assets and served via the stable
+      # `releases/latest/download/<asset>` redirect. This means the workflow never pushes to `main`
+      # (so `main` can be fully branch-protected) and the standalone repository URL never changes:
+      #   https://github.com/miralsoft/Dalamud-Fate-Helper/releases/latest/download/pluginmaster.json
+      #
+      # The aggregate index at miralsoft/Dalamud-Plugins does not use that file. It reads the zip
+      # attached to the newest release, which is why `latest.zip` has to be here under that name.
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@3d0d9888cb7fd7b750713d6e236d1fcb99157228 # v3.0.2
+        with:
+          files: |
+            latest.zip
+            pluginmaster.json
+          generate_release_notes: true

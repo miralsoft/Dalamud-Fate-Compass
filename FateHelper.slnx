@@ -1,0 +1,9 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/FateHelper.Core/FateHelper.Core.csproj" />
+    <Project Path="src/FateHelper/FateHelper.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/FateHelper.Core.Tests/FateHelper.Core.Tests.csproj" />
+  </Folder>
+</Solution>

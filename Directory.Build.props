@@ -1,0 +1,40 @@
+<Project>
+
+  <!--
+    Shared build settings for every project in this repository (C-01). The rules
+    they implement are documented in docs/rules/csharp.md.
+  -->
+
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <!-- A warning is a defect, not a note. -->
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+
+    <!--
+      IDE0005 (unnecessary usings) only runs at build time when the documentation
+      file is generated. That is a Roslyn limitation, not a preference. CS1591 is
+      suppressed in return, because we want the analyzer, not a rule that every
+      public member needs an XML comment.
+    -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+
+    <!-- Static analysis: the build fails on findings rather than reporting them. -->
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
+
+    <!-- Dependency integrity (S-08). -->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+
+    <!-- Shared identity. -->
+    <Authors>Sanaka</Authors>
+    <Company>Sanaka</Company>
+    <Copyright>Sanaka</Copyright>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,70 @@
+# Builds the plugin and reports the path to register as a Dalamud dev plugin.
+# Runs the same gates the rules require before a build counts as good (C-03, T-03, S-08).
+
+param(
+    [ValidateSet('Debug', 'Release')]
+    [string]$Configuration = 'Release',
+
+    [switch]$SkipChecks
+)
+
+$ErrorActionPreference = 'Stop'
+Set-Location $PSScriptRoot
+
+if (-not $SkipChecks) {
+    Write-Host '--- format ---' -ForegroundColor Cyan
+    dotnet format FateHelper.slnx --verify-no-changes
+    if ($LASTEXITCODE -ne 0) { throw 'Formatting check failed. Run: dotnet format FateHelper.slnx' }
+}
+
+Write-Host '--- build ---' -ForegroundColor Cyan
+dotnet build FateHelper.slnx -c $Configuration --nologo
+if ($LASTEXITCODE -ne 0) { throw 'Build failed.' }
+
+if (-not $SkipChecks) {
+    Write-Host '--- tests ---' -ForegroundColor Cyan
+    dotnet test FateHelper.slnx -c $Configuration --nologo
+    if ($LASTEXITCODE -ne 0) { throw 'Tests failed.' }
+}
+
+$output = Join-Path $PSScriptRoot "src\FateHelper\bin\$Configuration"
+$dll = Join-Path $output 'FateHelper.dll'
+
+if (-not (Test-Path $dll)) { throw "Expected plugin assembly not found at $dll" }
+
+# --- Publish to a folder Dalamud watches -----------------------------------------
+#
+# Dalamud reloads a dev plugin as soon as its main assembly changes on disk. This plugin
+# ships two assemblies, and MSBuild writes them one after another straight into bin/.
+# Pointing Dalamud at bin/ therefore lets a reload fire while FateHelper.dll is new and
+# FateHelper.Core.dll is still the old one, or still being written, which loads a plugin
+# against a dependency that does not match it and takes the game down.
+#
+# Staging fixes the ordering: everything is copied here with the main assembly LAST, so by
+# the time Dalamud notices it, every file it depends on is already complete.
+
+$dist = Join-Path $PSScriptRoot 'dist'
+New-Item -ItemType Directory -Force -Path $dist | Out-Null
+
+$mainAssembly = 'FateHelper.dll'
+$supporting = Get-ChildItem $output -File | Where-Object { $_.Name -ne $mainAssembly }
+
+foreach ($file in $supporting) {
+    Copy-Item $file.FullName (Join-Path $dist $file.Name) -Force
+}
+
+# Last, and only once everything else is in place.
+Copy-Item $dll (Join-Path $dist $mainAssembly) -Force
+
+$devPath = Join-Path $dist $mainAssembly
+
+Write-Host ''
+Write-Host 'Build complete.' -ForegroundColor Green
+Write-Host ''
+Write-Host 'Register this path in Dalamud:' -ForegroundColor Yellow
+Write-Host "  /xlsettings  ->  Experimental  ->  Dev Plugin Locations" -ForegroundColor Gray
+Write-Host ''
+Write-Host "  $devPath" -ForegroundColor White
+Write-Host ''
+Write-Host 'The main assembly is copied last on purpose, so the auto-reload never sees a' -ForegroundColor Gray
+Write-Host 'half-updated set of files. Update the path above if you registered bin\ before.' -ForegroundColor Gray

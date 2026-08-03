@@ -1,0 +1,92 @@
+# The single formatting and style standard for this repository (C-03).
+# Checked with: dotnet format --verify-no-changes
+root = true
+
+[*]
+charset = utf-8
+end_of_line = crlf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+[*.{json,yml,yaml,md}]
+indent_size = 2
+
+[*.md]
+trim_trailing_whitespace = false
+
+[*.{csproj,props,targets,config}]
+indent_size = 2
+
+[*.cs]
+indent_size = 4
+max_line_length = 120
+
+# Usings
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = false
+csharp_using_directive_placement = outside_namespace:warning
+
+# Modern language features
+csharp_style_namespace_declarations = file_scoped:warning
+csharp_prefer_braces = true:warning
+csharp_style_var_for_built_in_types = false:suggestion
+csharp_style_var_when_type_is_apparent = true:suggestion
+csharp_style_expression_bodied_methods = when_on_single_line:silent
+csharp_style_expression_bodied_properties = true:silent
+
+# Null handling matters here, so these are not suggestions
+dotnet_style_null_propagation = true:warning
+dotnet_style_coalesce_expression = true:warning
+csharp_style_conditional_delegate_call = true:warning
+
+# Immutability and intent
+dotnet_style_readonly_field = true:warning
+csharp_prefer_static_local_function = true:warning
+dotnet_style_prefer_auto_properties = true:warning
+
+# Cleanliness (C-04: no dead code)
+dotnet_diagnostic.IDE0005.severity = warning   # unnecessary using
+dotnet_diagnostic.CA1806.severity = warning    # ignored return value
+dotnet_diagnostic.CA2213.severity = warning    # disposable field not disposed
+dotnet_diagnostic.CA1001.severity = warning    # type owns disposable, is not disposable
+
+# This plugin is single-language and never localises its own diagnostics,
+# so the culture-info analyzers add noise without value.
+dotnet_diagnostic.CA1303.severity = none
+
+# Naming. Order matters: the first matching rule wins, so the specific modifiers
+# come before the general private-field rule.
+dotnet_naming_style.camel_case.capitalization = camel_case
+dotnet_naming_style.pascal_case.capitalization = pascal_case
+
+# const fields are PascalCase.
+dotnet_naming_rule.constants_pascal_case.symbols = constants
+dotnet_naming_rule.constants_pascal_case.style = pascal_case
+dotnet_naming_rule.constants_pascal_case.severity = warning
+dotnet_naming_symbols.constants.applicable_kinds = field
+dotnet_naming_symbols.constants.applicable_accessibilities = *
+dotnet_naming_symbols.constants.required_modifiers = const
+
+# static readonly fields are PascalCase, matching the usual C# convention.
+dotnet_naming_rule.static_readonly_pascal_case.symbols = static_readonly_fields
+dotnet_naming_rule.static_readonly_pascal_case.style = pascal_case
+dotnet_naming_rule.static_readonly_pascal_case.severity = warning
+dotnet_naming_symbols.static_readonly_fields.applicable_kinds = field
+dotnet_naming_symbols.static_readonly_fields.applicable_accessibilities = *
+dotnet_naming_symbols.static_readonly_fields.required_modifiers = static,readonly
+
+# Everything else private is camelCase.
+dotnet_naming_rule.private_fields_camel_case.symbols = private_fields
+dotnet_naming_rule.private_fields_camel_case.style = camel_case
+dotnet_naming_rule.private_fields_camel_case.severity = warning
+dotnet_naming_symbols.private_fields.applicable_kinds = field
+dotnet_naming_symbols.private_fields.applicable_accessibilities = private
+
+# Generated and vendored code is not ours to restyle
+[**/obj/**]
+generated_code = true
+
+[**/bin/**]
+generated_code = true

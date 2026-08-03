@@ -1,0 +1,23 @@
+# Normalise line endings: store LF in the repository, check out the platform
+# default in the working tree. The working tree convention is set in .editorconfig
+# and checked by dotnet format.
+* text=auto
+
+# Explicit types, so a new tool cannot guess wrong.
+*.cs        text diff=csharp
+*.csproj    text
+*.props     text
+*.targets   text
+*.slnx      text
+*.json      text
+*.md        text
+*.config    text
+*.editorconfig text
+
+# Binary, never touched.
+*.png       binary
+*.jpg       binary
+*.wav       binary
+*.ogg       binary
+*.dll       binary
+*.zip       binary
