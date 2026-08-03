@@ -181,8 +181,22 @@ internal sealed unsafe class MinimapButton : Window, IDisposable
     /// </summary>
     internal bool IsRepositioning { get; set; }
 
+    /// <summary>How many style values <see cref="PreDraw"/> pushes, undone by <see cref="PostDraw"/>.</summary>
+    private const int PushedStyleValues = 3;
+
     public override void PreDraw()
     {
+        // Zero padding, before anything can return early, because PostDraw pops these
+        // unconditionally and an unbalanced style stack corrupts every window drawn afterwards.
+        //
+        // Without this the icon is cut off. The window is sized to the icon exactly, but ImGui
+        // insets the content by the window padding while clipping at the window's edge, so an
+        // image drawn at the window's own size loses its right and bottom edges. Eight pixels of
+        // a thirty-eight pixel button is a fifth of the picture, taken off two sides.
+        ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, Vector2.Zero);
+        ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, Vector2.Zero);
+        ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, Vector2.Zero);
+
         if (!TryGetMinimapBounds(out var position, out var scale))
         {
             return;
@@ -215,6 +229,8 @@ internal sealed unsafe class MinimapButton : Window, IDisposable
         Position = anchored;
         PositionCondition = ImGuiCond.Appearing;
     }
+
+    public override void PostDraw() => ImGui.PopStyleVar(PushedStyleValues);
 
     /// <summary>
     /// Stores wherever the icon was dragged to, converted back into an offset from the minimap.
