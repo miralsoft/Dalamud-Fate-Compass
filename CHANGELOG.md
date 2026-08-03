@@ -9,16 +9,21 @@ All notable changes to this project are recorded here. The format follows
 ### Added
 
 - Licensed under AGPL-3.0-or-later, with the reasoning recorded in `docs/decisions.md`.
-- The minimap button draws the plugin's own icon instead of a borrowed game glyph. It comes from
-  an embedded resource, because the packaged zip does not carry the image file and a path-based
-  load would work in a development build while quietly falling back for everybody else.
+- The plugin has an icon: a gold emblem on deep violet, a needle pointing into a glowing ring.
+  Framed for Dalamud's plugin list, cut out for the minimap button, which now draws it instead of
+  a borrowed game glyph. The minimap version comes from an embedded resource, because the
+  packaged zip does not carry the image file and a path-based load would work in a development
+  build while quietly falling back for everybody else.
+- `scripts/prepare-icons.ps1`, which brings new artwork into the shape both places need: exactly
+  512 by 512 for the plugin list, and cropped to its alpha channel and squared for the minimap.
 - A test binding `CHANGELOG.md` to the version being built: the newest section has to name it,
   and every version described to players in the release notes has to appear here.
 
 ### Changed
 
-- The plugin icon is now one file feeding three destinations, so a replacement changes all of
-  them at once and none of them can drift apart. Details in `docs/decisions.md`.
+- `IconUrl` is written in exactly one place, the plugin manifest, and reaches both the installed
+  entry and the repository listing from there. Two hand-kept copies is how the two views end up
+  showing different pictures. Details in `docs/decisions.md`.
 
 ## [1.0.0] - 2026-08-03
 

@@ -8,12 +8,13 @@ namespace FateHelper.Adapters;
 /// itself.
 /// </summary>
 /// <remarks>
-/// One picture, three destinations, all fed from <c>src/FateHelper/images/icon.png</c>: Dalamud's
-/// plugin list reads it as a file beside the plugin, the repository index reads it through the
-/// manifest's <c>IconUrl</c>, and this reads it out of the assembly. Replacing the file changes
-/// all three, which is the whole point of not keeping three copies.
+/// The artwork lives in <c>src/FateHelper/images</c> in two versions, because the places that
+/// show it want different things. <c>icon.png</c> keeps its frame and goes to Dalamud's plugin
+/// list, both as a file beside the packaged plugin and through the manifest's <c>IconUrl</c>.
+/// <c>minimap.png</c> is the same emblem cut out, without frame or backdrop, for drawing over the
+/// game's own interface, and that is the one compiled in here.
 /// <para>
-/// Embedded rather than loaded from disk. The packaged plugin does not carry the image inside
+/// Embedded rather than loaded from disk. The packaged plugin does not carry the images inside
 /// its zip, so a path-based load would work for a development build and quietly fall back to the
 /// game icon for everyone who installed it normally. That is exactly the kind of split that is
 /// invisible to whoever built it.
@@ -24,7 +25,7 @@ internal static class PluginIcon
     /// <summary>
     /// Assembly resource name of the icon: root namespace, then the path with dots.
     /// </summary>
-    private const string ResourceName = "FateHelper.images.icon.png";
+    private const string ResourceName = "FateHelper.images.minimap.png";
 
     /// <summary>
     /// Stands in until the plugin has an icon of its own, and whenever loading one fails. A

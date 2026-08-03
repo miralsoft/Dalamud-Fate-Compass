@@ -30,14 +30,22 @@
   -->
   <ItemGroup Condition="Exists('images\icon.png')">
     <Content Include="images\icon.png" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 
-    <!--
-      The same file again, this time compiled into the assembly, so the minimap button can draw
-      the plugin's own icon. It cannot read the copy above: the packaged zip does not carry it,
-      so a path-based load would work for a development build and silently fall back to a game
-      glyph for everybody who installed the plugin normally. See Adapters/PluginIcon.cs.
-    -->
-    <EmbeddedResource Include="images\icon.png" />
+  <!--
+    The same emblem again, cut out and without its frame, compiled into the assembly so the
+    minimap button can draw it over the game's own interface.
+
+    Two files rather than one, because the two places genuinely want different pictures: in a
+    list the icon stands on a tile of its own and needs its frame, on the minimap it lies on the
+    HUD and a frame would fight with it.
+
+    Embedded rather than read from disk. The packaged zip does not carry the images, so a
+    path-based load would work in a development build and silently fall back to a game glyph for
+    everybody who installed the plugin normally. See Adapters/PluginIcon.cs.
+  -->
+  <ItemGroup Condition="Exists('images\minimap.png')">
+    <EmbeddedResource Include="images\minimap.png" />
   </ItemGroup>
 
   <!--

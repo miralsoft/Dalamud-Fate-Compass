@@ -142,3 +142,21 @@ Each entry: date, decision, short rationale.
   path-based load works in a development build and silently falls back to a game glyph for
   everyone who installed the plugin normally. That difference is invisible to whoever built it,
   which is the worst kind.
+
+- (2026-08-03) Supersedes the one-file icon decision above: there are two images, not one.
+  `images/icon.png` keeps the frame and the dark backdrop and serves Dalamud's plugin list;
+  `images/minimap.png` is the same emblem cut out, with a real alpha channel, and is what the
+  minimap button draws. Rationale: the two places want genuinely different pictures. In a list
+  the icon owns a tile and its frame gives it an edge; over the HUD a frame competes with the
+  minimap around it, and a backdrop would be a coloured box sitting on the game. The cost is
+  that two files now have to be kept in step by hand, so replacing one and not the other shows
+  two different pictures in two places. `scripts/prepare-icons.ps1` at least makes their shape
+  automatic.
+
+- (2026-08-03) Incoming artwork is normalised by `scripts/prepare-icons.ps1` rather than by hand,
+  and the repository holds only finished images. Rationale: both files have requirements that are
+  invisible in an image viewer. Dalamud discards an icon that is not exactly 512 by 512 square
+  and shows its default instead, and generated artwork arrives on whatever canvas the generator
+  felt like, so the cut-out version has to be found by its alpha channel and squared before it is
+  scaled. Written down as a script because those are exactly the rules nobody remembers a year
+  later.

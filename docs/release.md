@@ -52,6 +52,21 @@ holding any extra file:
 
 Then one line in the index's `plugins.json` and one section in its README.
 
+## When the artwork changes
+
+Drop the new files into `src/FateHelper/images` and run:
+
+```powershell
+./scripts/prepare-icons.ps1
+```
+
+It rewrites both in place: `icon.png` to exactly 512 by 512, and `minimap.png` cropped to its
+alpha channel, squared and scaled. Neither requirement is visible in an image viewer, and getting
+either wrong means Dalamud quietly shows its default icon instead.
+
+`IconUrl` in the manifest points at `main`, not at a tag, so replacing the file changes what the
+plugin list shows without waiting for a release.
+
 ## What is deliberately not automated
 
 The version number. A workflow that derives the version from the tag would make the tag the
