@@ -156,6 +156,23 @@ public sealed class FateCompassSettings
     public bool ShowNewFateNotification { get; set; }
 
     /// <summary>
+    /// Answers the game's "return to your starting point?" prompt after the travel button cast
+    /// Return.
+    /// </summary>
+    /// <remarks>
+    /// Ships on, because it only ever completes a request the player just made: the prompt
+    /// appears because they pressed the travel button, and the answer was decided by that press.
+    /// It never begins anything, and outside the couple of seconds after such a cast it does
+    /// nothing at all.
+    /// <para>
+    /// Off is a reasonable position too, which is why the switch is here. Dalamud's published
+    /// restrictions name dialog boxes among the things plugins should not answer, and whether
+    /// finishing your own request counts as that is a judgement rather than a fact.
+    /// </para>
+    /// </remarks>
+    public bool ConfirmReturnPrompt { get; set; } = true;
+
+    /// <summary>
     /// Opens the release notes once after an update that brings notes the player has not seen.
     /// Never on a first installation.
     /// </summary>

@@ -35,6 +35,22 @@ internal interface IGameActions
     /// </para>
     /// </remarks>
     bool Return();
+
+    /// <summary>
+    /// Answers the game's own "return to your starting point?" prompt with yes, but only when
+    /// this plugin asked for that return moments ago.
+    /// </summary>
+    /// <remarks>
+    /// This is the one place the plugin operates a game window rather than sending an action,
+    /// and it is deliberately the narrowest version of that: one named window, only while a
+    /// return we sent is still unanswered, once. Outside that window it does nothing at all, so
+    /// no other prompt the player ever sees can be answered by this.
+    /// <para>
+    /// It is switchable and it follows a button the player pressed. It never begins anything.
+    /// </para>
+    /// </remarks>
+    /// <returns>True when the prompt was answered.</returns>
+    bool ConfirmPendingReturn();
 }
 
 /// <summary>

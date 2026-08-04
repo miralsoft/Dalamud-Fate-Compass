@@ -92,6 +92,7 @@ public static class StringKeys
     public const string SettingsCounters = "settings.counters";
     public const string SettingsSteps = "settings.steps";
     public const string SettingsAfterFate = "settings.afterFate";
+    public const string SettingsTravel = "settings.travel";
     public const string SettingsMapMarkers = "settings.mapMarkers";
     public const string SettingsChat = "settings.chat";
     public const string SettingsWeights = "settings.weights";
@@ -252,6 +253,8 @@ public static class StringKeys
     public const string NewsKindChanged = "news.kind.changed";
     public const string NewsKindFixed = "news.kind.fixed";
     public const string NewsKindRemoved = "news.kind.removed";
+    public const string SettingConfirmReturnPrompt = "setting.confirmReturnPrompt";
+    public const string SettingConfirmReturnPromptHelp = "setting.confirmReturnPrompt.help";
     public const string SettingShowNewsOnUpdate = "setting.showNewsOnUpdate";
     public const string SettingShowNewsOnUpdateHelp = "setting.showNewsOnUpdate.help";
 
@@ -281,7 +284,7 @@ public static class StringKeys
         ChannelShout, ChannelYell, ChannelLinkshell, ChannelCrossWorld,
         TabBasics, TabAutomation, TabMap, TabFilter, TabAdvanced,
         SettingsDisplay, SettingsCounters, SettingsSteps, SettingsAfterFate,
-        SettingsMapMarkers, SettingsChat, SettingsWeights, SettingsWhichFates,
+        SettingsMapMarkers, SettingsChat, SettingsWeights, SettingsWhichFates, SettingsTravel,
         SettingsStepsHint, SettingsMapMarkersHint, SettingsWeightsHint,
         StatusBarTooltip, SettingShowStatusBar, SettingShowStatusBarHelp, StateNotStarted,
         SettingShowMinimapButton, SettingShowMinimapButtonHelp,
@@ -323,6 +326,7 @@ public static class StringKeys
         NewsEmpty, NewsVersion, NewsInstalled,
         NewsKindAdded, NewsKindChanged, NewsKindFixed, NewsKindRemoved,
         SettingShowNewsOnUpdate, SettingShowNewsOnUpdateHelp,
+        SettingConfirmReturnPrompt, SettingConfirmReturnPromptHelp,
         UnitYalms, UnitSeconds, UnitMinutes,
     ];
 }

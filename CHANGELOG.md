@@ -6,6 +6,20 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- The confirmation the game raises after the travel button casts Return is answered with yes.
+  Only that prompt, only while a Return this plugin sent is still unanswered, only once, and
+  switchable under Automation. Every other yes/no prompt passes through untouched.
+
+  Worth stating plainly, because it is the only place this plugin operates a game window rather
+  than sending an action: Dalamud's published restrictions name dialog boxes among the things
+  plugins should not answer, and none of the 479 plugins in the official repository does this.
+  It is here because the owner decided the line that matters is whether the plugin *begins*
+  something, and this begins nothing. It finishes a request made a second earlier by pressing a
+  button. That is a defensible reading and it is not the only one, which is why there is a
+  switch and why this paragraph exists. Reasoning in `docs/decisions.md`.
+
 ### Fixed
 
 - The travel button did nothing in Eureka, Bozja and the Occult Crescent. Those zones have no

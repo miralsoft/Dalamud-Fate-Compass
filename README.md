@@ -172,11 +172,16 @@ Five tabs, and every setting explains itself behind the **(?)** next to it.
 
 This plugin assists. It does not play.
 
-- It never moves your character, never targets, never fights, never loots.
+- It never targets, never fights, never loots, and never walks anywhere on its own.
 - It never joins a FATE for you.
 - It never sends anything to chat. It types; you press enter.
 - The preparation steps only ever run **after you entered a FATE yourself**, and every one of
   them can be switched off.
+
+Where it does act on your behalf, it is always finishing something you started. Pressing the
+travel button teleports, or casts Return in the zones that have no aetherytes, and answers the
+one confirmation the game raises for that Return. Nothing else, and only in the seconds after
+your press. That last part is a switch in the settings if you would rather answer it yourself.
 
 That boundary is not a setting. It is how the plugin is built, and it is why it can be used
 without worrying about what it might do on its own.

@@ -6,6 +6,7 @@ using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Shell;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace FateCompass.Adapters;
 
@@ -90,11 +91,29 @@ internal sealed unsafe class GameActions : IGameActions
         }
     }
 
+    /// <summary>
+    /// How long a return we sent stays answerable.
+    /// </summary>
+    /// <remarks>
+    /// Long enough for the prompt to appear, short enough that it cannot still be open when the
+    /// player next opens some unrelated window. The prompt follows the cast within a frame or
+    /// two, so this is generous already.
+    /// </remarks>
+    private static readonly TimeSpan ReturnPromptWindow = TimeSpan.FromSeconds(5);
+
+    /// <summary>When a return we sent is still waiting for its prompt to be answered.</summary>
+    private DateTime? returnAwaitingPrompt;
+
     public bool Return()
     {
         try
         {
             var sent = UseGeneralAction(GeneralActionReturn);
+
+            // Only a return that was actually accepted opens a prompt worth answering. Arming
+            // this on a refused cast would leave the plugin waiting to press yes on whatever
+            // window happened to come next.
+            returnAwaitingPrompt = sent ? DateTime.UtcNow : null;
 
             DalamudServices.Log.Information(
                 "GameActions: Return trigger={Trigger} sent={Sent}", ActionTrigger.Manual, sent);
@@ -103,7 +122,43 @@ internal sealed unsafe class GameActions : IGameActions
         }
         catch (Exception ex)
         {
+            returnAwaitingPrompt = null;
             DalamudServices.Log.Error(ex, "GameActions: Return failed");
+            return false;
+        }
+    }
+
+    public bool ConfirmPendingReturn()
+    {
+        // Cleared before anything else can go wrong, so this can only ever fire once per return.
+        var requestedAt = returnAwaitingPrompt;
+        returnAwaitingPrompt = null;
+
+        if (requestedAt is null || DateTime.UtcNow - requestedAt.Value > ReturnPromptWindow)
+        {
+            return false;
+        }
+
+        try
+        {
+            var addon = (AtkUnitBase*)DalamudServices.GameGui.GetAddonByName(SelectYesNoAddon).Address;
+            if (addon is null || !addon->IsVisible)
+            {
+                return false;
+            }
+
+            // 0 is yes on this prompt, 1 is no.
+            addon->FireCallbackInt(ConfirmYes);
+
+            DalamudServices.Log.Information(
+                "GameActions: confirmed the return prompt, {Age}ms after the cast",
+                (int)(DateTime.UtcNow - requestedAt.Value).TotalMilliseconds);
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            DalamudServices.Log.Error(ex, "GameActions: confirming the return prompt failed");
             return false;
         }
     }
@@ -251,6 +306,12 @@ internal sealed unsafe class GameActions : IGameActions
     /// They are still the first values to confirm if one of these steps ever stops working.
     /// </summary>
     private const uint GeneralActionReturn = 8;
+
+    /// <summary>The game's generic yes/no prompt.</summary>
+    private const string SelectYesNoAddon = "SelectYesno";
+
+    /// <summary>Callback value for yes on that prompt.</summary>
+    private const int ConfirmYes = 0;
 
     private const uint GeneralActionMountRoulette = 9;
 

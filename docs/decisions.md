@@ -204,3 +204,27 @@ Each entry: date, decision, short rationale.
   plumbing found nothing because the plumbing was correct. Worth remembering: when something
   displays wrongly and the code that produces it checks out, the next place to look is what the
   host says about us, not what we say about ourselves.
+
+- (2026-08-03) The plugin answers the game's confirmation prompt after a Return that it cast
+  itself. Decided by the owner against my recommendation, and recorded here with both sides
+  because that is what this log is for.
+
+  Against: Dalamud's published restrictions list "Skip Cutscenes/Dialogs" among the things that
+  violate the automation rules, and name dialog boxes explicitly. A check of the official
+  repository found none of its 479 plugins doing this; the well known plugin that does,
+  YesAlready, is distributed outside it. And once a plugin can answer one window, the question
+  stops being whether it operates windows and becomes which ones, which is a line that has to be
+  redrawn at every new case.
+
+  For: the prompt exists because the player pressed the travel button, and the answer was
+  decided by that press. The plugin begins nothing here; it finishes a request that is one
+  second old. Refusing to complete it costs the player a keystroke at the exact spot their hand
+  already is.
+
+  The implementation is the narrowest version of the idea, so that the reading above stays true:
+  one named window, only while a Return this plugin sent is unanswered, only within five
+  seconds, once, and the latch is cleared before anything else can go wrong. It is switchable
+  (FH-02) and it ships on, because it only ever completes the player's own request.
+
+  What this costs is a line in the README's "what it will not do", which has been rewritten to
+  say what actually happens rather than a version of it that reads better.

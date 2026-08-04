@@ -259,6 +259,11 @@ internal sealed class ConfigWindow : Window, IDisposable
             IntSlider(StringKeys.SettingRemountDelay, settings.RemountDelaySeconds, 0, 15,
                 value => settings.RemountDelaySeconds = value));
 
+        Section(StringKeys.SettingsTravel);
+
+        changed |= Checkbox(StringKeys.SettingConfirmReturnPrompt, StringKeys.SettingConfirmReturnPromptHelp,
+            settings.ConfirmReturnPrompt, value => settings.ConfirmReturnPrompt = value);
+
         Save(changed);
     }
 

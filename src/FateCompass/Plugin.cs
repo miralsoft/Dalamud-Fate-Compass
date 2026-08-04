@@ -67,6 +67,11 @@ public sealed class Plugin : IDalamudPlugin
         ApplyLanguage(configuration.Settings.Language);
 
         Actions = new GameActions();
+
+        // Answers the prompt the game raises after the travel button casts Return. Registered
+        // here so it comes down in Dispose before anything else it depends on.
+        ReturnPrompt.Initialise(configuration);
+
         controller = new FateCompassController(configuration, history, Actions, localizer);
 
         configWindow = new ConfigWindow(
@@ -172,6 +177,7 @@ public sealed class Plugin : IDalamudPlugin
         // released. These are native UI nodes living inside the game's map window, so they have
         // to go while the plugin is still whole enough to take them down cleanly.
         NativeMapMarkers.Shutdown();
+        ReturnPrompt.Shutdown();
 
         DalamudServices.PluginInterface.LanguageChanged -= OnDalamudLanguageChanged;
         DalamudServices.PluginInterface.UiBuilder.OpenConfigUi -= ToggleConfig;

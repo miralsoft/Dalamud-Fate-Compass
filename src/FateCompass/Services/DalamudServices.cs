@@ -47,6 +47,12 @@ internal sealed class DalamudServices
     [PluginService] internal static ITextureProvider TextureProvider { get; private set; } = null!;
 
     /// <summary>
+    /// Notifies when a game window opens or closes. Its callbacks arrive on the framework
+    /// thread, which is what makes them a legitimate place to touch addon memory (FH-08).
+    /// </summary>
+    [PluginService] internal static IAddonLifecycle AddonLifecycle { get; private set; } = null!;
+
+    /// <summary>
     /// Runs an action on the game's framework thread.
     /// </summary>
     /// <remarks>
