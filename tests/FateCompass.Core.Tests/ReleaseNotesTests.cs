@@ -88,15 +88,25 @@ public sealed class ReleaseNotesTests
         Assert.Equal("1.0.0", notes.LatestVersion);
     }
 
-    [Fact]
-    public void NotesAreGroupedNewFirstThenChangedThenFixed()
+    /// <summary>
+    /// What is new comes before what changed, which comes before what was repaired. The order is
+    /// the point, not which of them a given version happens to have: a release that only fixes
+    /// things is perfectly ordinary, and an earlier version of this test said otherwise by
+    /// demanding all three.
+    /// </summary>
+    [Theory]
+    [InlineData("en")]
+    [InlineData("de")]
+    public void NotesWithinAVersionKeepTheirOrder(string code)
     {
-        var kinds = EmbeddedReleaseNotes.Load("de").Versions[0].Notes
-            .Select(note => note.Kind)
-            .Distinct()
-            .ToList();
+        foreach (var version in EmbeddedReleaseNotes.Load(code).Versions)
+        {
+            var kinds = version.Notes.Select(note => (int)note.Kind).ToList();
 
-        Assert.Equal([ReleaseNoteKind.Added, ReleaseNoteKind.Changed, ReleaseNoteKind.Fixed], kinds);
+            Assert.True(
+                kinds.SequenceEqual(kinds.Order()),
+                $"Version {version.Version} in '{code}' lists its notes out of order.");
+        }
     }
 
     [Theory]

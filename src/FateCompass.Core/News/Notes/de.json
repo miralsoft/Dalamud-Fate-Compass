@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "1.0.2",
+      "date": "2026-08-03",
+      "fixed": [
+        "Der Reiseknopf funktioniert jetzt in Eureka, Bozja und Kreszentia. Dort gibt es keine Aetheryten, zu denen man porten kann, deshalb passierte bisher schlicht nichts. Jetzt wirkt er Rückführung, was in diesen Gebieten der Port ist.",
+        "Die Nachfrage des Spiels nach der Rückführung wird gleich mit bestätigt. Nur diese eine, nur direkt nach deinem Knopfdruck. Abschaltbar unter Automatik."
+      ]
+    },
+    {
       "version": "1.0.1",
       "date": "2026-08-03",
       "summary": "Erste öffentliche Fassung. Der Helfer sucht, bewertet und findet FATEs, gespielt wird weiterhin von dir. Die Punkte unter Geändert und Behoben beziehen sich auf die Testfassungen davor.",
