@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "1.0.2",
+      "date": "2026-08-03",
+      "fixed": [
+        "The travel button now works in Eureka, Bozja and the Crescent. Those zones have no aetherytes to teleport to, so pressing it simply did nothing. It now casts Return, which is what a teleport is there.",
+        "The game's confirmation for that Return is answered for you. Only that one, only right after your button press. Switchable under Automation."
+      ]
+    },
+    {
       "version": "1.0.1",
       "date": "2026-08-03",
       "summary": "First public version. The helper finds, ranks, and routes to FATEs. The playing is still yours. The Changed and Fixed entries refer to the test builds that came before.",

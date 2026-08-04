@@ -6,19 +6,18 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
-### Added
+## [1.0.2] - 2026-08-03
 
-- The confirmation the game raises after the travel button casts Return is answered with yes.
-  Only that prompt, only while a Return this plugin sent is still unanswered, only once, and
-  switchable under Automation. Every other yes/no prompt passes through untouched.
+One repair, in two parts: the travel button works in the exploratory zones, and it works all the
+way through rather than stopping at a prompt. Patch rather than minor on purpose. Nothing here is
+new ground, it is a button that was supposed to do this and did not.
 
-  Worth stating plainly, because it is the only place this plugin operates a game window rather
-  than sending an action: Dalamud's published restrictions name dialog boxes among the things
-  plugins should not answer, and none of the 479 plugins in the official repository does this.
-  It is here because the owner decided the line that matters is whether the plugin *begins*
-  something, and this begins nothing. It finishes a request made a second earlier by pressing a
-  button. That is a defensible reading and it is not the only one, which is why there is a
-  switch and why this paragraph exists. Reasoning in `docs/decisions.md`.
+### Changed
+
+- **`main` is never written to directly any more.** Every change reaches it through a pull
+  request, including one-line fixes and release preparation. From 1.0.1 onwards `main` is what a
+  release is cut from, and a commit that arrived without passing CI on its own is a release
+  nobody checked. Recorded as FH-13 in `docs/rules-project.md`.
 
 ### Fixed
 
@@ -33,6 +32,19 @@ All notable changes to this project are recorded here. The format follows
   The general action id was read out of the game's own `GeneralAction` sheet rather than
   remembered: 8 is Return, right beside 7 for Teleport, and the same lookup confirmed the 9 and
   23 this plugin already used for mount and dismount.
+
+- The same button then stopped at the game's "return to your starting point?" prompt, which is
+  half a repair. That prompt is now answered with yes: only that one, only while a Return this
+  plugin sent is still unanswered, only once, and switchable under Automation. Every other
+  yes/no prompt passes through untouched.
+
+  Worth stating plainly, because it is the only place this plugin operates a game window rather
+  than sending an action: Dalamud's published restrictions name dialog boxes among the things
+  plugins should not answer, and none of the 479 plugins in the official repository does this.
+  It is here because the owner decided the line that matters is whether the plugin *begins*
+  something, and this begins nothing. It finishes a request made a second earlier by pressing a
+  button. That is a defensible reading and it is not the only one, which is why there is a
+  switch and why this paragraph exists. Reasoning in `docs/decisions.md`.
 
 ## [1.0.1] - 2026-08-03
 
