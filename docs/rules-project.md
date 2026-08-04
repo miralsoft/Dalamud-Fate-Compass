@@ -93,3 +93,19 @@ prevent a crash.
   `unsafe` block, every `->`, every `fixed`, and every game call reachable from a UI callback,
   against FH-08 to FH-10. This is a checklist pass, not a feeling: grep for the constructs and
   look at each hit. Record the result in `status.md`.
+
+## Since the first release
+
+- **FH-13 `main` is never written to directly.** Every change goes onto a branch and reaches
+  `main` through a pull request, including one-line fixes, documentation and release
+  preparation. The rule starts with 1.0.1, the first version other people can install.
+
+  The reason is not review for its own sake, it is that `main` is now the thing a release is cut
+  from. A tag names a commit, and a commit that arrived without passing CI on its own is a
+  release nobody checked. A pull request also gives every change a place where the reasoning
+  lives that is not the commit message, and it makes "what went into 1.0.2" a question with an
+  answer.
+
+  Branch names say what the change is: `fix/`, `feat/`, `chore/`, `docs/`. The release
+  preparation for a version is part of the branch that finishes it, not a commit that appears on
+  `main` afterwards. Tags are pushed only after the merge, and only to `main`.
