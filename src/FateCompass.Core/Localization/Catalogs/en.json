@@ -23,6 +23,7 @@
   "button.flag": "Flag",
   "button.flag.tooltip": "Place the map flag on this FATE. Then type <flag> in chat and send it.",
   "button.teleport": "Teleport",
+  "button.return": "Return",
   "button.teleport.tooltip": "Teleport to {0}.",
   "button.engage": "Ready up",
   "button.engage.tooltip": "Get combat ready right now: dismount, level sync, tank stance. The same thing the automation does, only once and on your say-so.",
@@ -104,6 +105,7 @@
 
   "route.walkFaster": "Go direct",
   "route.noAetheryte": "No aetheryte in this zone.",
+  "route.returnFirst": "Casts Return to get you back to camp. The rest of the way is the camp travel menu.",
   "route.tooLate": "Too late, it ends before you arrive",
   "route.saves": "saves ~{0}s",
   "route.costs": "teleporting costs ~{0}s more",

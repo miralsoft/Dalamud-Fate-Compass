@@ -711,15 +711,40 @@ internal sealed class MainWindow : Window, IDisposable
 
         var pressed = IconButton("##teleport", AetheryteIconId, TeleportTooltip(route), tint);
 
-        // The travel points inside an exploratory zone carry no aetheryte identifier, because
-        // they cannot be teleported to from outside: the player returns to camp and travels on
-        // from there. So the icon still colours the advice, and pressing it does nothing rather
-        // than sending the game a destination it would refuse.
-        if (pressed && route.NearestAetheryte.Id != 0)
+        if (pressed)
         {
-            var aetheryteId = route.NearestAetheryte.Id;
-            DalamudServices.OnGameThread(() => Plugin.Actions.Teleport(aetheryteId), "teleport");
+            TravelTo(route.NearestAetheryte);
         }
+    }
+
+    /// <summary>
+    /// Starts the journey the route advice describes.
+    /// </summary>
+    /// <remarks>
+    /// One button, two actions, because the zones differ. Everywhere with real aetherytes this
+    /// teleports. Inside Eureka, Bozja and the Occult Crescent the travel points carry no
+    /// identifier at all, because they cannot be teleported to from outside; there the journey
+    /// begins by returning to camp, and Return is that zone's teleport.
+    /// <para>
+    /// This used to do nothing at all in those zones, which was defensible when it was written
+    /// (better than handing the game a destination it would refuse) and was still wrong: the
+    /// player presses a travel button and expects to travel.
+    /// </para>
+    /// <para>
+    /// The second leg, from the camp out to the waypoint, stays with the player. It runs through
+    /// the camp's own travel menu, and driving a menu is not something this plugin does.
+    /// </para>
+    /// </remarks>
+    private static void TravelTo(Aetheryte aetheryte)
+    {
+        if (aetheryte.Id == 0)
+        {
+            DalamudServices.OnGameThread(() => Plugin.Actions.Return(), "return");
+            return;
+        }
+
+        var aetheryteId = aetheryte.Id;
+        DalamudServices.OnGameThread(() => Plugin.Actions.Teleport(aetheryteId), "teleport");
     }
 
     private void DrawTileFooter(RankedFate entry)
@@ -1172,12 +1197,9 @@ internal sealed class MainWindow : Window, IDisposable
         ImGui.PushStyleColor(ImGuiCol.Button, colour);
         try
         {
-            // Same as in the tiles: an in-zone travel point has no identifier to teleport to.
-            if (ImGui.SmallButton(localizer.Get(StringKeys.ButtonTeleport))
-                && route.NearestAetheryte.Id != 0)
+            if (ImGui.SmallButton(TravelButtonLabel(route.NearestAetheryte)))
             {
-                var aetheryteId = route.NearestAetheryte.Id;
-                DalamudServices.OnGameThread(() => Plugin.Actions.Teleport(aetheryteId), "teleport");
+                TravelTo(route.NearestAetheryte);
             }
         }
         finally
@@ -1199,10 +1221,29 @@ internal sealed class MainWindow : Window, IDisposable
     /// four lines of prose that repeated the destination once and the timings twice, and the one
     /// thing being looked for — which waypoint — was buried in the middle of a sentence.
     /// </remarks>
+    /// <summary>
+    /// What the travel button says. Inside an exploratory zone it does something different, so
+    /// it has to be called something different.
+    /// </summary>
+    private string TravelButtonLabel(Aetheryte aetheryte) => localizer.Get(
+        aetheryte.Id == 0 ? StringKeys.ButtonReturn : StringKeys.ButtonTeleport);
+
     private string TeleportTooltip(RouteHint route)
     {
         var seconds = MathF.Abs(route.SecondsSaved).ToString("F0", CultureInfo.CurrentCulture);
 
+        // In an exploratory zone the button casts Return, and the leg from the camp out to the
+        // waypoint is the player's to walk through the travel menu. Saying so is the difference
+        // between a button that looks broken and one that is understood.
+        var leg = route.NearestAetheryte.Id == 0
+            ? "\n" + localizer.Get(StringKeys.RouteReturnFirst)
+            : string.Empty;
+
+        return TeleportVerdictText(route, seconds) + leg;
+    }
+
+    private string TeleportVerdictText(RouteHint route, string seconds)
+    {
         return route.Verdict switch
         {
             TeleportVerdict.Worthwhile =>

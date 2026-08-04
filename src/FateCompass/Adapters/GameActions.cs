@@ -90,6 +90,24 @@ internal sealed unsafe class GameActions : IGameActions
         }
     }
 
+    public bool Return()
+    {
+        try
+        {
+            var sent = UseGeneralAction(GeneralActionReturn);
+
+            DalamudServices.Log.Information(
+                "GameActions: Return trigger={Trigger} sent={Sent}", ActionTrigger.Manual, sent);
+
+            return sent;
+        }
+        catch (Exception ex)
+        {
+            DalamudServices.Log.Error(ex, "GameActions: Return failed");
+            return false;
+        }
+    }
+
     /// <summary>True when the player is currently level synced to the FATE they are in.</summary>
     internal static bool IsSyncedToCurrentFate()
     {
@@ -228,9 +246,12 @@ internal sealed unsafe class GameActions : IGameActions
         UseAction(ActionType.GeneralAction, generalActionId);
 
     /// <summary>
-    /// General action ids. These two are stable and long-standing, but they are still marked
-    /// here as the values to confirm first if dismount or mount ever stops working.
+    /// General action ids, read out of the game's own <c>GeneralAction</c> sheet rather than
+    /// remembered: 9 is Mount Roulette, 23 is Dismount, 8 is Return, and 7 beside it is Teleport.
+    /// They are still the first values to confirm if one of these steps ever stops working.
     /// </summary>
+    private const uint GeneralActionReturn = 8;
+
     private const uint GeneralActionMountRoulette = 9;
 
     private const uint GeneralActionDismount = 23;

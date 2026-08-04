@@ -6,6 +6,20 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
+### Fixed
+
+- The travel button did nothing in Eureka, Bozja and the Occult Crescent. Those zones have no
+  aetherytes that can be teleported to, so their travel points carry no identifier, and the
+  button deliberately sent nothing rather than hand the game a destination it would refuse. That
+  was defensible and still wrong: a travel button that does nothing reads as broken. It now casts
+  Return, which is what a teleport is in those zones. The leg from the camp out to the waypoint
+  stays with the player, through the camp's own travel menu, and the tooltip says so. The button
+  is labelled "Return" there rather than "Teleport", because it does something different.
+
+  The general action id was read out of the game's own `GeneralAction` sheet rather than
+  remembered: 8 is Return, right beside 7 for Teleport, and the same lookup confirmed the 9 and
+  23 this plugin already used for mount and dismount.
+
 ## [1.0.1] - 2026-08-03
 
 The release 1.0.0 should have been is. That version carried an internal name nobody could install

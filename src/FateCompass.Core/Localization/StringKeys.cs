@@ -40,6 +40,9 @@ public static class StringKeys
     public const string ButtonFlag = "button.flag";
     public const string ButtonFlagTooltip = "button.flag.tooltip";
     public const string ButtonTeleport = "button.teleport";
+
+    /// <summary>Label for the travel button in a zone whose points cannot be teleported to.</summary>
+    public const string ButtonReturn = "button.return";
     public const string ButtonTeleportTooltip = "button.teleport.tooltip";
     public const string ButtonEngage = "button.engage";
     public const string ButtonEngageTooltip = "button.engage.tooltip";
@@ -150,6 +153,7 @@ public static class StringKeys
     // Route hints
     public const string RouteWalkFaster = "route.walkFaster";
     public const string RouteNoAetheryte = "route.noAetheryte";
+    public const string RouteReturnFirst = "route.returnFirst";
     public const string RouteTooLate = "route.tooLate";
     public const string RouteSaves = "route.saves";
     public const string RouteCosts = "route.costs";
@@ -267,7 +271,7 @@ public static class StringKeys
         ListAetheryte, ListActions, ListSync, SyncYes, SyncNo,
         ListEmpty, ListNotInWorld, ListDisabled,
         ButtonFlag, ButtonFlagTooltip, ButtonTeleport, ButtonTeleportTooltip,
-        ButtonEngage, ButtonEngageTooltip, ButtonSettings, ButtonOpenMain,
+        ButtonEngage, ButtonEngageTooltip, ButtonSettings, ButtonOpenMain, ButtonReturn,
         ButtonViewTable, ButtonViewCompact,
         ButtonAutomationOn, ButtonAutomationOff, ButtonAutomationTooltip, ButtonRunNow,
         ButtonAnnounceTooltip, ButtonAnnounceChannelTooltip,
@@ -291,7 +295,7 @@ public static class StringKeys
         ExcludedNotJoinable, ExcludedFiltered, ExcludedNearlyComplete, ExcludedExpiringSoon,
         ExcludedUnreachable, ExcludedRegistrationClosed, ExcludedRegistrationTooLate,
         StateRegistrationCloses,
-        RouteWalkFaster, RouteNoAetheryte,
+        RouteWalkFaster, RouteNoAetheryte, RouteReturnFirst,
         RouteTooLate, RouteSaves, RouteCosts,
         GemstonesLabel, GemstonesWarning, GemstonesFull,
         SharedFateProgress, SharedFateComplete, SharedFateNoData, SharedFateAge,

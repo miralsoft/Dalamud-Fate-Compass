@@ -21,6 +21,20 @@ internal interface IGameActions
 
     /// <summary>Teleports to an aetheryte. Always player-triggered, never automatic.</summary>
     bool Teleport(uint aetheryteId);
+
+    /// <summary>
+    /// Casts Return, which is how travel begins inside an exploratory zone.
+    /// </summary>
+    /// <remarks>
+    /// Eureka, Bozja and the Occult Crescent have no aetherytes that can be teleported to: their
+    /// travel points carry no identifier, and the way across is to return to camp and travel out
+    /// from there. Return is the teleport of those zones, so the same button has to send a
+    /// different action depending on where the player is standing.
+    /// <para>
+    /// Always player-triggered. Nothing automatic ever moves the player (FH-05).
+    /// </para>
+    /// </remarks>
+    bool Return();
 }
 
 /// <summary>

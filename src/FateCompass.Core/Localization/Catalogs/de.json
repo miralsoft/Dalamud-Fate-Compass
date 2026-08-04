@@ -23,6 +23,7 @@
   "button.flag": "Flagge",
   "button.flag.tooltip": "Setzt die Kartenflagge auf dieses FATE. Danach <flag> in den Chat tippen und abschicken.",
   "button.teleport": "Porten",
+  "button.return": "Rückführung",
   "button.teleport.tooltip": "Nach {0} porten.",
   "button.engage": "Kampfbereit",
   "button.engage.tooltip": "Macht dich sofort kampfbereit: absteigen, Stufe angleichen, Verteidigungshaltung. Dasselbe wie die Automatik, nur einmalig und von dir ausgelöst.",
@@ -104,6 +105,7 @@
 
   "route.walkFaster": "Direkt hin",
   "route.noAetheryte": "Kein Aetheryt in dieser Zone.",
+  "route.returnFirst": "Wirkt Rückführung und bringt dich ins Lager. Der Rest des Wegs läuft über das Reisemenü dort.",
   "route.tooLate": "Zu spät, endet vor deiner Ankunft",
   "route.saves": "spart ~{0}s",
   "route.costs": "Porten kostet ~{0}s mehr",
