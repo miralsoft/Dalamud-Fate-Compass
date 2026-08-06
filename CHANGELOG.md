@@ -30,6 +30,12 @@ All notable changes to this project are recorded here. The format follows
   the old behaviour rather than into a wrong answer. Both sides have to be known for a climb to
   count, and setting the weight to zero restores the old measurement exactly.
 
+- **The route tooltip now shows its working**: the aetheryte it compared against, how far that
+  is from the FATE, and both timings, in every case. Previously, when the verdict was "go
+  direct" it said only that, so there was no way to tell which aetheryte had been rejected or by
+  how much. A recommendation you cannot check is one you can only believe, which is exactly the
+  wrong footing for the change above.
+
 ## [1.0.2] - 2026-08-03
 
 One repair, in two parts: the travel button works in the exploratory zones, and it works all the

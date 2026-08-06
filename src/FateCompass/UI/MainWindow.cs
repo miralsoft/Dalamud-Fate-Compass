@@ -1228,9 +1228,24 @@ internal sealed class MainWindow : Window, IDisposable
     private string TravelButtonLabel(Aetheryte aetheryte) => localizer.Get(
         aetheryte.Id == 0 ? StringKeys.ButtonReturn : StringKeys.ButtonTeleport);
 
+    /// <remarks>
+    /// The destination and both timings are shown in every case, including the one where the
+    /// advice is to travel. That used to be hidden: when the verdict was "go direct" the tooltip
+    /// said so and nothing else, so there was no way to tell which aetheryte it had rejected or
+    /// by how much. A recommendation you cannot check is one you can only believe.
+    /// </remarks>
     private string TeleportTooltip(RouteHint route)
     {
         var seconds = MathF.Abs(route.SecondsSaved).ToString("F0", CultureInfo.CurrentCulture);
+
+        var destination = $"→ {route.NearestAetheryte.Name}   "
+            + $"{route.AetheryteToFateYalms.ToString("F0", CultureInfo.CurrentCulture)}"
+            + localizer.Get(StringKeys.UnitYalms);
+
+        var comparison = localizer.Format(
+            StringKeys.RouteComparison,
+            route.EstimatedDirectRouteSeconds.ToString("F0", CultureInfo.CurrentCulture),
+            route.EstimatedTeleportRouteSeconds.ToString("F0", CultureInfo.CurrentCulture));
 
         // In an exploratory zone the button casts Return, and the leg from the camp out to the
         // waypoint is the player's to walk through the travel menu. Saying so is the difference
@@ -1239,24 +1254,17 @@ internal sealed class MainWindow : Window, IDisposable
             ? "\n" + localizer.Get(StringKeys.RouteReturnFirst)
             : string.Empty;
 
-        return TeleportVerdictText(route, seconds) + leg;
+        return $"{destination}\n{comparison}\n{TeleportVerdictText(route, seconds)}{leg}";
     }
 
-    private string TeleportVerdictText(RouteHint route, string seconds)
+    private string TeleportVerdictText(RouteHint route, string seconds) => route.Verdict switch
     {
-        return route.Verdict switch
-        {
-            TeleportVerdict.Worthwhile =>
-                $"→ {route.NearestAetheryte.Name}\n"
-                + localizer.Format(StringKeys.RouteSaves, seconds),
-
-            TeleportVerdict.TravelIsFaster =>
-                localizer.Get(StringKeys.RouteWalkFaster) + "\n"
-                + localizer.Format(StringKeys.RouteCosts, seconds),
-
-            _ => localizer.Get(StringKeys.RouteTooLate),
-        };
-    }
+        TeleportVerdict.Worthwhile => localizer.Format(StringKeys.RouteSaves, seconds),
+        TeleportVerdict.TravelIsFaster =>
+            localizer.Get(StringKeys.RouteWalkFaster) + " "
+            + localizer.Format(StringKeys.RouteCosts, seconds),
+        _ => localizer.Get(StringKeys.RouteTooLate),
+    };
 
     /// <summary>
     /// The bottom bar: controls on the left, view switch pinned to the right edge so the two

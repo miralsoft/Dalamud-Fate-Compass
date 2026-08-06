@@ -5,6 +5,7 @@
       "date": "2026-08-04",
       "added": [
         "Route advice now knows how high an aetheryte stands. The leg from an aetheryte to a FATE used to be measured flat, so a target on a plateau looked closest to the aetheryte directly underneath it. You now get the one you are actually fastest from.",
+        "The travel button tooltip now always shows which aetheryte it compared against, how far that is from the target, and both timings. It used to say only \"go direct\", without the comparison behind it.",
         "Those heights are in no game file, so the plugin learns them: aetherytes you pass are remembered and kept. One you have never been near is measured flat, as before."
       ]
     },

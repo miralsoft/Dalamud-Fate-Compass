@@ -155,6 +155,7 @@ public static class StringKeys
     public const string RouteWalkFaster = "route.walkFaster";
     public const string RouteNoAetheryte = "route.noAetheryte";
     public const string RouteReturnFirst = "route.returnFirst";
+    public const string RouteComparison = "route.comparison";
     public const string RouteTooLate = "route.tooLate";
     public const string RouteSaves = "route.saves";
     public const string RouteCosts = "route.costs";
@@ -298,7 +299,7 @@ public static class StringKeys
         ExcludedNotJoinable, ExcludedFiltered, ExcludedNearlyComplete, ExcludedExpiringSoon,
         ExcludedUnreachable, ExcludedRegistrationClosed, ExcludedRegistrationTooLate,
         StateRegistrationCloses,
-        RouteWalkFaster, RouteNoAetheryte, RouteReturnFirst,
+        RouteWalkFaster, RouteNoAetheryte, RouteReturnFirst, RouteComparison,
         RouteTooLate, RouteSaves, RouteCosts,
         GemstonesLabel, GemstonesWarning, GemstonesFull,
         SharedFateProgress, SharedFateComplete, SharedFateNoData, SharedFateAge,
