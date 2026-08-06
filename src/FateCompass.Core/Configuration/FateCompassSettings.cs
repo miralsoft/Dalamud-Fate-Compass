@@ -354,8 +354,20 @@ public sealed class FateCompassSettings
     /// The way across is to return to camp and travel out from the aetheryte there, which is two
     /// waits rather than one, and the second alone made the comparison say the trip was half as
     /// expensive as it is.
+    /// <para>
+    /// Eight, timed in the Crescent, where it comes in at seven to eight seconds. It stood at
+    /// twenty, which was written down as a guess and behaved like one: with the second leg on
+    /// top it costed the trip at thirty seconds, nearly twice what it is, and every close call
+    /// in those zones came out as "just fly".
+    /// </para>
+    /// <para>
+    /// The upper end of the measured range on purpose. Overstating the cost errs towards flying,
+    /// and that is the cheaper mistake: a flight taken when a return would have been quicker
+    /// costs seconds, while a return taken when flying would have done costs its cooldown, and
+    /// that is measured in minutes.
+    /// </para>
     /// </remarks>
-    public float ReturnOverheadSeconds { get; set; } = 20f;
+    public float ReturnOverheadSeconds { get; set; } = 8f;
 
     /// <summary>
     /// What a trip through the aetheryte network costs before any running, where the player is.

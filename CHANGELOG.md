@@ -41,6 +41,19 @@ All notable changes to this project are recorded here. The format follows
   mean the correction reaches nobody who already installed. It is replaced only where it still
   stands at exactly the old default. A value somebody moved is a decision and stays theirs.
 
+- **Returning to camp is costed at 8 seconds rather than 20**, timed in the Crescent where it
+  comes in at seven to eight. The old figure was written down as a guess at the time and behaved
+  like one: with the second leg on top, a trip through the exploratory zones was costed at thirty
+  seconds, nearly twice what it is, so every close call there came out as "just fly".
+
+  The upper end of the measured range on purpose. Overstating the cost errs towards flying, and
+  that is the cheaper mistake: a flight taken when a return would have been quicker costs
+  seconds, while a return taken when flying would have done costs its cooldown, which is measured
+  in minutes.
+
+  Corrected in existing configurations where it is still the old default, on the same reasoning
+  as the teleport overhead above.
+
 - **The route tooltip now shows its working**: the aetheryte it compared against, how far that
   is from the FATE, and both timings, in every case. Previously, when the verdict was "go
   direct" it said only that, so there was no way to tell which aetheryte had been rejected or by

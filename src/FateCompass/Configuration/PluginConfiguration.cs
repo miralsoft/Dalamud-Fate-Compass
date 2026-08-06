@@ -38,10 +38,19 @@ internal sealed class PluginConfiguration : IPluginConfiguration
     /// replaced only where it still stands at exactly the old default: a value somebody moved is
     /// a decision, and that stays theirs.
     /// </remarks>
-    private const int CurrentVersion = 3;
+    /// <remarks>
+    /// Version 4: the return overhead shipped at twenty seconds and was written down as a guess
+    /// at the time. Timed in the Crescent it is seven to eight. Same reasoning as version 3: a
+    /// number the plugin made up and wrote into every configuration is not somebody's decision,
+    /// so it is corrected where it is untouched and left alone where it is not.
+    /// </remarks>
+    private const int CurrentVersion = 4;
 
     /// <summary>The teleport overhead as it shipped before it was timed.</summary>
     private const float PreviousTeleportOverhead = 15f;
+
+    /// <summary>The return overhead as it shipped before it was timed.</summary>
+    private const float PreviousReturnOverhead = 20f;
 
     public FateCompassSettings Settings { get; set; } = new();
 
@@ -121,6 +130,12 @@ internal sealed class PluginConfiguration : IPluginConfiguration
             && Math.Abs(Settings.TeleportOverheadSeconds - PreviousTeleportOverhead) < 0.01f)
         {
             Settings.TeleportOverheadSeconds = fresh.TeleportOverheadSeconds;
+        }
+
+        if (Version < 4
+            && Math.Abs(Settings.ReturnOverheadSeconds - PreviousReturnOverhead) < 0.01f)
+        {
+            Settings.ReturnOverheadSeconds = fresh.ReturnOverheadSeconds;
         }
 
         DalamudServices.Log.Information(
