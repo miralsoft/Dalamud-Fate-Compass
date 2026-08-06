@@ -113,13 +113,40 @@ public sealed class CompassBearingTests
         Assert.Equal(left, right, 5);
     }
 
+    /// <summary>
+    /// Arrived means standing inside the objective's own circle. A fixed distance is wrong for
+    /// nearly every FATE: fifteen yalms said "not yet" while the player was fighting in the
+    /// middle of one that is ninety across.
+    /// </summary>
+    [Theory]
+    [InlineData(0f, 90f, true)]
+    [InlineData(42f, 90f, true)]
+    [InlineData(89f, 90f, true)]
+    [InlineData(91f, 90f, false)]
+    [InlineData(400f, 90f, false)]
+    public void BeingInsideTheCircleCountsAsArrived(float distance, float radius, bool arrived)
+    {
+        Assert.Equal(arrived, CompassBearing.IsAtTarget(distance, radius));
+    }
+
+    /// <summary>
+    /// Where the game reports no radius there is nothing better than a fixed distance, so the
+    /// fallback still has to behave.
+    /// </summary>
     [Theory]
     [InlineData(0f, true)]
-    [InlineData(14f, true)]
-    [InlineData(16f, false)]
+    [InlineData(24f, true)]
+    [InlineData(26f, false)]
     [InlineData(900f, false)]
-    public void StandingOnTopOfItCountsAsArrived(float distance, bool arrived)
+    public void WithoutARadiusAFixedDistanceStandsIn(float distance, bool arrived)
     {
         Assert.Equal(arrived, CompassBearing.IsAtTarget(distance));
+    }
+
+    /// <summary>A radius of zero is the game saying nothing, not saying "no room at all".</summary>
+    [Fact]
+    public void AZeroRadiusFallsBackRatherThanNeverArriving()
+    {
+        Assert.True(CompassBearing.IsAtTarget(10f, 0f));
     }
 }

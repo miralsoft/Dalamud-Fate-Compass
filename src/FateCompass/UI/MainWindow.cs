@@ -789,7 +789,10 @@ internal sealed class MainWindow : Window, IDisposable
     }
 
     /// <summary>Radius of the needle drawn under a tile.</summary>
-    private const float CompassRadius = 8f;
+    private const float CompassRadius = 14f;
+
+    /// <summary>Air between the distance line and the needle under it, and below the needle.</summary>
+    private const float CompassGap = 5f;
 
     /// <summary>The same needle on one line, for a table row.</summary>
     private void DrawCompassInline(RankedFate entry)
@@ -805,10 +808,10 @@ internal sealed class MainWindow : Window, IDisposable
             return;
         }
 
-        var radius = ImGui.GetFontSize() * 0.42f;
+        var radius = ImGui.GetFontSize() * 0.62f;
         var top = ImGui.GetCursorPosY();
 
-        if (CompassBearing.IsAtTarget(entry.DistanceYalms))
+        if (CompassBearing.IsAtTarget(entry.DistanceYalms, entry.Fate.Radius))
         {
             Widgets.CompassArrived(radius);
         }
@@ -851,19 +854,27 @@ internal sealed class MainWindow : Window, IDisposable
             return;
         }
 
+        // Air above and below. Pressed straight against the distance the needle read as part of
+        // the text block rather than as its own thing, and a tile that ends on the pixel below a
+        // glyph looks squeezed however correct the spacing technically is.
+        ImGui.Dummy(new Vector2(0f, CompassGap));
+
         // Centred under the tile, so the row of needles reads as a row.
         ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ((width - (CompassRadius * 2f)) / 2f));
 
-        if (CompassBearing.IsAtTarget(entry.DistanceYalms))
+        if (CompassBearing.IsAtTarget(entry.DistanceYalms, entry.Fate.Radius))
         {
             Widgets.CompassArrived(CompassRadius);
-            return;
+        }
+        else
+        {
+            var here = new WorldPosition(player.Position.X, player.Position.Y, player.Position.Z);
+            var relative = CompassBearing.Relative(here, player.Rotation, entry.Fate.Position);
+
+            Widgets.CompassNeedle(CompassRadius, relative, CompassBearing.OnCourse(relative));
         }
 
-        var here = new WorldPosition(player.Position.X, player.Position.Y, player.Position.Z);
-        var relative = CompassBearing.Relative(here, player.Rotation, entry.Fate.Position);
-
-        Widgets.CompassNeedle(CompassRadius, relative, CompassBearing.OnCourse(relative));
+        ImGui.Dummy(new Vector2(0f, CompassGap));
     }
 
     /// <summary>

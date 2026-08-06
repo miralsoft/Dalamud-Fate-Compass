@@ -64,17 +64,23 @@ public static class CompassBearing
     }
 
     /// <summary>
-    /// True once the target is close enough that a direction stops meaning anything.
+    /// True once the player is at the objective rather than merely near it.
     /// </summary>
     /// <remarks>
-    /// A bearing is an angle, and an angle from almost the same point swings wildly for a step
-    /// in any direction. Standing on top of a FATE the needle would spin, which reads as broken
-    /// rather than as arrived, so the caller shows that it is arrived instead.
+    /// Arrived means standing inside the circle, and the circle is the objective's own, not a
+    /// number chosen here. FATEs range from a courtyard to most of a field, so a single fixed
+    /// distance is wrong for nearly all of them: fifteen yalms said "not yet" while the player
+    /// was fighting in the middle of one.
+    /// <para>
+    /// Where the game reports no radius, a fixed distance is the fallback. It is a guess, but a
+    /// guess only applies where there is nothing better, rather than everywhere.
+    /// </para>
     /// </remarks>
-    public static bool IsAtTarget(float distanceYalms) => distanceYalms <= ArrivedYalms;
+    public static bool IsAtTarget(float distanceYalms, float? radiusYalms = null) =>
+        distanceYalms <= (radiusYalms is > 0f ? radiusYalms.Value : ArrivedYalms);
 
-    /// <summary>Close enough that a bearing is noise.</summary>
-    private const float ArrivedYalms = 15f;
+    /// <summary>Fallback for an objective that does not report how wide it is.</summary>
+    private const float ArrivedYalms = 25f;
 
     /// <summary>Folds any angle into -pi to pi, so the needle turns the short way round.</summary>
     private static float Normalise(float radians)

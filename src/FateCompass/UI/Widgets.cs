@@ -130,10 +130,27 @@ internal static class Widgets
     internal static float BadgeWidth(string text) => ImGui.CalcTextSize(text).X + 16f;
 
     /// <summary>Fully on course. The same green the route advice uses for a worthwhile teleport.</summary>
-    private static readonly Vector4 OnCourseColour = new(0.35f, 0.85f, 0.45f, 1f);
+    private static readonly Vector4 OnCourseColour = new(0.40f, 0.95f, 0.50f, 1f);
 
-    /// <summary>Pointing anywhere else. Grey rather than red: wrong heading is not a warning.</summary>
-    private static readonly Vector4 OffCourseColour = new(0.55f, 0.55f, 0.55f, 0.85f);
+    /// <summary>
+    /// Pointing anywhere else. Grey rather than red, because a wrong heading is not a warning.
+    /// </summary>
+    /// <remarks>
+    /// Bright, though. The first version used a mid grey at four fifths opacity, which on this
+    /// window's near-black background left a shape you had to look for rather than one you saw.
+    /// Off course still has to be legible; it is the state the needle spends most of its time in.
+    /// </remarks>
+    private static readonly Vector4 OffCourseColour = new(0.78f, 0.78f, 0.80f, 1f);
+
+    /// <summary>
+    /// Drawn behind the needle so it separates from whatever is under it.
+    /// </summary>
+    /// <remarks>
+    /// A dark outline around a light shape is what makes a small glyph readable on a background
+    /// whose brightness cannot be relied on. Without it the needle disappeared into the window
+    /// at a glance, which for something meant to be glanced at is the whole failure.
+    /// </remarks>
+    private static readonly Vector4 NeedleOutline = new(0.05f, 0.05f, 0.07f, 0.9f);
 
     /// <summary>
     /// A needle pointing at something, with up meaning straight ahead.
@@ -160,13 +177,26 @@ internal static class Widgets
             MathF.Sin(angle) * distance,
             -MathF.Cos(angle) * distance);
 
+        // Wider than the first attempt. A slender dart is elegant at four times this size and
+        // unreadable here: what carries the direction is the silhouette, and a silhouette needs
+        // width to have a direction at all.
         var tip = At(relativeRadians, radius);
-        var left = At(relativeRadians + 2.5f, radius * 0.95f);
-        var right = At(relativeRadians - 2.5f, radius * 0.95f);
-        var notch = At(relativeRadians, radius * 0.35f);
+        var left = At(relativeRadians + 2.3f, radius * 1.0f);
+        var right = At(relativeRadians - 2.3f, radius * 1.0f);
+        var notch = At(relativeRadians, radius * 0.3f);
 
-        draw.AddTriangleFilled(tip, left, notch, ImGui.GetColorU32(colour));
-        draw.AddTriangleFilled(tip, notch, right, ImGui.GetColorU32(colour));
+        var fill = ImGui.GetColorU32(colour);
+        var outline = ImGui.GetColorU32(NeedleOutline);
+
+        draw.AddTriangleFilled(tip, left, notch, fill);
+        draw.AddTriangleFilled(tip, notch, right, fill);
+
+        // Outlined after filling, so the edge sits on top and the shape keeps its full size.
+        var thickness = MathF.Max(radius * 0.18f, 1.5f);
+        draw.AddLine(tip, left, outline, thickness);
+        draw.AddLine(left, notch, outline, thickness);
+        draw.AddLine(notch, right, outline, thickness);
+        draw.AddLine(right, tip, outline, thickness);
     }
 
     /// <summary>

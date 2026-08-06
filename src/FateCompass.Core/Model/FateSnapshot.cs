@@ -36,6 +36,17 @@ public sealed record FateSnapshot
 
     public required WorldPosition Position { get; init; }
 
+    /// <summary>
+    /// How wide the objective is, in yalms, or null where the game does not say.
+    /// </summary>
+    /// <remarks>
+    /// This is what "arrived" means. Standing inside the circle is being there, and the circle is
+    /// not a fixed size: FATEs range from a courtyard to most of a field, so any single distance
+    /// picked as the threshold is wrong for nearly all of them. Where it is null, the caller
+    /// falls back to a fixed distance rather than pretending.
+    /// </remarks>
+    public float? Radius { get; init; }
+
     /// <summary>Completion percentage, 0 to 100.</summary>
     public required int ProgressPercent { get; init; }
 

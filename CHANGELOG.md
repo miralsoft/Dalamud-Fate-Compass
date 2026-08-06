@@ -20,9 +20,11 @@ All notable changes to this project are recorded here. The format follows
   threshold flickers exactly when the heading sits on it, which is exactly while you are turning
   onto the target and watching, and a fade also says "warmer" on the way there.
 
-  Once the target is underfoot the needle becomes a ring: a bearing from almost the same point
-  swings wildly for a step in any direction, so a spinning needle would read as broken rather
-  than as arrived.
+  Once you are inside the objective's circle the needle becomes a ring. "Inside" is the FATE's
+  own radius, which the game reports, not a distance chosen here: FATEs run from a courtyard to
+  most of a field, so any single number is wrong for nearly all of them. The first attempt used
+  a fixed fifteen yalms and still said "not yet" while the player was fighting in the middle of
+  one.
 
   It is drawn from the facing as it is this frame rather than from the twice-a-second poll the
   rest of the window uses. That rate is plenty for a countdown and useless for something that
