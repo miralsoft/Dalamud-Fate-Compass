@@ -484,6 +484,10 @@ internal sealed class MainWindow : Window, IDisposable
         // it had seven, and the number that could be shown depended on how wide the window was
         // rather than on anything about the zone. Now every recommendation is in there and the
         // window's width decides only how many are in view.
+        // Started fresh every frame rather than kept as a running maximum, so switching the
+        // needle off gives the height back instead of holding the tallest a tile has ever been.
+        tallestTileThisFrame = 0f;
+
         if (ImGui.BeginChild(
             "##compactTiles",
             new Vector2(stripWidth, TileRowHeight()),
@@ -499,9 +503,16 @@ internal sealed class MainWindow : Window, IDisposable
 
                 DrawTile(candidates[index]);
             }
+
+            // Only a strip that actually scrolls needs room for a scrollbar. Reserving it
+            // always cost a band of empty space under every tile in every window wide enough to
+            // hold its tiles, which is most of them.
+            stripScrolls = ImGui.GetScrollMaxX() > 0f;
         }
 
         ImGui.EndChild();
+
+        measuredTileHeight = tallestTileThisFrame;
 
         DrawSidelined(special, hasTargets: true);
         DrawPendingSidelineRule(rowTop);
@@ -581,6 +592,15 @@ internal sealed class MainWindow : Window, IDisposable
 
     private float TileRowHeight()
     {
+        var scrollbar = stripScrolls ? ImGui.GetStyle().ScrollbarSize : 0f;
+
+        if (measuredTileHeight > 0f)
+        {
+            return measuredTileHeight + scrollbar;
+        }
+
+        // First frame only, before a tile has ever been drawn. Deliberately generous: too tall
+        // for one frame is invisible, too short cuts the tile and is not.
         var line = ImGui.GetTextLineHeightWithSpacing();
         var spacing = ImGui.GetStyle().ItemSpacing.Y;
 
@@ -594,9 +614,18 @@ internal sealed class MainWindow : Window, IDisposable
             + (line * 2f)         // progress with the countdown, then the distance
             + compass             // the direction needle, with its air above and below
             + (spacing * 4f)
-            + ImGui.GetStyle().ScrollbarSize
+            + scrollbar
             + 8f;
     }
+
+    /// <summary>How tall a tile came out last frame, measured from inside the strip.</summary>
+    private float measuredTileHeight;
+
+    /// <summary>Whether the strip is actually scrolling, so a scrollbar is worth reserving.</summary>
+    private bool stripScrolls;
+
+    /// <summary>Tallest tile seen while drawing the current frame, reset before every strip.</summary>
+    private float tallestTileThisFrame;
 
     /// <summary>Where the inactive area's rule goes, set while the row is laid out.</summary>
     private float sidelineRuleX;
@@ -722,6 +751,11 @@ internal sealed class MainWindow : Window, IDisposable
             ImGui.Dummy(new Vector2(tileWidth, 4f));
 
             ImGui.EndGroup();
+
+            // The tile's real height, taken from the group that just closed. Reading the cursor
+            // after the loop instead would report the row's starting line, because the tiles sit
+            // beside one another, and the strip would be sized to nothing.
+            tallestTileThisFrame = MathF.Max(tallestTileThisFrame, ImGui.GetItemRectSize().Y);
         }
         finally
         {
