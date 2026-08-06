@@ -166,7 +166,7 @@
   "setting.travelSpeed.exploratory": "Travel speed in Eureka, Bozja, and the Crescent (riding map bought)",
   "setting.travelSpeed.exploratorySlow": "The same zones without the riding map",
   "setting.teleportOverhead": "Assumed teleport cost (seconds)",
-  "setting.returnOverhead": "Cost of returning to camp (seconds)",
+  "setting.returnOverhead": "Cost of a journey in an exploratory zone (seconds)",
   "setting.nearlyDone": "Treat as finished from (percent)",
   "setting.minimumRemaining": "Minimum time left (seconds)",
   "setting.weight.distance": "Weight: distance",

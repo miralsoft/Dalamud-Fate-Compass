@@ -5,6 +5,7 @@
       "date": "2026-08-04",
       "added": [
         "Route advice now knows how high an aetheryte stands. The leg from an aetheryte to a FATE used to be measured flat, so a target on a plateau looked closest to the aetheryte directly underneath it. You now get the one you are actually fastest from.",
+        "A journey in Eureka, Bozja or the Crescent is now costed at 20 seconds rather than 30: the return, the walk to the camp aetheryte, the second port. It used to be a sum of two guessed parts and came out too expensive, which turned every close call into \"just fly\".",
         "A teleport is now costed at 10 seconds rather than 15. The old figure was an estimate and a third too high, which decided the close calls the wrong way round. If you changed it yourself, your value stays.",
         "The travel button tooltip now always shows which aetheryte it compared against, how far that is from the target, and both timings. It used to say only \"go direct\", without the comparison behind it.",
         "Every target now carries a direction needle. It turns with your facing, up means straight ahead, and it greens as you come onto course. Once you are inside the target circle it becomes a ring.",

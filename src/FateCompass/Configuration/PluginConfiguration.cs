@@ -38,7 +38,15 @@ internal sealed class PluginConfiguration : IPluginConfiguration
     /// replaced only where it still stands at exactly the old default: a value somebody moved is
     /// a decision, and that stays theirs.
     /// </remarks>
-    private const int CurrentVersion = 3;
+    /// <remarks>
+    /// Version 4: what a trip through an exploratory zone costs used to be the return plus an
+    /// ordinary teleport, thirty seconds together. That decomposition was invented rather than
+    /// observed, because the second hop cannot be timed on its own, and it came out half again
+    /// too expensive. It is now one figure, walked through end to end, and the old pair is
+    /// retired rather than carried forward: the sum meant something different from what the new
+    /// value means, so there is nothing to convert.
+    /// </remarks>
+    private const int CurrentVersion = 4;
 
     /// <summary>The teleport overhead as it shipped before it was timed.</summary>
     private const float PreviousTeleportOverhead = 15f;
@@ -121,6 +129,13 @@ internal sealed class PluginConfiguration : IPluginConfiguration
             && Math.Abs(Settings.TeleportOverheadSeconds - PreviousTeleportOverhead) < 0.01f)
         {
             Settings.TeleportOverheadSeconds = fresh.TeleportOverheadSeconds;
+        }
+
+        // Nothing to carry over. The old pair added up to something the new single figure is
+        // not, so a converted value would be a wrong number wearing the right name.
+        if (Version < 4)
+        {
+            Settings.ExploratoryTravelOverheadSeconds = fresh.ExploratoryTravelOverheadSeconds;
         }
 
         DalamudServices.Log.Information(
