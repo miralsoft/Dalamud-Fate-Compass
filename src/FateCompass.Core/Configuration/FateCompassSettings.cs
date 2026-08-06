@@ -354,26 +354,39 @@ public sealed class FateCompassSettings
     /// The way across is to return to camp and travel out from the aetheryte there, which is two
     /// waits rather than one, and the second alone made the comparison say the trip was half as
     /// expensive as it is.
+    /// </remarks>
+    [Obsolete("Superseded by ExploratoryTravelOverheadSeconds, which is one measured figure rather than half of a sum.")]
+    public float ReturnOverheadSeconds { get; set; } = 20f;
+
+    /// <summary>
+    /// What the whole journey costs in an exploratory zone before any travelling: returning to
+    /// camp, walking to the aetheryte there, and porting out from it.
+    /// </summary>
+    /// <remarks>
+    /// One measured figure, because that is what can be measured. It used to be a sum of the
+    /// return and an ordinary teleport, and the decomposition was invented rather than observed:
+    /// nobody can time the second hop on its own, and the two parts were only ever going to be
+    /// wrong in ways that cancelled or compounded without anybody being able to tell which.
     /// <para>
-    /// Eight, timed in the Crescent, where it comes in at seven to eight seconds. It stood at
-    /// twenty, which was written down as a guess and behaved like one: with the second leg on
-    /// top it costed the trip at thirty seconds, nearly twice what it is, and every close call
-    /// in those zones came out as "just fly".
+    /// Twenty, walked through end to end in the Crescent: about eight for the return itself,
+    /// then the walk to the aetheryte at camp and the port out from it. The old arrangement put
+    /// it at thirty, which is half again too much, and every close call in those zones came out
+    /// as "just fly".
     /// </para>
     /// <para>
-    /// The upper end of the measured range on purpose. Overstating the cost errs towards flying,
-    /// and that is the cheaper mistake: a flight taken when a return would have been quicker
-    /// costs seconds, while a return taken when flying would have done costs its cooldown, and
-    /// that is measured in minutes.
+    /// Where the measurement is a range, the upper end. Overstating the cost errs towards
+    /// flying, and that is the cheaper mistake: a flight taken when returning would have been
+    /// quicker costs seconds, while a return taken when flying would have done costs its
+    /// cooldown, which is minutes.
     /// </para>
     /// </remarks>
-    public float ReturnOverheadSeconds { get; set; } = 8f;
+    public float ExploratoryTravelOverheadSeconds { get; set; } = 20f;
 
     /// <summary>
     /// What a trip through the aetheryte network costs before any running, where the player is.
     /// </summary>
     public float TeleportOverheadFor(ContentKind content) => content.IsExploratory()
-        ? ReturnOverheadSeconds + TeleportOverheadSeconds
+        ? ExploratoryTravelOverheadSeconds
         : TeleportOverheadSeconds;
 
     /// <summary>

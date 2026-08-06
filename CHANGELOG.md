@@ -41,18 +41,22 @@ All notable changes to this project are recorded here. The format follows
   mean the correction reaches nobody who already installed. It is replaced only where it still
   stands at exactly the old default. A value somebody moved is a decision and stays theirs.
 
-- **Returning to camp is costed at 8 seconds rather than 20**, timed in the Crescent where it
-  comes in at seven to eight. The old figure was written down as a guess at the time and behaved
-  like one: with the second leg on top, a trip through the exploratory zones was costed at thirty
-  seconds, nearly twice what it is, so every close call there came out as "just fly".
+- **A journey through an exploratory zone is one measured figure, 20 seconds, instead of a sum
+  of two invented ones.** It used to be the return spell plus an ordinary teleport, thirty
+  seconds together, and that decomposition was never observed: the return can be timed, the walk
+  to the camp's aetheryte and the port out cannot be separated from it in practice, and the total
+  came out half again too expensive. Every close call in those zones therefore came out as "just
+  fly".
 
-  The upper end of the measured range on purpose. Overstating the cost errs towards flying, and
-  that is the cheaper mistake: a flight taken when a return would have been quicker costs
-  seconds, while a return taken when flying would have done costs its cooldown, which is measured
-  in minutes.
+  Walked through end to end in the Crescent: about eight seconds for the return, then the walk
+  and the second port, fifteen when hurrying and twenty at an ordinary pace. Twenty is what
+  ships. Where a measurement is a range, the upper end: overstating the cost errs towards
+  flying, and that is the cheaper mistake, because a flight taken when returning would have been
+  quicker costs seconds while a return taken when flying would have done costs its cooldown,
+  which is minutes.
 
-  Corrected in existing configurations where it is still the old default, on the same reasoning
-  as the teleport overhead above.
+  The old pair is retired rather than converted. The sum meant something different from what the
+  new value means, so a carried-over number would be a wrong figure wearing the right name.
 
 - **The route tooltip now shows its working**: the aetheryte it compared against, how far that
   is from the FATE, and both timings, in every case. Previously, when the verdict was "go

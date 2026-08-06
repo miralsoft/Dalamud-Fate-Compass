@@ -39,18 +39,17 @@ internal sealed class PluginConfiguration : IPluginConfiguration
     /// a decision, and that stays theirs.
     /// </remarks>
     /// <remarks>
-    /// Version 4: the return overhead shipped at twenty seconds and was written down as a guess
-    /// at the time. Timed in the Crescent it is seven to eight. Same reasoning as version 3: a
-    /// number the plugin made up and wrote into every configuration is not somebody's decision,
-    /// so it is corrected where it is untouched and left alone where it is not.
+    /// Version 4: what a trip through an exploratory zone costs used to be the return plus an
+    /// ordinary teleport, thirty seconds together. That decomposition was invented rather than
+    /// observed, because the second hop cannot be timed on its own, and it came out half again
+    /// too expensive. It is now one figure, walked through end to end, and the old pair is
+    /// retired rather than carried forward: the sum meant something different from what the new
+    /// value means, so there is nothing to convert.
     /// </remarks>
     private const int CurrentVersion = 4;
 
     /// <summary>The teleport overhead as it shipped before it was timed.</summary>
     private const float PreviousTeleportOverhead = 15f;
-
-    /// <summary>The return overhead as it shipped before it was timed.</summary>
-    private const float PreviousReturnOverhead = 20f;
 
     public FateCompassSettings Settings { get; set; } = new();
 
@@ -132,10 +131,11 @@ internal sealed class PluginConfiguration : IPluginConfiguration
             Settings.TeleportOverheadSeconds = fresh.TeleportOverheadSeconds;
         }
 
-        if (Version < 4
-            && Math.Abs(Settings.ReturnOverheadSeconds - PreviousReturnOverhead) < 0.01f)
+        // Nothing to carry over. The old pair added up to something the new single figure is
+        // not, so a converted value would be a wrong number wearing the right name.
+        if (Version < 4)
         {
-            Settings.ReturnOverheadSeconds = fresh.ReturnOverheadSeconds;
+            Settings.ExploratoryTravelOverheadSeconds = fresh.ExploratoryTravelOverheadSeconds;
         }
 
         DalamudServices.Log.Information(

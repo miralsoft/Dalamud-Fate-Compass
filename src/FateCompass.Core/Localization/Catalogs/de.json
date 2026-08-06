@@ -166,7 +166,7 @@
   "setting.travelSpeed.exploratory": "Reisegeschwindigkeit in Eureka, Bozja und Crescent (mit Reitwege-Karte)",
   "setting.travelSpeed.exploratorySlow": "Dieselben Gebiete ohne gekaufte Reitwege-Karte",
   "setting.teleportOverhead": "Angenommene Portkosten (Sekunden)",
-  "setting.returnOverhead": "Kosten der Rückführung ins Lager (Sekunden)",
+  "setting.returnOverhead": "Aufwand für eine Reise in Erkundungsgebieten (Sekunden)",
   "setting.nearlyDone": "Gilt als fertig ab (Prozent)",
   "setting.minimumRemaining": "Mindestrestzeit (Sekunden)",
   "setting.weight.distance": "Gewichtung: Entfernung",
