@@ -207,11 +207,11 @@ internal sealed class MainWindow : Window, IDisposable
         // short to hold its contents does not hide them politely, it clips them. A hand-picked
         // number was right until the needle was added and then silently was not, which is the
         // same failure the tile strip had one level down.
-        if (configuration.Settings.CompactView)
+        if (configuration.Settings.CompactView && CompactContentHeight() is > 0f and var needed)
         {
             SizeConstraints = new WindowSizeConstraints
             {
-                MinimumSize = new Vector2(MinimumWidth, CompactContentHeight()),
+                MinimumSize = new Vector2(MinimumWidth, needed),
                 MaximumSize = new Vector2(float.MaxValue, float.MaxValue),
             };
         }
@@ -255,6 +255,13 @@ internal sealed class MainWindow : Window, IDisposable
         ImGui.Dummy(new Vector2(0f, BarPadding * 0.5f));
         ImGui.Separator();
         ImGui.Dummy(new Vector2(0f, BarPadding * 0.5f));
+
+        // Measured, not predicted. Everything above this point varies: the gemstone line appears
+        // or does not, the zone progress the same, the riding map hint only in some zones, and
+        // there are rules and spacers between them. Adding those up by hand is how the minimum
+        // height came out short enough to cut the bottom bar in half, so the header now reports
+        // what it actually took and the window sizes itself to that.
+        measuredHeaderHeight = ImGui.GetCursorPosY();
 
         if (configuration.Settings.CompactView)
         {
@@ -535,8 +542,14 @@ internal sealed class MainWindow : Window, IDisposable
     /// and it is the one thing here that wraps onto a second line when squeezed, which then
     /// pushes the list into the space the bar is standing in. The tiles do not set the floor:
     /// they scroll sideways by design.
+    /// <para>
+    /// Unlike the height, this is dialled in rather than derived, and the number comes from the
+    /// width the window was actually sized to in play rather than from an estimate. Measuring it
+    /// the way the height is measured does not work: the right-hand group is aligned to the
+    /// window's edge, so it reports the width it was given instead of the width it needs.
+    /// </para>
     /// </remarks>
-    private const float MinimumWidth = 360f;
+    private const float MinimumWidth = 536f;
 
     /// <summary>
     /// The height the compact view needs to show everything it is drawing.
@@ -549,16 +562,22 @@ internal sealed class MainWindow : Window, IDisposable
     /// </remarks>
     private float CompactContentHeight()
     {
-        var line = ImGui.GetTextLineHeightWithSpacing();
+        // Nothing has been drawn yet on the very first frame, so the constructor's estimate
+        // stands for one frame and the measurement takes over from the second.
+        if (measuredHeaderHeight <= 0f)
+        {
+            return 0f;
+        }
 
-        return line                      // the gemstone and zone progress header
-            + line                       // the shared FATE line under it
-            + ImGui.GetStyle().ItemSpacing.Y
+        return measuredHeaderHeight      // header, rules and spacers, as actually drawn
             + TileRowHeight()
             + BottomBarHeight()
-            + (ImGui.GetStyle().WindowPadding.Y * 2f)
-            + ImGui.GetFrameHeight();    // the title bar
+            + ImGui.GetStyle().WindowPadding.Y   // the top padding is already in the measurement
+            + ImGui.GetFrameHeight();            // the title bar
     }
+
+    /// <summary>How tall the header came out last frame, including its rule and spacers.</summary>
+    private float measuredHeaderHeight;
 
     private float TileRowHeight()
     {

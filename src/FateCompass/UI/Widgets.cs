@@ -177,27 +177,35 @@ internal static class Widgets
             MathF.Sin(angle) * distance,
             -MathF.Cos(angle) * distance);
 
-        // Wider than the first attempt. A slender dart is elegant at four times this size and
-        // unreadable here: what carries the direction is the silhouette, and a silhouette needs
-        // width to have a direction at all.
+        // An arrowhead: a point, two wings swept back, and a notch cut into the base between
+        // them. The notch belongs *behind* the centre, opposite the point. Putting it in front,
+        // between the centre and the tip, folds the shape in on itself and leaves two slivers
+        // that read as a tick mark rather than an arrow, which is precisely how the first
+        // attempt looked on screen.
         var tip = At(relativeRadians, radius);
-        var left = At(relativeRadians + 2.3f, radius * 1.0f);
-        var right = At(relativeRadians - 2.3f, radius * 1.0f);
-        var notch = At(relativeRadians, radius * 0.3f);
+        var wingLeft = At(relativeRadians + WingAngle, radius * 0.95f);
+        var wingRight = At(relativeRadians - WingAngle, radius * 0.95f);
+        var notch = At(relativeRadians + MathF.PI, radius * 0.25f);
 
-        var fill = ImGui.GetColorU32(colour);
-        var outline = ImGui.GetColorU32(NeedleOutline);
-
-        draw.AddTriangleFilled(tip, left, notch, fill);
-        draw.AddTriangleFilled(tip, notch, right, fill);
-
-        // Outlined after filling, so the edge sits on top and the shape keeps its full size.
-        var thickness = MathF.Max(radius * 0.18f, 1.5f);
-        draw.AddLine(tip, left, outline, thickness);
-        draw.AddLine(left, notch, outline, thickness);
-        draw.AddLine(notch, right, outline, thickness);
-        draw.AddLine(right, tip, outline, thickness);
+        // Traced tip, wing, notch, wing, so the quad follows the outline rather than crossing
+        // itself. The fill and the outline take the same four points, which is what keeps the
+        // edge on the shape instead of near it.
+        draw.AddQuadFilled(tip, wingLeft, notch, wingRight, ImGui.GetColorU32(colour));
+        draw.AddQuad(
+            tip, wingLeft, notch, wingRight,
+            ImGui.GetColorU32(NeedleOutline),
+            MathF.Max(radius * 0.12f, 1f));
     }
+
+    /// <summary>
+    /// How far back the wings sweep from the point, in radians.
+    /// </summary>
+    /// <remarks>
+    /// About 140 degrees. Narrower gives a dart that is elegant at four times this size and
+    /// unreadable here; wider gives a lozenge with no obvious front. What carries a direction at
+    /// this scale is the silhouette, and a silhouette needs both width and an unmistakable point.
+    /// </remarks>
+    private const float WingAngle = 2.45f;
 
     /// <summary>
     /// Drawn instead of the needle once the target is underfoot.
