@@ -105,6 +105,7 @@
 
   "route.walkFaster": "Go direct",
   "route.noAetheryte": "No aetheryte in this zone.",
+  "route.comparison": "Direct {0}s   ·   Teleport {1}s",
   "route.returnFirst": "Casts Return to get you back to camp. The rest of the way is the camp travel menu.",
   "route.tooLate": "Too late, it ends before you arrive",
   "route.saves": "saves ~{0}s",

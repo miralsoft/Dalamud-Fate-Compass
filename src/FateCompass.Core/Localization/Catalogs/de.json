@@ -105,6 +105,7 @@
 
   "route.walkFaster": "Direkt hin",
   "route.noAetheryte": "Kein Aetheryt in dieser Zone.",
+  "route.comparison": "Direkt {0}s   ·   Port {1}s",
   "route.returnFirst": "Wirkt Rückführung und bringt dich ins Lager. Der Rest des Wegs läuft über das Reisemenü dort.",
   "route.tooLate": "Zu spät, endet vor deiner Ankunft",
   "route.saves": "spart ~{0}s",

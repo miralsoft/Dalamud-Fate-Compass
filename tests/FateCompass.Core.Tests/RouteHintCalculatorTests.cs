@@ -5,7 +5,22 @@ namespace FateCompass.Core.Tests;
 
 public sealed class RouteHintCalculatorTests
 {
-    private static FateCompassSettings Settings() => new();
+    /// <summary>
+    /// Settings for these tests, with the two figures a verdict actually turns on pinned rather
+    /// than inherited.
+    /// </summary>
+    /// <remarks>
+    /// This used to be the bare defaults, and lowering the shipped teleport overhead from
+    /// fifteen seconds to ten broke a test that had nothing to do with the change. A test whose
+    /// premise is "travelling wins here" has to own the numbers that decide it, otherwise it is
+    /// really asserting what today's defaults happen to be, and it fails the next time somebody
+    /// improves one.
+    /// </remarks>
+    private static FateCompassSettings Settings() => new()
+    {
+        TravelSpeedYalmsPerSecond = 20f,
+        TeleportOverheadSeconds = 15f,
+    };
 
     [Fact]
     public void ReturnsNullWhenTheZoneHasNoAetherytes()

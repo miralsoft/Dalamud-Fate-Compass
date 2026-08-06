@@ -6,6 +6,47 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-08-04
+
+### Added
+
+- **Routes account for how high an aetheryte stands.** Until now the leg from an aetheryte to a
+  FATE was measured flat, so a target on a plateau looked closest to the aetheryte directly
+  underneath it, which is the one place you cannot walk from. Reported from play on 2026-08-01
+  and open ever since. The nearest aetheryte is now chosen by travel distance rather than by map
+  distance, with a climb weighted exactly as the ranking already weighted the player's own
+  approach (`VerticalTravelWeight`).
+
+  The note this was planned from proposed scanning the `Level` sheet and matching by proximity.
+  That was checked against the game data before being built and does not hold: of 108 visible
+  aetherytes only 15 are reachable through `Level.Object`, and `Aetheryte.Level` points at row
+  ids like 3785149 against a sheet of 61346 rows. There is no static table to read.
+
+  What works is not a data file at all. The aetheryte is a physical object standing in the zone,
+  and the object table reports its real position. The catch is that the game only loads objects
+  near the player, so heights are **learned rather than looked up**: whatever is in range is
+  remembered and persisted across sessions, and the table fills in as a zone gets played. An
+  aetheryte nobody has walked past measures flat, exactly as before, so the feature degrades into
+  the old behaviour rather than into a wrong answer. Both sides have to be known for a climb to
+  count, and setting the weight to zero restores the old measurement exactly.
+
+- **The assumed cost of a teleport drops from 15 seconds to 10**, timed rather than estimated.
+  A third of the fixed cost is exactly the amount that decides the close calls: at twenty yalms
+  a second it moved the break-even point by a hundred yalms, and every route inside that band
+  was advised the wrong way round.
+
+  Existing configurations are corrected, which this project otherwise does not do for a changed
+  default. The reasoning: fifteen was never a preference anybody expressed, it was a measurement
+  the plugin got wrong and then wrote into every configuration it created, so leaving it would
+  mean the correction reaches nobody who already installed. It is replaced only where it still
+  stands at exactly the old default. A value somebody moved is a decision and stays theirs.
+
+- **The route tooltip now shows its working**: the aetheryte it compared against, how far that
+  is from the FATE, and both timings, in every case. Previously, when the verdict was "go
+  direct" it said only that, so there was no way to tell which aetheryte had been rejected or by
+  how much. A recommendation you cannot check is one you can only believe, which is exactly the
+  wrong footing for the change above.
+
 ## [1.0.2] - 2026-08-03
 
 One repair, in two parts: the travel button works in the exploratory zones, and it works all the

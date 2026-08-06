@@ -58,6 +58,8 @@ public sealed class Plugin : IDalamudPlugin
         history = new FateHistoryStore(configuration.Settings);
         history.Load(configuration.History);
 
+        AetheryteElevations.Restore(configuration.AetheryteElevations);
+
         localizer = new Localizer();
         foreach (var catalog in EmbeddedCatalogs.LoadAll())
         {

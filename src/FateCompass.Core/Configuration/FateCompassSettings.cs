@@ -323,7 +323,13 @@ public sealed class FateCompassSettings
     /// Fixed cost of a teleport in seconds: the cast plus the loading screen. Used to judge
     /// whether teleporting actually beats simply travelling there.
     /// </summary>
-    public float TeleportOverheadSeconds { get; set; } = 15f;
+    /// <remarks>
+    /// Ten, timed rather than estimated. It stood at fifteen, which is a third too much, and a
+    /// third of the fixed cost is exactly the amount that decides the close calls: at twenty
+    /// yalms a second it moved the break-even point by a hundred yalms, and every route inside
+    /// that band was advised the wrong way round.
+    /// </remarks>
+    public float TeleportOverheadSeconds { get; set; } = 10f;
 
     /// <summary>
     /// Fixed cost of the return spell, in seconds: its cast plus the trip back to camp.
