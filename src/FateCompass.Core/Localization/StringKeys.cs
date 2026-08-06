@@ -115,6 +115,8 @@ public static class StringKeys
     public const string ButtonPlacementMove = "button.placement.move";
     public const string ButtonPlacementDone = "button.placement.done";
     public const string PlacementHint = "placement.hint";
+    public const string SettingShowCompass = "setting.showCompass";
+    public const string SettingShowCompassHelp = "setting.showCompass.help";
     public const string SettingShowRankMarkers = "setting.showRankMarkers";
     public const string SettingShowRankMarkersHelp = "setting.showRankMarkers.help";
 
@@ -291,6 +293,7 @@ public static class StringKeys
         SettingMinimapSize, SettingMinimapOffsetX, SettingMinimapOffsetY,
         ButtonPlacementMove, ButtonPlacementDone, PlacementHint,
         SettingShowRankMarkers, SettingShowRankMarkersHelp,
+        SettingShowCompass, SettingShowCompassHelp,
         KindUnknown, KindBoss, KindSlay, KindCollect, KindEscort, KindDefend,
         KindSkirmish, KindCriticalEngagement, KindCriticalEncounter, KindSpecialObjective,
         ListParticipants, StateRegistrationOpen, NotificationRegistrationOpen,

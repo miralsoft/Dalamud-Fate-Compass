@@ -129,6 +129,68 @@ internal static class Widgets
     /// <summary>How wide a badge would be for this text, so a set of them can share one width.</summary>
     internal static float BadgeWidth(string text) => ImGui.CalcTextSize(text).X + 16f;
 
+    /// <summary>Fully on course. The same green the route advice uses for a worthwhile teleport.</summary>
+    private static readonly Vector4 OnCourseColour = new(0.35f, 0.85f, 0.45f, 1f);
+
+    /// <summary>Pointing anywhere else. Grey rather than red: wrong heading is not a warning.</summary>
+    private static readonly Vector4 OffCourseColour = new(0.55f, 0.55f, 0.55f, 0.85f);
+
+    /// <summary>
+    /// A needle pointing at something, with up meaning straight ahead.
+    /// </summary>
+    /// <remarks>
+    /// Screen space grows downward, so ahead is minus Y. The needle is a triangle with a notch
+    /// cut out of its base rather than a plain one, because at this size a plain triangle reads
+    /// as a blob and its point is the only part carrying the information.
+    /// </remarks>
+    /// <param name="radius">Half the space the needle occupies, in pixels.</param>
+    /// <param name="relativeRadians">Turn needed, clockwise, with zero straight ahead.</param>
+    /// <param name="onCourse">Zero for wide of the mark, one for dead on. Blends the colour.</param>
+    internal static void CompassNeedle(float radius, float relativeRadians, float onCourse)
+    {
+        var size = new Vector2(radius * 2f, radius * 2f);
+        var origin = ImGui.GetCursorScreenPos();
+        ImGui.Dummy(size);
+
+        var centre = origin + new Vector2(radius, radius);
+        var colour = Vector4.Lerp(OffCourseColour, OnCourseColour, Math.Clamp(onCourse, 0f, 1f));
+        var draw = ImGui.GetWindowDrawList();
+
+        Vector2 At(float angle, float distance) => centre + new Vector2(
+            MathF.Sin(angle) * distance,
+            -MathF.Cos(angle) * distance);
+
+        var tip = At(relativeRadians, radius);
+        var left = At(relativeRadians + 2.5f, radius * 0.95f);
+        var right = At(relativeRadians - 2.5f, radius * 0.95f);
+        var notch = At(relativeRadians, radius * 0.35f);
+
+        draw.AddTriangleFilled(tip, left, notch, ImGui.GetColorU32(colour));
+        draw.AddTriangleFilled(tip, notch, right, ImGui.GetColorU32(colour));
+    }
+
+    /// <summary>
+    /// Drawn instead of the needle once the target is underfoot.
+    /// </summary>
+    /// <remarks>
+    /// A ring with a dot in it, the shape a compass uses for "this is the place". Hiding the
+    /// needle would have done the job too, but an empty space says nothing, while this says
+    /// arrived, and it keeps the row from changing height as it happens.
+    /// </remarks>
+    internal static void CompassArrived(float radius)
+    {
+        var size = new Vector2(radius * 2f, radius * 2f);
+        var origin = ImGui.GetCursorScreenPos();
+        ImGui.Dummy(size);
+
+        var centre = origin + new Vector2(radius, radius);
+        var colour = ImGui.GetColorU32(OnCourseColour);
+        var draw = ImGui.GetWindowDrawList();
+
+        draw.AddCircle(centre, radius * 0.85f, colour, 0, MathF.Max(radius * 0.16f, 1.5f));
+        draw.AddCircleFilled(centre, radius * 0.3f, colour);
+    }
+
     /// <summary>A switch with a caption beside it, aligned to the switch's centre line.</summary>
     internal static bool ToggleWithLabel(string id, string label, ref bool value)
     {

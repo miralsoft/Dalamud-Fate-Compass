@@ -6,6 +6,31 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- **A direction needle under every entry**, turning with the character's facing so that up means
+  straight ahead. It answers the question the list was silent about: the distance says how far,
+  the needle says which way, and together they say whether the flight is going anywhere useful.
+
+  The character's facing, not the camera's. The camera answers "where am I looking", which
+  swings while you glance around mid-flight; the character answers "where would I go if I held
+  forward", and that is the question somebody in the air is asking.
+
+  It fades from grey to green over the last 45 degrees rather than switching at a threshold. A
+  threshold flickers exactly when the heading sits on it, which is exactly while you are turning
+  onto the target and watching, and a fade also says "warmer" on the way there.
+
+  Once the target is underfoot the needle becomes a ring: a bearing from almost the same point
+  swings wildly for a step in any direction, so a spinning needle would read as broken rather
+  than as arrived.
+
+  It is drawn from the facing as it is this frame rather than from the twice-a-second poll the
+  rest of the window uses. That rate is plenty for a countdown and useless for something that
+  follows a turning character.
+
+  The needle points along the straight line. That is the whole idea and also its limit: it
+  answers "am I heading at it", never "can I get there this way".
+
 ## [1.0.2] - 2026-08-03
 
 One repair, in two parts: the travel button works in the exploratory zones, and it works all the
