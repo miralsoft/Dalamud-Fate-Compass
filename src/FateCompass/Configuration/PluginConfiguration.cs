@@ -30,7 +30,18 @@ internal sealed class PluginConfiguration : IPluginConfiguration
     /// the old scheme is a measurement from whichever zone happened to be last, which is not what
     /// either of the new fields means.
     /// </remarks>
-    private const int CurrentVersion = 2;
+    /// <remarks>
+    /// Version 3: the teleport overhead shipped at fifteen seconds, which was an estimate and
+    /// too high by a third. That number is not a preference somebody expressed, it is a
+    /// measurement the plugin got wrong and then wrote into every configuration it created, so
+    /// leaving it would mean the correction never reaches anybody who already installed. It is
+    /// replaced only where it still stands at exactly the old default: a value somebody moved is
+    /// a decision, and that stays theirs.
+    /// </remarks>
+    private const int CurrentVersion = 3;
+
+    /// <summary>The teleport overhead as it shipped before it was timed.</summary>
+    private const float PreviousTeleportOverhead = 15f;
 
     public FateCompassSettings Settings { get; set; } = new();
 
@@ -97,12 +108,23 @@ internal sealed class PluginConfiguration : IPluginConfiguration
         }
 
         var fresh = new FateCompassSettings();
-        Settings.ExploratoryTravelSpeedYalmsPerSecond = fresh.ExploratoryTravelSpeedYalmsPerSecond;
-        Settings.ExploratorySlowTravelSpeedYalmsPerSecond = fresh.ExploratorySlowTravelSpeedYalmsPerSecond;
+
+        if (Version < 2)
+        {
+            Settings.ExploratoryTravelSpeedYalmsPerSecond = fresh.ExploratoryTravelSpeedYalmsPerSecond;
+            Settings.ExploratorySlowTravelSpeedYalmsPerSecond = fresh.ExploratorySlowTravelSpeedYalmsPerSecond;
+        }
+
+        // Only where it is still the old default. Somebody who moved the slider expressed an
+        // opinion, and correcting a number is not licence to overwrite one.
+        if (Version < 3
+            && Math.Abs(Settings.TeleportOverheadSeconds - PreviousTeleportOverhead) < 0.01f)
+        {
+            Settings.TeleportOverheadSeconds = fresh.TeleportOverheadSeconds;
+        }
 
         DalamudServices.Log.Information(
-            "Configuration: migrated from version {Old} to {New}, exploratory travel speeds reset",
-            Version, CurrentVersion);
+            "Configuration: migrated from version {Old} to {New}", Version, CurrentVersion);
 
         Version = CurrentVersion;
         Save();

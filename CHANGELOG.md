@@ -30,6 +30,17 @@ All notable changes to this project are recorded here. The format follows
   the old behaviour rather than into a wrong answer. Both sides have to be known for a climb to
   count, and setting the weight to zero restores the old measurement exactly.
 
+- **The assumed cost of a teleport drops from 15 seconds to 10**, timed rather than estimated.
+  A third of the fixed cost is exactly the amount that decides the close calls: at twenty yalms
+  a second it moved the break-even point by a hundred yalms, and every route inside that band
+  was advised the wrong way round.
+
+  Existing configurations are corrected, which this project otherwise does not do for a changed
+  default. The reasoning: fifteen was never a preference anybody expressed, it was a measurement
+  the plugin got wrong and then wrote into every configuration it created, so leaving it would
+  mean the correction reaches nobody who already installed. It is replaced only where it still
+  stands at exactly the old default. A value somebody moved is a decision and stays theirs.
+
 - **The route tooltip now shows its working**: the aetheryte it compared against, how far that
   is from the FATE, and both timings, in every case. Previously, when the verdict was "go
   direct" it said only that, so there was no way to tell which aetheryte had been rejected or by
