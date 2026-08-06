@@ -2,7 +2,7 @@
   "versions": [
     {
       "version": "1.1.0",
-      "date": "2026-08-04",
+      "date": "2026-08-06",
       "added": [
         "Die Wegempfehlung kennt jetzt die Höhe der Aetheryten. Bisher wurde die Strecke vom Aetheryten zum Ziel flach gemessen, weshalb ein FATE auf einem Plateau ausgerechnet dem Aetheryten direkt darunter am nächsten schien. Jetzt wird der Aetheryt vorgeschlagen, von dem aus man wirklich am schnellsten dort ist.",
         "Eine Reise in Eureka, Bozja oder Kreszentia wird jetzt mit 20 Sekunden gerechnet statt mit 30: Rückführung, Weg zum Aetheryten im Lager, zweiter Port. Vorher war das eine Rechnung aus zwei geschätzten Teilen und deutlich zu teuer, wodurch knappe Fälle immer auf \"hinfliegen\" hinausliefen.",
