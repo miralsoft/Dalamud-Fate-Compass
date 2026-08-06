@@ -120,12 +120,9 @@ internal sealed class MainWindow : Window, IDisposable
 
         SizeConstraints = new WindowSizeConstraints
         {
-            // Wide enough that the bottom row never wraps onto a second line, which is what
-            // sets the floor rather than the tiles.
-            // Tall enough for the header, its rule, a row of tiles, and the bottom bar. The
-            // window does not scroll, so the minimum has to be the height that actually fits
-            // everything rather than a round number.
-            MinimumSize = new Vector2(360, 275),
+            // A starting point only. The real minimum height is worked out every frame in
+            // PreDraw from what is actually being drawn, because it depends on settings.
+            MinimumSize = new Vector2(MinimumWidth, 240),
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue),
         };
 
@@ -204,6 +201,20 @@ internal sealed class MainWindow : Window, IDisposable
         }
 
         WindowName = $"{title}###FateCompassMain";
+
+        // The minimum height is derived, not chosen. This window never scrolls: everything in it
+        // is either one row of tiles or a list that scrolls inside its own frame, so a window too
+        // short to hold its contents does not hide them politely, it clips them. A hand-picked
+        // number was right until the needle was added and then silently was not, which is the
+        // same failure the tile strip had one level down.
+        if (configuration.Settings.CompactView)
+        {
+            SizeConstraints = new WindowSizeConstraints
+            {
+                MinimumSize = new Vector2(MinimumWidth, CompactContentHeight()),
+                MaximumSize = new Vector2(float.MaxValue, float.MaxValue),
+            };
+        }
 
         // Set every frame rather than once: it goes out again the moment the notes are opened,
         // and the language can change underneath it.
@@ -516,6 +527,39 @@ internal sealed class MainWindow : Window, IDisposable
     /// the code and obvious on screen: the needle was added without this and came out sliced off
     /// along the bottom of the strip. Anything drawn in a tile has to appear in both places.
     /// </remarks>
+    /// <summary>
+    /// Narrowest the window may be, set by the bottom bar rather than by the tiles.
+    /// </summary>
+    /// <remarks>
+    /// The bar holds the automation switch, the chat controls and the view buttons side by side,
+    /// and it is the one thing here that wraps onto a second line when squeezed, which then
+    /// pushes the list into the space the bar is standing in. The tiles do not set the floor:
+    /// they scroll sideways by design.
+    /// </remarks>
+    private const float MinimumWidth = 360f;
+
+    /// <summary>
+    /// The height the compact view needs to show everything it is drawing.
+    /// </summary>
+    /// <remarks>
+    /// Derived from the same pieces the tile strip is, so a change to a tile reaches both the
+    /// strip and the window at once. Everything here is either a row of tiles or a list that
+    /// scrolls inside its own frame, so a window shorter than its contents clips them rather
+    /// than scrolling.
+    /// </remarks>
+    private float CompactContentHeight()
+    {
+        var line = ImGui.GetTextLineHeightWithSpacing();
+
+        return line                      // the gemstone and zone progress header
+            + line                       // the shared FATE line under it
+            + ImGui.GetStyle().ItemSpacing.Y
+            + TileRowHeight()
+            + BottomBarHeight()
+            + (ImGui.GetStyle().WindowPadding.Y * 2f)
+            + ImGui.GetFrameHeight();    // the title bar
+    }
+
     private float TileRowHeight()
     {
         var line = ImGui.GetTextLineHeightWithSpacing();
