@@ -38,4 +38,11 @@
     <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
   </PropertyGroup>
 
+  <!--
+    Local, uncommitted build switches, if there are any. The file this points at is in
+    .gitignore, so nothing here can affect a build made from a clean checkout.
+  -->
+  <Import Project="$(MSBuildThisFileDirectory)Directory.Build.local.props"
+          Condition="Exists('$(MSBuildThisFileDirectory)Directory.Build.local.props')" />
+
 </Project>
