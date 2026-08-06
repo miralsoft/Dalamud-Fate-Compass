@@ -47,7 +47,9 @@ public sealed class Plugin : IDalamudPlugin
     private readonly ReleaseNotesWindow newsWindow;
     private readonly StatusBarEntry statusBar;
     private readonly MinimapButton minimapButton;
-    private readonly DebugWindow? debugWindow;
+#if FATECOMPASS_DEVTOOLS
+    private readonly DebugWindow debugWindow;
+#endif
 
     public Plugin(IDalamudPluginInterface pluginInterface)
     {
@@ -106,21 +108,19 @@ public sealed class Plugin : IDalamudPlugin
             configuration, localizer, ToggleMain, ToggleAutomationFromStatusBar);
         windowSystem.AddWindow(minimapButton);
 
-        // Developer tools, wired up only while DebugWindow.Enabled is true.
+        // Developer tools. Not a switch that ships off, but code that is not in the assembly at
+        // all unless the build defines FATECOMPASS_DEVTOOLS, and nothing in this repository
+        // defines it: the symbol comes from Directory.Build.local.props, which git ignores.
         //
-        // The compiler is right that this is unreachable in a release build, and that is the
-        // point: the switch is a constant precisely so the branch disappears rather than being
-        // decided at runtime. Suppressed here rather than turned into a runtime flag, because a
-        // runtime flag is one that can be turned back on by whoever finds it.
-#pragma warning disable CS0162 // Unreachable code detected
-        if (DebugWindow.Enabled)
-        {
-            debugWindow = new DebugWindow(configuration, controller);
-            windowSystem.AddWindow(debugWindow);
+        // A constant guarded branch would have been almost as good and not quite: the window
+        // would still be in the assembly, and "off" is a thing somebody can look for. Absent is
+        // not.
+#if FATECOMPASS_DEVTOOLS
+        debugWindow = new DebugWindow(configuration, controller);
+        windowSystem.AddWindow(debugWindow);
 
-            mainWindow.AddDebugButton(() => debugWindow.IsOpen = !debugWindow.IsOpen);
-        }
-#pragma warning restore CS0162
+        mainWindow.AddDebugButton(() => debugWindow.IsOpen = !debugWindow.IsOpen);
+#endif
 
         DalamudServices.CommandManager.AddHandler(CommandName, new CommandInfo(OnCommand)
         {
@@ -199,7 +199,9 @@ public sealed class Plugin : IDalamudPlugin
         configWindow.Dispose();
         newsWindow.Dispose();
         minimapButton.Dispose();
-        debugWindow?.Dispose();
+#if FATECOMPASS_DEVTOOLS
+        debugWindow.Dispose();
+#endif
 
         AetheryteProvider.ClearCache();
         ContentKindProvider.ClearCache();
@@ -323,9 +325,11 @@ public sealed class Plugin : IDalamudPlugin
 
             // Diagnostics, deliberately undocumented in the help text: it exists to work out
             // data layouts the game does not document, not for everyday use.
+#if FATECOMPASS_DEVTOOLS
             case "debug":
                 RunDiagnostics(value);
                 break;
+#endif
 
             case "help":
                 DalamudServices.ChatGui.Print(localizer.Get(StringKeys.CommandHelp));
@@ -337,6 +341,7 @@ public sealed class Plugin : IDalamudPlugin
         }
     }
 
+#if FATECOMPASS_DEVTOOLS
     /// <summary>
     /// Reports the measured travel speed and offers to adopt it, replacing the estimate the
     /// ranking has been using.
@@ -417,6 +422,7 @@ public sealed class Plugin : IDalamudPlugin
                 break;
         }
     }
+#endif
 
     private void RunEngageFromCommand()
     {

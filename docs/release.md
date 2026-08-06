@@ -153,3 +153,32 @@ The version number. A workflow that derives the version from the tag would make 
 source of truth, and the tag is the one thing written by hand at the end. Keeping `Version` in
 `Directory.Build.props` means the build fails loudly when the two disagree, rather than quietly
 publishing whichever the tag happened to say.
+
+## The developer tools
+
+The bug icon in the title bar, the diagnostics window behind it and the `/fate debug` probes are
+not a setting that ships off. They are **not in the assembly at all** unless the build defines
+`FATECOMPASS_DEVTOOLS`, and nothing in this repository defines it.
+
+To turn them on for your own machine:
+
+```powershell
+Copy-Item Directory.Build.local.props.example Directory.Build.local.props
+.\build.ps1
+```
+
+`build.ps1` then says which of the two kinds of build it made, because the difference is
+invisible in the output folder and very visible in the game.
+
+Three things keep such a build from ever leaving the machine:
+
+- `Directory.Build.local.props` is in `.gitignore`, so it cannot be committed by accident.
+- CI fails if it is committed on purpose. That is the only route by which a published build
+  could contain the tools, so it is checked rather than trusted.
+- The release workflow builds from a clean checkout, where the file does not exist.
+
+Verified rather than assumed: built both ways and read the type table out of the resulting
+assembly. Without the file it contains neither `DebugWindow` nor `Diagnostics`; with it, both.
+
+A guarded constant would have been almost as good and not quite. The window would still be in
+the assembly, and "off" is something a person can go looking for. Absent is not.

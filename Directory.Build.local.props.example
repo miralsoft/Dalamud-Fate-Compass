@@ -1,0 +1,19 @@
+<Project>
+
+  <!--
+    Copy this file to Directory.Build.local.props to compile the developer tools into your local
+    build: the bug icon in the title bar, the diagnostics window behind it, and the /fate debug
+    probes.
+
+    The copy is ignored by git and the CI fails if it is ever committed, so a build made from
+    this repository by anybody else, or by the release workflow, cannot contain any of it. The
+    guarded code is not switched off in those builds, it is not in the assembly at all.
+
+    After copying, run .\build.ps1 as usual. It says which of the two kinds of build it made.
+  -->
+
+  <PropertyGroup>
+    <DefineConstants>$(DefineConstants);FATECOMPASS_DEVTOOLS</DefineConstants>
+  </PropertyGroup>
+
+</Project>

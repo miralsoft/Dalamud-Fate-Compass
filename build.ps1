@@ -70,6 +70,15 @@ $devPath = Join-Path $dist $mainAssembly
 
 Write-Host ''
 Write-Host 'Build complete.' -ForegroundColor Green
+
+# Which of the two kinds of build this was. Worth saying out loud: the difference is invisible
+# in the output folder and very visible in the game, and a developer build must never be the one
+# that gets uploaded anywhere.
+if (Test-Path (Join-Path $PSScriptRoot 'Directory.Build.local.props')) {
+    Write-Host ''
+    Write-Host 'Developer tools ARE compiled in (Directory.Build.local.props is present).' -ForegroundColor Yellow
+    Write-Host 'This build is for your machine only. Releases are built from a clean checkout.' -ForegroundColor Gray
+}
 Write-Host ''
 Write-Host 'Register this path in Dalamud:' -ForegroundColor Yellow
 Write-Host "  /xlsettings  ->  Experimental  ->  Dev Plugin Locations" -ForegroundColor Gray
