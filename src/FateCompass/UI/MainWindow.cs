@@ -125,7 +125,7 @@ internal sealed class MainWindow : Window, IDisposable
             // Tall enough for the header, its rule, a row of tiles, and the bottom bar. The
             // window does not scroll, so the minimum has to be the height that actually fits
             // everything rather than a round number.
-            MinimumSize = new Vector2(360, 230),
+            MinimumSize = new Vector2(360, 275),
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue),
         };
 
@@ -511,15 +511,25 @@ internal sealed class MainWindow : Window, IDisposable
     /// Added up from the pieces a tile is made of rather than measured, because the strip has to
     /// be given its height before anything has been drawn into it.
     /// </remarks>
-    private static float TileRowHeight()
+    /// <remarks>
+    /// Adding something to a tile means adding it here too, and forgetting to is invisible in
+    /// the code and obvious on screen: the needle was added without this and came out sliced off
+    /// along the bottom of the strip. Anything drawn in a tile has to appear in both places.
+    /// </remarks>
+    private float TileRowHeight()
     {
         var line = ImGui.GetTextLineHeightWithSpacing();
         var spacing = ImGui.GetStyle().ItemSpacing.Y;
+
+        var compass = configuration.Settings.ShowCompassNeedle
+            ? (CompassRadius * 2f) + (CompassGap * 2f) + spacing
+            : 0f;
 
         return line               // the rank above the icon
             + TileWidth           // the icon, which is square
             + ActionIconSize      // the flag and teleport buttons
             + (line * 2f)         // progress with the countdown, then the distance
+            + compass             // the direction needle, with its air above and below
             + (spacing * 4f)
             + ImGui.GetStyle().ScrollbarSize
             + 8f;

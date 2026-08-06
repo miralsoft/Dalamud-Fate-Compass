@@ -7,6 +7,7 @@
         "Die Wegempfehlung kennt jetzt die Höhe der Aetheryten. Bisher wurde die Strecke vom Aetheryten zum Ziel flach gemessen, weshalb ein FATE auf einem Plateau ausgerechnet dem Aetheryten direkt darunter am nächsten schien. Jetzt wird der Aetheryt vorgeschlagen, von dem aus man wirklich am schnellsten dort ist.",
         "Ein Port wird jetzt mit 10 Sekunden Aufwand gerechnet statt mit 15. Der alte Wert war geschätzt und ein Drittel zu hoch, wodurch knappe Fälle falsch herum entschieden wurden. Wer den Wert selbst verstellt hat, behält seinen.",
         "Der Tooltip am Reiseknopf zeigt jetzt immer, mit welchem Aetheryten gerechnet wurde, wie weit der vom Ziel entfernt ist und beide Zeiten. Bisher stand bei \"direkt hin\" nur das, ohne den Vergleich dahinter.",
+        "Unter jedem Ziel steht jetzt eine Richtungsnadel. Sie dreht sich mit deiner Blickrichtung, nach oben heißt geradeaus, und sie wird grün, je näher du auf Kurs bist. Bist du im Zielkreis angekommen, wird sie zum Ring.",
         "Die Höhen stehen in keiner Spieldatei, deshalb lernt das Plugin sie: Aetheryten, an denen du vorbeikommst, werden gemerkt und bleiben gespeichert. Ein Aetheryt, an dem du noch nie warst, wird wie bisher flach gerechnet."
       ]
     },
