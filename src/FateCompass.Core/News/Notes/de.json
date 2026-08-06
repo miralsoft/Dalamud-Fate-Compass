@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "1.1.0",
+      "date": "2026-08-04",
+      "added": [
+        "Die Wegempfehlung kennt jetzt die Höhe der Aetheryten. Bisher wurde die Strecke vom Aetheryten zum Ziel flach gemessen, weshalb ein FATE auf einem Plateau ausgerechnet dem Aetheryten direkt darunter am nächsten schien. Jetzt wird der Aetheryt vorgeschlagen, von dem aus man wirklich am schnellsten dort ist.",
+        "Die Höhen stehen in keiner Spieldatei, deshalb lernt das Plugin sie: Aetheryten, an denen du vorbeikommst, werden gemerkt und bleiben gespeichert. Ein Aetheryt, an dem du noch nie warst, wird wie bisher flach gerechnet."
+      ]
+    },
+    {
       "version": "1.0.2",
       "date": "2026-08-03",
       "fixed": [

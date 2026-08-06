@@ -44,6 +44,16 @@ internal sealed class PluginConfiguration : IPluginConfiguration
     /// </summary>
     public List<SharedFateZone> SharedFateZones { get; set; } = [];
 
+    /// <summary>
+    /// How high each aetheryte stands, in world yalms, keyed by its row id.
+    /// </summary>
+    /// <remarks>
+    /// Learned rather than read: the game data has no elevation for an aetheryte, so it comes
+    /// from having stood near one. Persisted because a table that empties on every restart would
+    /// spend most of its life useless, and because heights only move when a patch moves them.
+    /// </remarks>
+    public Dictionary<uint, float> AetheryteElevations { get; set; } = [];
+
     public DateTimeOffset SharedFateReadAt { get; set; } = DateTimeOffset.MinValue;
 
     /// <summary>

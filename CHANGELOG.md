@@ -6,6 +6,30 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-08-04
+
+### Added
+
+- **Routes account for how high an aetheryte stands.** Until now the leg from an aetheryte to a
+  FATE was measured flat, so a target on a plateau looked closest to the aetheryte directly
+  underneath it, which is the one place you cannot walk from. Reported from play on 2026-08-01
+  and open ever since. The nearest aetheryte is now chosen by travel distance rather than by map
+  distance, with a climb weighted exactly as the ranking already weighted the player's own
+  approach (`VerticalTravelWeight`).
+
+  The note this was planned from proposed scanning the `Level` sheet and matching by proximity.
+  That was checked against the game data before being built and does not hold: of 108 visible
+  aetherytes only 15 are reachable through `Level.Object`, and `Aetheryte.Level` points at row
+  ids like 3785149 against a sheet of 61346 rows. There is no static table to read.
+
+  What works is not a data file at all. The aetheryte is a physical object standing in the zone,
+  and the object table reports its real position. The catch is that the game only loads objects
+  near the player, so heights are **learned rather than looked up**: whatever is in range is
+  remembered and persisted across sessions, and the table fills in as a zone gets played. An
+  aetheryte nobody has walked past measures flat, exactly as before, so the feature degrades into
+  the old behaviour rather than into a wrong answer. Both sides have to be known for a climb to
+  count, and setting the weight to zero restores the old measurement exactly.
+
 ## [1.0.2] - 2026-08-03
 
 One repair, in two parts: the travel button works in the exploratory zones, and it works all the

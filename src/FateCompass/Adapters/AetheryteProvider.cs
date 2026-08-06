@@ -43,16 +43,21 @@ internal static class AetheryteProvider
     /// Aetherytes of the given territory, positioned in map coordinates. Cached per zone,
     /// because the game data cannot change while the client runs.
     /// </summary>
+    /// <remarks>
+    /// The elevations are attached on the way out rather than cached with the rest. Positions and
+    /// names come from data files that cannot change while the client runs, so caching them is
+    /// free; heights are learned as the player moves around and would be frozen at whatever was
+    /// known the first time this zone was asked about.
+    /// </remarks>
     internal static IReadOnlyList<Core.Routing.Aetheryte> ForTerritory(uint territoryId)
     {
-        if (Cache.TryGetValue(territoryId, out var cached))
+        if (!Cache.TryGetValue(territoryId, out var cached))
         {
-            return cached;
+            cached = Load(territoryId);
+            Cache[territoryId] = cached;
         }
 
-        var result = Load(territoryId);
-        Cache[territoryId] = result;
-        return result;
+        return [.. cached.Select(a => a with { Elevation = AetheryteElevations.For(a.Id) })];
     }
 
     internal static void ClearCache() => Cache.Clear();

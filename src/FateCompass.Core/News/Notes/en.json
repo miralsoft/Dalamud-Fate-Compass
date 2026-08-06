@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "1.1.0",
+      "date": "2026-08-04",
+      "added": [
+        "Route advice now knows how high an aetheryte stands. The leg from an aetheryte to a FATE used to be measured flat, so a target on a plateau looked closest to the aetheryte directly underneath it. You now get the one you are actually fastest from.",
+        "Those heights are in no game file, so the plugin learns them: aetherytes you pass are remembered and kept. One you have never been near is measured flat, as before."
+      ]
+    },
+    {
       "version": "1.0.2",
       "date": "2026-08-03",
       "fixed": [

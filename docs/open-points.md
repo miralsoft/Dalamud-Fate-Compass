@@ -113,10 +113,25 @@ The player's and the FATEs' elevation is known and is now weighted into the rank
   the earlier bug that made every zone report no aetheryte at all.
 - The working source, `MapMarker` with `DataType == 3`, is a 2D map position with no height.
 
-So the leg from an aetheryte to a FATE is still judged as if it were flat. Worth trying next:
-scan the `Level` sheet for rows in the territory whose object type is an aetheryte, then match
-them to the map markers by proximity. That would give a real world position, height included,
-and would also remove the map-space conversion the route hints currently need.
+**Solved on 2026-08-04, and not the way this note proposed.** The suggestion was to scan the
+`Level` sheet and match by proximity. That was checked against the game data before being built,
+and it does not hold: of 108 visible aetherytes only **15** can be reached through
+`Level.Object`, and the `Aetheryte.Level` references are row ids like 3785149 against a sheet of
+61346 rows. There is no static table to read, by that route or any other.
+
+The source that does work is the obvious one, and it is not a data file: the aetheryte is a
+physical object standing in the zone, and the object table reports its real position, height
+included. `ObjectKind.Aetheryte` picks it out and `BaseId` is its row id.
+
+The cost is that the game only loads objects near the player, so a zone cannot be asked about
+all at once. The heights are therefore **learned rather than looked up**: whatever is in range is
+remembered and persisted, and the table fills in as a zone gets played. An aetheryte that has
+not been walked past yet measures flat, which is what every aetheryte did before, so the feature
+degrades into the old behaviour rather than into a wrong answer.
+
+Both sides have to be known for the climb to count. A height on the aetheryte but not the FATE,
+or the other way round, falls back to flat rather than comparing measured against unmeasured on
+different terms.
 
 ### Requested, not yet built
 
