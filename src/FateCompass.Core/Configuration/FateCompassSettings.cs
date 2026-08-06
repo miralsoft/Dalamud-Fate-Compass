@@ -132,6 +132,21 @@ public sealed class FateCompassSettings
     /// </remarks>
     public bool TypeFlagIntoChat { get; set; } = true;
 
+    /// <summary>
+    /// Show a needle under each entry pointing the way to it, relative to where the character is
+    /// facing.
+    /// </summary>
+    /// <remarks>
+    /// On by default. It is a display, not an action, and it answers the question the window is
+    /// otherwise silent about: the list says how far, the needle says which way.
+    /// <para>
+    /// It follows the character rather than the camera. The camera answers "where am I looking",
+    /// the character answers "where would I go if I pressed forward", and the second is the
+    /// question somebody flying is asking.
+    /// </para>
+    /// </remarks>
+    public bool ShowCompassNeedle { get; set; } = true;
+
     // --- Announcing the leading FATE -----------------------------------------------------
 
     /// <summary>

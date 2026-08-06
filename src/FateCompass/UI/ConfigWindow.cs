@@ -277,6 +277,9 @@ internal sealed class ConfigWindow : Window, IDisposable
         changed |= Checkbox(StringKeys.SettingShowRankMarkers, StringKeys.SettingShowRankMarkersHelp,
             settings.ShowRankMarkersOnMap, value => settings.ShowRankMarkersOnMap = value);
 
+        changed |= Checkbox(StringKeys.SettingShowCompass, StringKeys.SettingShowCompassHelp,
+            settings.ShowCompassNeedle, value => settings.ShowCompassNeedle = value);
+
         Section(StringKeys.SettingsChat);
 
         changed |= Checkbox(StringKeys.SettingTypeFlagIntoChat, StringKeys.SettingTypeFlagIntoChatHelp,

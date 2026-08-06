@@ -72,6 +72,8 @@
   "button.placement.move": "Symbol verschieben",
   "button.placement.done": "Position übernehmen",
   "placement.hint": "Zieh das Symbol mit der Maus an die gewünschte Stelle.",
+  "setting.showCompass": "Richtungsnadel unter jedem Ziel anzeigen",
+  "setting.showCompass.help": "Eine kleine Nadel, die sich mit deiner Blickrichtung dreht und auf das jeweilige Ziel zeigt. Nach oben heißt geradeaus, grün heißt auf Kurs. Sie zeigt die Luftlinie, nicht den begehbaren Weg. Am Ziel angekommen wird sie zum Ring.",
   "setting.showRankMarkers": "Beste FATEs auf der Karte nummerieren",
   "setting.showRankMarkers.help": "Setzt Spielmarker auf Karte und Minikarte, damit die Reihenfolge dort sichtbar ist.",
 

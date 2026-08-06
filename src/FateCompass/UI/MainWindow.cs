@@ -765,6 +765,7 @@ internal sealed class MainWindow : Window, IDisposable
             }
 
             ImGui.TextDisabled($"{entry.DistanceYalms:F0}{localizer.Get(StringKeys.UnitYalms)}");
+            DrawCompass(entry, TileWidth);
             return;
         }
 
@@ -784,6 +785,96 @@ internal sealed class MainWindow : Window, IDisposable
         }
 
         ImGui.TextDisabled($"{entry.DistanceYalms:F0}{localizer.Get(StringKeys.UnitYalms)}");
+        DrawCompass(entry, TileWidth);
+    }
+
+    /// <summary>Radius of the needle drawn under a tile.</summary>
+    private const float CompassRadius = 14f;
+
+    /// <summary>Air between the distance line and the needle under it, and below the needle.</summary>
+    private const float CompassGap = 5f;
+
+    /// <summary>The same needle on one line, for a table row.</summary>
+    private void DrawCompassInline(RankedFate entry)
+    {
+        if (!configuration.Settings.ShowCompassNeedle)
+        {
+            return;
+        }
+
+        var player = DalamudServices.ObjectTable.LocalPlayer;
+        if (player is null)
+        {
+            return;
+        }
+
+        var radius = ImGui.GetFontSize() * 0.62f;
+        var top = ImGui.GetCursorPosY();
+
+        if (CompassBearing.IsAtTarget(entry.DistanceYalms, entry.Fate.Radius))
+        {
+            Widgets.CompassArrived(radius);
+        }
+        else
+        {
+            var here = new WorldPosition(player.Position.X, player.Position.Y, player.Position.Z);
+            var relative = CompassBearing.Relative(here, player.Rotation, entry.Fate.Position);
+            Widgets.CompassNeedle(radius, relative, CompassBearing.OnCourse(relative));
+        }
+
+        ImGui.SameLine(0f, 6f);
+        ImGui.SetCursorPosY(top);
+        ImGui.AlignTextToFramePadding();
+    }
+
+    /// <summary>
+    /// The needle that says which way to turn, drawn from the facing as it is this frame.
+    /// </summary>
+    /// <remarks>
+    /// Read live rather than from the polled snapshot. The rest of this window is refreshed
+    /// twice a second, which is plenty for a countdown and useless for something that follows
+    /// the character's heading: at that rate the needle lags a visible fraction of a turn behind
+    /// the player and looks broken. One property read per tile per frame is a price worth paying
+    /// for that.
+    /// <para>
+    /// It points along the straight line, which is the whole idea and also its limit. It answers
+    /// "am I heading at it", never "can I get there this way".
+    /// </para>
+    /// </remarks>
+    private void DrawCompass(RankedFate entry, float width)
+    {
+        if (!configuration.Settings.ShowCompassNeedle)
+        {
+            return;
+        }
+
+        var player = DalamudServices.ObjectTable.LocalPlayer;
+        if (player is null)
+        {
+            return;
+        }
+
+        // Air above and below. Pressed straight against the distance the needle read as part of
+        // the text block rather than as its own thing, and a tile that ends on the pixel below a
+        // glyph looks squeezed however correct the spacing technically is.
+        ImGui.Dummy(new Vector2(0f, CompassGap));
+
+        // Centred under the tile, so the row of needles reads as a row.
+        ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ((width - (CompassRadius * 2f)) / 2f));
+
+        if (CompassBearing.IsAtTarget(entry.DistanceYalms, entry.Fate.Radius))
+        {
+            Widgets.CompassArrived(CompassRadius);
+        }
+        else
+        {
+            var here = new WorldPosition(player.Position.X, player.Position.Y, player.Position.Z);
+            var relative = CompassBearing.Relative(here, player.Rotation, entry.Fate.Position);
+
+            Widgets.CompassNeedle(CompassRadius, relative, CompassBearing.OnCourse(relative));
+        }
+
+        ImGui.Dummy(new Vector2(0f, CompassGap));
     }
 
     /// <summary>
@@ -1074,6 +1165,10 @@ internal sealed class MainWindow : Window, IDisposable
             }
 
             ImGui.TableNextColumn();
+
+            // Beside the distance rather than under it: a table row is one line, and how far
+            // away something is and which way it lies are the same question asked twice.
+            DrawCompassInline(entry);
             ImGui.TextUnformatted($"{entry.DistanceYalms:F0}{localizer.Get(StringKeys.UnitYalms)}");
 
             // Participation is only reported by the instanced engagement content. Open-world
