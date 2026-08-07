@@ -406,27 +406,34 @@ public sealed class DynamicEventRankingTests
         Assert.Equal(20f, settings.SpeedFor(ContentKind.Overworld, 0, hasMountSpeedUpgrades: false));
     }
 
+    /// <summary>
+    /// An exploratory zone charges its own figure, not the ordinary teleport. There is no
+    /// teleporting to a destination from where you stand there: it is the return to camp, the
+    /// walk to the aetheryte and the port out, and that whole chain is one measured number
+    /// rather than a sum of parts nobody can time separately.
+    /// </summary>
     [Fact]
-    public void AnExploratoryZonePaysForBothHops()
+    public void AnExploratoryZoneChargesItsOwnFigure()
     {
-        // There is no teleporting to a destination from where you stand: it is the return spell
-        // to camp and then the aetheryte out. Both waits count, and counting only the second one
-        // made the trip look half as expensive as it is.
         var settings = Settings();
         settings.TeleportOverheadSeconds = 15f;
-        settings.ReturnOverheadSeconds = 20f;
+        settings.ExploratoryTravelOverheadSeconds = 20f;
 
         Assert.Equal(15f, settings.TeleportOverheadFor(ContentKind.Overworld));
-        Assert.Equal(35f, settings.TeleportOverheadFor(ContentKind.OccultCrescent));
-        Assert.Equal(35f, settings.TeleportOverheadFor(ContentKind.Bozja));
+        Assert.Equal(20f, settings.TeleportOverheadFor(ContentKind.OccultCrescent));
+        Assert.Equal(20f, settings.TeleportOverheadFor(ContentKind.Bozja));
     }
 
+    /// <summary>
+    /// Standing at the camp's own aetheryte, the journey there has already been made, so the
+    /// trip costs an ordinary teleport rather than the whole chain.
+    /// </summary>
     [Fact]
-    public void StandingAtTheAetheryteDropsTheReturnLeg()
+    public void StandingAtTheAetheryteDropsTheJourneyToIt()
     {
         var settings = Settings();
         settings.TeleportOverheadSeconds = 15f;
-        settings.ReturnOverheadSeconds = 20f;
+        settings.ExploratoryTravelOverheadSeconds = 20f;
         settings.ExploratoryTravelSpeedYalmsPerSecond = 10f;
 
         var camp = TestData.Aetheryte(id: 0, x: 0f, z: 0f);
@@ -439,8 +446,11 @@ public sealed class DynamicEventRankingTests
         var fromCamp = RouteHintCalculator.Calculate(fate, atCamp, [camp], settings, 50f);
         var fromAway = RouteHintCalculator.Calculate(fate, away, [camp], settings, 50f);
 
+        var savedByBeingThere =
+            settings.ExploratoryTravelOverheadSeconds - settings.TeleportOverheadSeconds;
+
         Assert.Equal(
-            fromAway!.EstimatedTeleportRouteSeconds - settings.ReturnOverheadSeconds,
+            fromAway!.EstimatedTeleportRouteSeconds - savedByBeingThere,
             fromCamp!.EstimatedTeleportRouteSeconds,
             precision: 3);
     }

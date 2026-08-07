@@ -129,6 +129,106 @@ internal static class Widgets
     /// <summary>How wide a badge would be for this text, so a set of them can share one width.</summary>
     internal static float BadgeWidth(string text) => ImGui.CalcTextSize(text).X + 16f;
 
+    /// <summary>Fully on course. The same green the route advice uses for a worthwhile teleport.</summary>
+    private static readonly Vector4 OnCourseColour = new(0.40f, 0.95f, 0.50f, 1f);
+
+    /// <summary>
+    /// Pointing anywhere else. Grey rather than red, because a wrong heading is not a warning.
+    /// </summary>
+    /// <remarks>
+    /// Bright, though. The first version used a mid grey at four fifths opacity, which on this
+    /// window's near-black background left a shape you had to look for rather than one you saw.
+    /// Off course still has to be legible; it is the state the needle spends most of its time in.
+    /// </remarks>
+    private static readonly Vector4 OffCourseColour = new(0.78f, 0.78f, 0.80f, 1f);
+
+    /// <summary>
+    /// Drawn behind the needle so it separates from whatever is under it.
+    /// </summary>
+    /// <remarks>
+    /// A dark outline around a light shape is what makes a small glyph readable on a background
+    /// whose brightness cannot be relied on. Without it the needle disappeared into the window
+    /// at a glance, which for something meant to be glanced at is the whole failure.
+    /// </remarks>
+    private static readonly Vector4 NeedleOutline = new(0.05f, 0.05f, 0.07f, 0.9f);
+
+    /// <summary>
+    /// A needle pointing at something, with up meaning straight ahead.
+    /// </summary>
+    /// <remarks>
+    /// Screen space grows downward, so ahead is minus Y. The needle is a triangle with a notch
+    /// cut out of its base rather than a plain one, because at this size a plain triangle reads
+    /// as a blob and its point is the only part carrying the information.
+    /// </remarks>
+    /// <param name="radius">Half the space the needle occupies, in pixels.</param>
+    /// <param name="relativeRadians">Turn needed, clockwise, with zero straight ahead.</param>
+    /// <param name="onCourse">Zero for wide of the mark, one for dead on. Blends the colour.</param>
+    internal static void CompassNeedle(float radius, float relativeRadians, float onCourse)
+    {
+        var size = new Vector2(radius * 2f, radius * 2f);
+        var origin = ImGui.GetCursorScreenPos();
+        ImGui.Dummy(size);
+
+        var centre = origin + new Vector2(radius, radius);
+        var colour = Vector4.Lerp(OffCourseColour, OnCourseColour, Math.Clamp(onCourse, 0f, 1f));
+        var draw = ImGui.GetWindowDrawList();
+
+        Vector2 At(float angle, float distance) => centre + new Vector2(
+            MathF.Sin(angle) * distance,
+            -MathF.Cos(angle) * distance);
+
+        // An arrowhead: a point, two wings swept back, and a notch cut into the base between
+        // them. The notch belongs *behind* the centre, opposite the point. Putting it in front,
+        // between the centre and the tip, folds the shape in on itself and leaves two slivers
+        // that read as a tick mark rather than an arrow, which is precisely how the first
+        // attempt looked on screen.
+        var tip = At(relativeRadians, radius);
+        var wingLeft = At(relativeRadians + WingAngle, radius * 0.95f);
+        var wingRight = At(relativeRadians - WingAngle, radius * 0.95f);
+        var notch = At(relativeRadians + MathF.PI, radius * 0.25f);
+
+        // Traced tip, wing, notch, wing, so the quad follows the outline rather than crossing
+        // itself. The fill and the outline take the same four points, which is what keeps the
+        // edge on the shape instead of near it.
+        draw.AddQuadFilled(tip, wingLeft, notch, wingRight, ImGui.GetColorU32(colour));
+        draw.AddQuad(
+            tip, wingLeft, notch, wingRight,
+            ImGui.GetColorU32(NeedleOutline),
+            MathF.Max(radius * 0.12f, 1f));
+    }
+
+    /// <summary>
+    /// How far back the wings sweep from the point, in radians.
+    /// </summary>
+    /// <remarks>
+    /// About 140 degrees. Narrower gives a dart that is elegant at four times this size and
+    /// unreadable here; wider gives a lozenge with no obvious front. What carries a direction at
+    /// this scale is the silhouette, and a silhouette needs both width and an unmistakable point.
+    /// </remarks>
+    private const float WingAngle = 2.45f;
+
+    /// <summary>
+    /// Drawn instead of the needle once the target is underfoot.
+    /// </summary>
+    /// <remarks>
+    /// A ring with a dot in it, the shape a compass uses for "this is the place". Hiding the
+    /// needle would have done the job too, but an empty space says nothing, while this says
+    /// arrived, and it keeps the row from changing height as it happens.
+    /// </remarks>
+    internal static void CompassArrived(float radius)
+    {
+        var size = new Vector2(radius * 2f, radius * 2f);
+        var origin = ImGui.GetCursorScreenPos();
+        ImGui.Dummy(size);
+
+        var centre = origin + new Vector2(radius, radius);
+        var colour = ImGui.GetColorU32(OnCourseColour);
+        var draw = ImGui.GetWindowDrawList();
+
+        draw.AddCircle(centre, radius * 0.85f, colour, 0, MathF.Max(radius * 0.16f, 1.5f));
+        draw.AddCircleFilled(centre, radius * 0.3f, colour);
+    }
+
     /// <summary>A switch with a caption beside it, aligned to the switch's centre line.</summary>
     internal static bool ToggleWithLabel(string id, string label, ref bool value)
     {

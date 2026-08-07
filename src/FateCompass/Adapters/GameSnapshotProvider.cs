@@ -170,6 +170,7 @@ internal static class GameSnapshotProvider
         Kind = ClassifyKind(fate),
         State = MapState(fate.State),
         Position = new WorldPosition(fate.Position.X, fate.Position.Y, fate.Position.Z),
+        Radius = fate.Radius > 0f ? fate.Radius : null,
         ProgressPercent = Math.Clamp((int)fate.Progress, 0, 100),
         SecondsRemaining = Math.Max((int)fate.TimeRemaining, 0),
         HasStarted = HasClockStarted(fate),

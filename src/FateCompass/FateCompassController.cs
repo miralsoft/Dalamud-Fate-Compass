@@ -310,6 +310,16 @@ internal sealed class FateCompassController : IDisposable
         // the player and the FATEs are converted into the same space before anything is
         // measured. Mixing world and map coordinates is what made every aetheryte look absent.
         var mapId = DalamudServices.ClientState.MapId;
+
+        // Aetheryte heights exist nowhere in the game data, so they are picked up from whichever
+        // aetheryte happens to be loaded around the player. Done here, on the poll, because an
+        // aetheryte does not move between frames.
+        if (AetheryteElevations.Learn())
+        {
+            configuration.AetheryteElevations = new Dictionary<uint, float>(AetheryteElevations.Export());
+            configuration.Save();
+        }
+
         var aetherytes = AetheryteProvider.ForTerritory(territory);
         var playerOnMap = AetheryteProvider.ToMapSpace(player.Position, mapId);
         var routes = new Dictionary<uint, RouteHint>();
@@ -328,13 +338,18 @@ internal sealed class FateCompassController : IDisposable
                 // The ranker already measured the direct route in world space with elevation
                 // weighted in. Handing that figure over keeps the teleport verdict aware of
                 // height, which the flat map space alone cannot be.
+                // The FATE's own height goes over separately, because the position handed to the
+                // calculator is in map space and map space has no height. Without it the second
+                // leg of the route is flat, and a target on a plateau looks closest to the
+                // aetheryte directly underneath it.
                 var hint = RouteHintCalculator.Calculate(
                     entry.Fate with { Position = fateMapPosition },
                     playerInMapSpace,
                     aetherytes,
                     configuration.Settings,
                     AetheryteProvider.YalmsPerMapUnit,
-                    entry.DistanceYalms);
+                    entry.DistanceYalms,
+                    entry.Fate.Position.Y);
 
                 if (hint is not null)
                 {

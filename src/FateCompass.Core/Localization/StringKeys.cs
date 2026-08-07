@@ -115,6 +115,8 @@ public static class StringKeys
     public const string ButtonPlacementMove = "button.placement.move";
     public const string ButtonPlacementDone = "button.placement.done";
     public const string PlacementHint = "placement.hint";
+    public const string SettingShowCompass = "setting.showCompass";
+    public const string SettingShowCompassHelp = "setting.showCompass.help";
     public const string SettingShowRankMarkers = "setting.showRankMarkers";
     public const string SettingShowRankMarkersHelp = "setting.showRankMarkers.help";
 
@@ -155,6 +157,7 @@ public static class StringKeys
     public const string RouteWalkFaster = "route.walkFaster";
     public const string RouteNoAetheryte = "route.noAetheryte";
     public const string RouteReturnFirst = "route.returnFirst";
+    public const string RouteComparison = "route.comparison";
     public const string RouteTooLate = "route.tooLate";
     public const string RouteSaves = "route.saves";
     public const string RouteCosts = "route.costs";
@@ -291,6 +294,7 @@ public static class StringKeys
         SettingMinimapSize, SettingMinimapOffsetX, SettingMinimapOffsetY,
         ButtonPlacementMove, ButtonPlacementDone, PlacementHint,
         SettingShowRankMarkers, SettingShowRankMarkersHelp,
+        SettingShowCompass, SettingShowCompassHelp,
         KindUnknown, KindBoss, KindSlay, KindCollect, KindEscort, KindDefend,
         KindSkirmish, KindCriticalEngagement, KindCriticalEncounter, KindSpecialObjective,
         ListParticipants, StateRegistrationOpen, NotificationRegistrationOpen,
@@ -298,7 +302,7 @@ public static class StringKeys
         ExcludedNotJoinable, ExcludedFiltered, ExcludedNearlyComplete, ExcludedExpiringSoon,
         ExcludedUnreachable, ExcludedRegistrationClosed, ExcludedRegistrationTooLate,
         StateRegistrationCloses,
-        RouteWalkFaster, RouteNoAetheryte, RouteReturnFirst,
+        RouteWalkFaster, RouteNoAetheryte, RouteReturnFirst, RouteComparison,
         RouteTooLate, RouteSaves, RouteCosts,
         GemstonesLabel, GemstonesWarning, GemstonesFull,
         SharedFateProgress, SharedFateComplete, SharedFateNoData, SharedFateAge,

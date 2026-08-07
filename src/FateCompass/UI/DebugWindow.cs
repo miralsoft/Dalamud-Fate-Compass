@@ -1,3 +1,7 @@
+// Developer tools. Present only in a build that defines FATECOMPASS_DEVTOOLS, which no
+// committed file does: it comes from Directory.Build.local.props, which is ignored by git.
+// In every published build this file compiles to nothing at all.
+#if FATECOMPASS_DEVTOOLS
 using System.Numerics;
 using Dalamud.Bindings.ImGui;
 using Dalamud.Interface.Windowing;
@@ -404,3 +408,4 @@ internal sealed class DebugWindow : Window, IDisposable
             """;
     }
 }
+#endif

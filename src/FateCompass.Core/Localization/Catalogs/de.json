@@ -72,6 +72,8 @@
   "button.placement.move": "Symbol verschieben",
   "button.placement.done": "Position übernehmen",
   "placement.hint": "Zieh das Symbol mit der Maus an die gewünschte Stelle.",
+  "setting.showCompass": "Richtungsnadel unter jedem Ziel anzeigen",
+  "setting.showCompass.help": "Eine kleine Nadel, die sich mit deiner Blickrichtung dreht und auf das jeweilige Ziel zeigt. Nach oben heißt geradeaus, grün heißt auf Kurs. Sie zeigt die Luftlinie, nicht den begehbaren Weg. Am Ziel angekommen wird sie zum Ring.",
   "setting.showRankMarkers": "Beste FATEs auf der Karte nummerieren",
   "setting.showRankMarkers.help": "Setzt Spielmarker auf Karte und Minikarte, damit die Reihenfolge dort sichtbar ist.",
 
@@ -105,6 +107,7 @@
 
   "route.walkFaster": "Direkt hin",
   "route.noAetheryte": "Kein Aetheryt in dieser Zone.",
+  "route.comparison": "Direkt {0}s   ·   Port {1}s",
   "route.returnFirst": "Wirkt Rückführung und bringt dich ins Lager. Der Rest des Wegs läuft über das Reisemenü dort.",
   "route.tooLate": "Zu spät, endet vor deiner Ankunft",
   "route.saves": "spart ~{0}s",
@@ -163,7 +166,7 @@
   "setting.travelSpeed.exploratory": "Reisegeschwindigkeit in Eureka, Bozja und Crescent (mit Reitwege-Karte)",
   "setting.travelSpeed.exploratorySlow": "Dieselben Gebiete ohne gekaufte Reitwege-Karte",
   "setting.teleportOverhead": "Angenommene Portkosten (Sekunden)",
-  "setting.returnOverhead": "Kosten der Rückführung ins Lager (Sekunden)",
+  "setting.returnOverhead": "Aufwand für eine Reise in Erkundungsgebieten (Sekunden)",
   "setting.nearlyDone": "Gilt als fertig ab (Prozent)",
   "setting.minimumRemaining": "Mindestrestzeit (Sekunden)",
   "setting.weight.distance": "Gewichtung: Entfernung",

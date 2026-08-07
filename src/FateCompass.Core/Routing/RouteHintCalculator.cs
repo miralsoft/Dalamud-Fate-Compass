@@ -34,13 +34,21 @@ public static class RouteHintCalculator
     /// </remarks>
     private const float AtAetheryteYalms = 40f;
 
+    /// <remarks>
+    /// <c>fateElevation</c> is the FATE's height in world yalms. Together with an aetheryte's own
+    /// elevation it turns the second leg from a flat line into a climb, which changes not only
+    /// the estimate but the choice: the nearest aetheryte on the map is not the nearest one to
+    /// travel from when the target sits a hundred yalms above it. Both sides have to be known for
+    /// that; either one missing falls back to the flat measure.
+    /// </remarks>
     public static RouteHint? Calculate(
         FateSnapshot fate,
         PlayerSnapshot player,
         IReadOnlyCollection<Aetheryte> aetherytes,
         FateCompassSettings settings,
         float yalmsPerUnit = 1f,
-        float? directDistanceYalms = null)
+        float? directDistanceYalms = null,
+        float? fateElevation = null)
     {
         ArgumentNullException.ThrowIfNull(fate);
         ArgumentNullException.ThrowIfNull(player);
@@ -53,13 +61,17 @@ public static class RouteHintCalculator
         }
 
 
+        var scale = MathF.Max(yalmsPerUnit, 0.0001f);
+
+        // Chosen by how far it is to travel, not by how close it looks on a flat map. That is
+        // the whole point: a FATE on a plateau is reached faster from a further aetheryte at the
+        // same height than from the one directly below it.
         var nearest = aetherytes
-            .OrderBy(aetheryte => aetheryte.Position.HorizontalDistanceTo(fate.Position))
+            .OrderBy(aetheryte => TravelYalms(aetheryte, fate, settings, scale, fateElevation))
             .ThenBy(aetheryte => aetheryte.Id)
             .First();
 
-        var scale = MathF.Max(yalmsPerUnit, 0.0001f);
-        var aetheryteToFate = nearest.Position.HorizontalDistanceTo(fate.Position) * scale;
+        var aetheryteToFate = TravelYalms(nearest, fate, settings, scale, fateElevation);
 
         // Prefer the caller's world-space figure, which knows about elevation. Fall back to the
         // flat map measure only when none was supplied.
@@ -93,5 +105,34 @@ public static class RouteHintCalculator
             FateSecondsRemaining = fate.SecondsRemaining,
             FateHasStarted = fate.HasStarted,
         };
+    }
+
+    /// <summary>
+    /// Travel distance from an aetheryte to the FATE, in yalms, with a climb weighted the same
+    /// way the ranking weights the player's own approach.
+    /// </summary>
+    /// <remarks>
+    /// The flat part is measured in map coordinates and scaled into yalms; the climb is already
+    /// in yalms because both elevations come from world space. Mixing the two is safe only
+    /// because the scaling happens first, which is why it happens here and not at the call site.
+    /// </remarks>
+    private static float TravelYalms(
+        Aetheryte aetheryte,
+        FateSnapshot fate,
+        FateCompassSettings settings,
+        float scale,
+        float? fateElevation)
+    {
+        var flat = aetheryte.Position.HorizontalDistanceTo(fate.Position) * scale;
+
+        if (aetheryte.Elevation is not { } aetheryteHeight
+            || fateElevation is not { } fateHeight
+            || settings.VerticalTravelWeight <= 0f)
+        {
+            return flat;
+        }
+
+        var climb = MathF.Abs(aetheryteHeight - fateHeight) * settings.VerticalTravelWeight;
+        return MathF.Sqrt((flat * flat) + (climb * climb));
     }
 }

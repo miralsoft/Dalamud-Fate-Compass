@@ -49,6 +49,18 @@ jobs:
       - name: Format check
         run: dotnet format FateCompass.slnx --verify-no-changes --verbosity minimal
 
+      # The developer tools are compiled in by a file that git ignores. A published build must
+      # never contain them, so the one way that could happen, somebody committing that file, is
+      # checked here rather than left to .gitignore alone.
+      - name: No local build switches committed
+        shell: pwsh
+        run: |
+          if (Test-Path "Directory.Build.local.props") {
+            Write-Error "Directory.Build.local.props is committed. It compiles the developer tools into the build and has to stay local."
+            exit 1
+          }
+          Write-Host "No local build switches present."
+
       - name: Vulnerable dependency scan
         shell: pwsh
         run: |

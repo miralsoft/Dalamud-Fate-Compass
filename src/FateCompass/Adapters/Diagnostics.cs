@@ -1,3 +1,7 @@
+// Developer tools. Present only in a build that defines FATECOMPASS_DEVTOOLS, which no
+// committed file does: it comes from Directory.Build.local.props, which is ignored by git.
+// In every published build this file compiles to nothing at all.
+#if FATECOMPASS_DEVTOOLS
 using System.Numerics;
 using System.Text;
 using FateCompass.Services;
@@ -428,3 +432,4 @@ internal static unsafe class Diagnostics
         return Encoding.UTF8.GetString(pointer, length);
     }
 }
+#endif

@@ -277,6 +277,9 @@ internal sealed class ConfigWindow : Window, IDisposable
         changed |= Checkbox(StringKeys.SettingShowRankMarkers, StringKeys.SettingShowRankMarkersHelp,
             settings.ShowRankMarkersOnMap, value => settings.ShowRankMarkersOnMap = value);
 
+        changed |= Checkbox(StringKeys.SettingShowCompass, StringKeys.SettingShowCompassHelp,
+            settings.ShowCompassNeedle, value => settings.ShowCompassNeedle = value);
+
         Section(StringKeys.SettingsChat);
 
         changed |= Checkbox(StringKeys.SettingTypeFlagIntoChat, StringKeys.SettingTypeFlagIntoChatHelp,
@@ -405,8 +408,9 @@ internal sealed class ConfigWindow : Window, IDisposable
             value => settings.ExploratorySlowTravelSpeedYalmsPerSecond = value);
         changed |= FloatSlider(StringKeys.SettingTeleportOverhead, settings.TeleportOverheadSeconds,
             0f, 60f, value => settings.TeleportOverheadSeconds = value);
-        changed |= FloatSlider(StringKeys.SettingReturnOverhead, settings.ReturnOverheadSeconds,
-            0f, 60f, value => settings.ReturnOverheadSeconds = value);
+        changed |= FloatSlider(
+            StringKeys.SettingReturnOverhead, settings.ExploratoryTravelOverheadSeconds,
+            0f, 60f, value => settings.ExploratoryTravelOverheadSeconds = value);
         changed |= IntSlider(StringKeys.SettingNearlyDone, settings.NearlyDoneThresholdPercent,
             50, 100, value => settings.NearlyDoneThresholdPercent = value);
         changed |= IntSlider(StringKeys.SettingMinimumRemaining, settings.MinimumSecondsRemaining,

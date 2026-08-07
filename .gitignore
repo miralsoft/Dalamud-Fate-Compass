@@ -30,3 +30,7 @@ Dalamud*.dll
 FFXIVClientStructs*.dll
 Lumina*.dll
 ImGui*.dll
+
+# Local build switches. Never committed, and the CI checks that it never is: this is what turns
+# the developer tools on, and a build that has them is a build that must not leave this machine.
+Directory.Build.local.props

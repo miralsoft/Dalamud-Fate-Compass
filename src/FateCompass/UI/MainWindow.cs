@@ -120,12 +120,9 @@ internal sealed class MainWindow : Window, IDisposable
 
         SizeConstraints = new WindowSizeConstraints
         {
-            // Wide enough that the bottom row never wraps onto a second line, which is what
-            // sets the floor rather than the tiles.
-            // Tall enough for the header, its rule, a row of tiles, and the bottom bar. The
-            // window does not scroll, so the minimum has to be the height that actually fits
-            // everything rather than a round number.
-            MinimumSize = new Vector2(360, 230),
+            // A starting point only. The real minimum height is worked out every frame in
+            // PreDraw from what is actually being drawn, because it depends on settings.
+            MinimumSize = new Vector2(MinimumWidth, 240),
             MaximumSize = new Vector2(float.MaxValue, float.MaxValue),
         };
 
@@ -205,6 +202,20 @@ internal sealed class MainWindow : Window, IDisposable
 
         WindowName = $"{title}###FateCompassMain";
 
+        // The minimum height is derived, not chosen. This window never scrolls: everything in it
+        // is either one row of tiles or a list that scrolls inside its own frame, so a window too
+        // short to hold its contents does not hide them politely, it clips them. A hand-picked
+        // number was right until the needle was added and then silently was not, which is the
+        // same failure the tile strip had one level down.
+        if (configuration.Settings.CompactView && CompactContentHeight() is > 0f and var needed)
+        {
+            SizeConstraints = new WindowSizeConstraints
+            {
+                MinimumSize = new Vector2(MinimumWidth, needed),
+                MaximumSize = new Vector2(float.MaxValue, float.MaxValue),
+            };
+        }
+
         // Set every frame rather than once: it goes out again the moment the notes are opened,
         // and the language can change underneath it.
         newsButton?.IconColor = hasUnseenNews() ? UnseenNewsColour : null;
@@ -244,6 +255,13 @@ internal sealed class MainWindow : Window, IDisposable
         ImGui.Dummy(new Vector2(0f, BarPadding * 0.5f));
         ImGui.Separator();
         ImGui.Dummy(new Vector2(0f, BarPadding * 0.5f));
+
+        // Measured, not predicted. Everything above this point varies: the gemstone line appears
+        // or does not, the zone progress the same, the riding map hint only in some zones, and
+        // there are rules and spacers between them. Adding those up by hand is how the minimum
+        // height came out short enough to cut the bottom bar in half, so the header now reports
+        // what it actually took and the window sizes itself to that.
+        measuredHeaderHeight = ImGui.GetCursorPosY();
 
         if (configuration.Settings.CompactView)
         {
@@ -466,6 +484,10 @@ internal sealed class MainWindow : Window, IDisposable
         // it had seven, and the number that could be shown depended on how wide the window was
         // rather than on anything about the zone. Now every recommendation is in there and the
         // window's width decides only how many are in view.
+        // Started fresh every frame rather than kept as a running maximum, so switching the
+        // needle off gives the height back instead of holding the tallest a tile has ever been.
+        tallestTileThisFrame = 0f;
+
         if (ImGui.BeginChild(
             "##compactTiles",
             new Vector2(stripWidth, TileRowHeight()),
@@ -481,9 +503,16 @@ internal sealed class MainWindow : Window, IDisposable
 
                 DrawTile(candidates[index]);
             }
+
+            // Only a strip that actually scrolls needs room for a scrollbar. Reserving it
+            // always cost a band of empty space under every tile in every window wide enough to
+            // hold its tiles, which is most of them.
+            stripScrolls = ImGui.GetScrollMaxX() > 0f;
         }
 
         ImGui.EndChild();
+
+        measuredTileHeight = tallestTileThisFrame;
 
         DrawSidelined(special, hasTargets: true);
         DrawPendingSidelineRule(rowTop);
@@ -511,19 +540,92 @@ internal sealed class MainWindow : Window, IDisposable
     /// Added up from the pieces a tile is made of rather than measured, because the strip has to
     /// be given its height before anything has been drawn into it.
     /// </remarks>
-    private static float TileRowHeight()
+    /// <remarks>
+    /// Adding something to a tile means adding it here too, and forgetting to is invisible in
+    /// the code and obvious on screen: the needle was added without this and came out sliced off
+    /// along the bottom of the strip. Anything drawn in a tile has to appear in both places.
+    /// </remarks>
+    /// <summary>
+    /// Narrowest the window may be, set by the bottom bar rather than by the tiles.
+    /// </summary>
+    /// <remarks>
+    /// The bar holds the automation switch, the chat controls and the view buttons side by side,
+    /// and it is the one thing here that wraps onto a second line when squeezed, which then
+    /// pushes the list into the space the bar is standing in. The tiles do not set the floor:
+    /// they scroll sideways by design.
+    /// <para>
+    /// Unlike the height, this is dialled in rather than derived, and the number comes from the
+    /// width the window was actually sized to in play rather than from an estimate. Measuring it
+    /// the way the height is measured does not work: the right-hand group is aligned to the
+    /// window's edge, so it reports the width it was given instead of the width it needs.
+    /// </para>
+    /// </remarks>
+    private const float MinimumWidth = 536f;
+
+    /// <summary>
+    /// The height the compact view needs to show everything it is drawing.
+    /// </summary>
+    /// <remarks>
+    /// Derived from the same pieces the tile strip is, so a change to a tile reaches both the
+    /// strip and the window at once. Everything here is either a row of tiles or a list that
+    /// scrolls inside its own frame, so a window shorter than its contents clips them rather
+    /// than scrolling.
+    /// </remarks>
+    private float CompactContentHeight()
     {
+        // Nothing has been drawn yet on the very first frame, so the constructor's estimate
+        // stands for one frame and the measurement takes over from the second.
+        if (measuredHeaderHeight <= 0f)
+        {
+            return 0f;
+        }
+
+        return measuredHeaderHeight      // header, rules and spacers, as actually drawn
+            + TileRowHeight()
+            + BottomBarHeight()
+            + ImGui.GetStyle().WindowPadding.Y   // the top padding is already in the measurement
+            + ImGui.GetFrameHeight();            // the title bar
+    }
+
+    /// <summary>How tall the header came out last frame, including its rule and spacers.</summary>
+    private float measuredHeaderHeight;
+
+    private float TileRowHeight()
+    {
+        var scrollbar = stripScrolls ? ImGui.GetStyle().ScrollbarSize : 0f;
+
+        if (measuredTileHeight > 0f)
+        {
+            return measuredTileHeight + scrollbar;
+        }
+
+        // First frame only, before a tile has ever been drawn. Deliberately generous: too tall
+        // for one frame is invisible, too short cuts the tile and is not.
         var line = ImGui.GetTextLineHeightWithSpacing();
         var spacing = ImGui.GetStyle().ItemSpacing.Y;
+
+        var compass = configuration.Settings.ShowCompassNeedle
+            ? (CompassRadius * 2f) + (CompassGap * 2f) + spacing
+            : 0f;
 
         return line               // the rank above the icon
             + TileWidth           // the icon, which is square
             + ActionIconSize      // the flag and teleport buttons
             + (line * 2f)         // progress with the countdown, then the distance
+            + compass             // the direction needle, with its air above and below
             + (spacing * 4f)
-            + ImGui.GetStyle().ScrollbarSize
+            + scrollbar
             + 8f;
     }
+
+    /// <summary>How tall a tile came out last frame, measured from inside the strip.</summary>
+    private float measuredTileHeight;
+
+    /// <summary>Whether the strip is actually scrolling, so a scrollbar is worth reserving.</summary>
+    private bool stripScrolls;
+
+    /// <summary>Tallest tile seen while drawing the current frame, reset before every strip.</summary>
+    private float tallestTileThisFrame;
 
     /// <summary>Where the inactive area's rule goes, set while the row is laid out.</summary>
     private float sidelineRuleX;
@@ -649,6 +751,11 @@ internal sealed class MainWindow : Window, IDisposable
             ImGui.Dummy(new Vector2(tileWidth, 4f));
 
             ImGui.EndGroup();
+
+            // The tile's real height, taken from the group that just closed. Reading the cursor
+            // after the loop instead would report the row's starting line, because the tiles sit
+            // beside one another, and the strip would be sized to nothing.
+            tallestTileThisFrame = MathF.Max(tallestTileThisFrame, ImGui.GetItemRectSize().Y);
         }
         finally
         {
@@ -765,6 +872,7 @@ internal sealed class MainWindow : Window, IDisposable
             }
 
             ImGui.TextDisabled($"{entry.DistanceYalms:F0}{localizer.Get(StringKeys.UnitYalms)}");
+            DrawCompass(entry, TileWidth);
             return;
         }
 
@@ -784,6 +892,96 @@ internal sealed class MainWindow : Window, IDisposable
         }
 
         ImGui.TextDisabled($"{entry.DistanceYalms:F0}{localizer.Get(StringKeys.UnitYalms)}");
+        DrawCompass(entry, TileWidth);
+    }
+
+    /// <summary>Radius of the needle drawn under a tile.</summary>
+    private const float CompassRadius = 14f;
+
+    /// <summary>Air between the distance line and the needle under it, and below the needle.</summary>
+    private const float CompassGap = 5f;
+
+    /// <summary>The same needle on one line, for a table row.</summary>
+    private void DrawCompassInline(RankedFate entry)
+    {
+        if (!configuration.Settings.ShowCompassNeedle)
+        {
+            return;
+        }
+
+        var player = DalamudServices.ObjectTable.LocalPlayer;
+        if (player is null)
+        {
+            return;
+        }
+
+        var radius = ImGui.GetFontSize() * 0.62f;
+        var top = ImGui.GetCursorPosY();
+
+        if (CompassBearing.IsAtTarget(entry.DistanceYalms, entry.Fate.Radius))
+        {
+            Widgets.CompassArrived(radius);
+        }
+        else
+        {
+            var here = new WorldPosition(player.Position.X, player.Position.Y, player.Position.Z);
+            var relative = CompassBearing.Relative(here, player.Rotation, entry.Fate.Position);
+            Widgets.CompassNeedle(radius, relative, CompassBearing.OnCourse(relative));
+        }
+
+        ImGui.SameLine(0f, 6f);
+        ImGui.SetCursorPosY(top);
+        ImGui.AlignTextToFramePadding();
+    }
+
+    /// <summary>
+    /// The needle that says which way to turn, drawn from the facing as it is this frame.
+    /// </summary>
+    /// <remarks>
+    /// Read live rather than from the polled snapshot. The rest of this window is refreshed
+    /// twice a second, which is plenty for a countdown and useless for something that follows
+    /// the character's heading: at that rate the needle lags a visible fraction of a turn behind
+    /// the player and looks broken. One property read per tile per frame is a price worth paying
+    /// for that.
+    /// <para>
+    /// It points along the straight line, which is the whole idea and also its limit. It answers
+    /// "am I heading at it", never "can I get there this way".
+    /// </para>
+    /// </remarks>
+    private void DrawCompass(RankedFate entry, float width)
+    {
+        if (!configuration.Settings.ShowCompassNeedle)
+        {
+            return;
+        }
+
+        var player = DalamudServices.ObjectTable.LocalPlayer;
+        if (player is null)
+        {
+            return;
+        }
+
+        // Air above and below. Pressed straight against the distance the needle read as part of
+        // the text block rather than as its own thing, and a tile that ends on the pixel below a
+        // glyph looks squeezed however correct the spacing technically is.
+        ImGui.Dummy(new Vector2(0f, CompassGap));
+
+        // Centred under the tile, so the row of needles reads as a row.
+        ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ((width - (CompassRadius * 2f)) / 2f));
+
+        if (CompassBearing.IsAtTarget(entry.DistanceYalms, entry.Fate.Radius))
+        {
+            Widgets.CompassArrived(CompassRadius);
+        }
+        else
+        {
+            var here = new WorldPosition(player.Position.X, player.Position.Y, player.Position.Z);
+            var relative = CompassBearing.Relative(here, player.Rotation, entry.Fate.Position);
+
+            Widgets.CompassNeedle(CompassRadius, relative, CompassBearing.OnCourse(relative));
+        }
+
+        ImGui.Dummy(new Vector2(0f, CompassGap));
     }
 
     /// <summary>
@@ -1074,6 +1272,10 @@ internal sealed class MainWindow : Window, IDisposable
             }
 
             ImGui.TableNextColumn();
+
+            // Beside the distance rather than under it: a table row is one line, and how far
+            // away something is and which way it lies are the same question asked twice.
+            DrawCompassInline(entry);
             ImGui.TextUnformatted($"{entry.DistanceYalms:F0}{localizer.Get(StringKeys.UnitYalms)}");
 
             // Participation is only reported by the instanced engagement content. Open-world
@@ -1228,9 +1430,24 @@ internal sealed class MainWindow : Window, IDisposable
     private string TravelButtonLabel(Aetheryte aetheryte) => localizer.Get(
         aetheryte.Id == 0 ? StringKeys.ButtonReturn : StringKeys.ButtonTeleport);
 
+    /// <remarks>
+    /// The destination and both timings are shown in every case, including the one where the
+    /// advice is to travel. That used to be hidden: when the verdict was "go direct" the tooltip
+    /// said so and nothing else, so there was no way to tell which aetheryte it had rejected or
+    /// by how much. A recommendation you cannot check is one you can only believe.
+    /// </remarks>
     private string TeleportTooltip(RouteHint route)
     {
         var seconds = MathF.Abs(route.SecondsSaved).ToString("F0", CultureInfo.CurrentCulture);
+
+        var destination = $"→ {route.NearestAetheryte.Name}   "
+            + $"{route.AetheryteToFateYalms.ToString("F0", CultureInfo.CurrentCulture)}"
+            + localizer.Get(StringKeys.UnitYalms);
+
+        var comparison = localizer.Format(
+            StringKeys.RouteComparison,
+            route.EstimatedDirectRouteSeconds.ToString("F0", CultureInfo.CurrentCulture),
+            route.EstimatedTeleportRouteSeconds.ToString("F0", CultureInfo.CurrentCulture));
 
         // In an exploratory zone the button casts Return, and the leg from the camp out to the
         // waypoint is the player's to walk through the travel menu. Saying so is the difference
@@ -1239,24 +1456,17 @@ internal sealed class MainWindow : Window, IDisposable
             ? "\n" + localizer.Get(StringKeys.RouteReturnFirst)
             : string.Empty;
 
-        return TeleportVerdictText(route, seconds) + leg;
+        return $"{destination}\n{comparison}\n{TeleportVerdictText(route, seconds)}{leg}";
     }
 
-    private string TeleportVerdictText(RouteHint route, string seconds)
+    private string TeleportVerdictText(RouteHint route, string seconds) => route.Verdict switch
     {
-        return route.Verdict switch
-        {
-            TeleportVerdict.Worthwhile =>
-                $"→ {route.NearestAetheryte.Name}\n"
-                + localizer.Format(StringKeys.RouteSaves, seconds),
-
-            TeleportVerdict.TravelIsFaster =>
-                localizer.Get(StringKeys.RouteWalkFaster) + "\n"
-                + localizer.Format(StringKeys.RouteCosts, seconds),
-
-            _ => localizer.Get(StringKeys.RouteTooLate),
-        };
-    }
+        TeleportVerdict.Worthwhile => localizer.Format(StringKeys.RouteSaves, seconds),
+        TeleportVerdict.TravelIsFaster =>
+            localizer.Get(StringKeys.RouteWalkFaster) + " "
+            + localizer.Format(StringKeys.RouteCosts, seconds),
+        _ => localizer.Get(StringKeys.RouteTooLate),
+    };
 
     /// <summary>
     /// The bottom bar: controls on the left, view switch pinned to the right edge so the two

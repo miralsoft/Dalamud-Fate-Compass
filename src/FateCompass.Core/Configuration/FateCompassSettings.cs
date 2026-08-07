@@ -132,6 +132,21 @@ public sealed class FateCompassSettings
     /// </remarks>
     public bool TypeFlagIntoChat { get; set; } = true;
 
+    /// <summary>
+    /// Show a needle under each entry pointing the way to it, relative to where the character is
+    /// facing.
+    /// </summary>
+    /// <remarks>
+    /// On by default. It is a display, not an action, and it answers the question the window is
+    /// otherwise silent about: the list says how far, the needle says which way.
+    /// <para>
+    /// It follows the character rather than the camera. The camera answers "where am I looking",
+    /// the character answers "where would I go if I pressed forward", and the second is the
+    /// question somebody flying is asking.
+    /// </para>
+    /// </remarks>
+    public bool ShowCompassNeedle { get; set; } = true;
+
     // --- Announcing the leading FATE -----------------------------------------------------
 
     /// <summary>
@@ -323,7 +338,13 @@ public sealed class FateCompassSettings
     /// Fixed cost of a teleport in seconds: the cast plus the loading screen. Used to judge
     /// whether teleporting actually beats simply travelling there.
     /// </summary>
-    public float TeleportOverheadSeconds { get; set; } = 15f;
+    /// <remarks>
+    /// Ten, timed rather than estimated. It stood at fifteen, which is a third too much, and a
+    /// third of the fixed cost is exactly the amount that decides the close calls: at twenty
+    /// yalms a second it moved the break-even point by a hundred yalms, and every route inside
+    /// that band was advised the wrong way round.
+    /// </remarks>
+    public float TeleportOverheadSeconds { get; set; } = 10f;
 
     /// <summary>
     /// Fixed cost of the return spell, in seconds: its cast plus the trip back to camp.
@@ -334,13 +355,38 @@ public sealed class FateCompassSettings
     /// waits rather than one, and the second alone made the comparison say the trip was half as
     /// expensive as it is.
     /// </remarks>
+    [Obsolete("Superseded by ExploratoryTravelOverheadSeconds, which is one measured figure rather than half of a sum.")]
     public float ReturnOverheadSeconds { get; set; } = 20f;
+
+    /// <summary>
+    /// What the whole journey costs in an exploratory zone before any travelling: returning to
+    /// camp, walking to the aetheryte there, and porting out from it.
+    /// </summary>
+    /// <remarks>
+    /// One measured figure, because that is what can be measured. It used to be a sum of the
+    /// return and an ordinary teleport, and the decomposition was invented rather than observed:
+    /// nobody can time the second hop on its own, and the two parts were only ever going to be
+    /// wrong in ways that cancelled or compounded without anybody being able to tell which.
+    /// <para>
+    /// Twenty, walked through end to end in the Crescent: about eight for the return itself,
+    /// then the walk to the aetheryte at camp and the port out from it. The old arrangement put
+    /// it at thirty, which is half again too much, and every close call in those zones came out
+    /// as "just fly".
+    /// </para>
+    /// <para>
+    /// Where the measurement is a range, the upper end. Overstating the cost errs towards
+    /// flying, and that is the cheaper mistake: a flight taken when returning would have been
+    /// quicker costs seconds, while a return taken when flying would have done costs its
+    /// cooldown, which is minutes.
+    /// </para>
+    /// </remarks>
+    public float ExploratoryTravelOverheadSeconds { get; set; } = 20f;
 
     /// <summary>
     /// What a trip through the aetheryte network costs before any running, where the player is.
     /// </summary>
     public float TeleportOverheadFor(ContentKind content) => content.IsExploratory()
-        ? ReturnOverheadSeconds + TeleportOverheadSeconds
+        ? ExploratoryTravelOverheadSeconds
         : TeleportOverheadSeconds;
 
     /// <summary>

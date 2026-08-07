@@ -72,6 +72,8 @@
   "button.placement.move": "Move the icon",
   "button.placement.done": "Keep this position",
   "placement.hint": "Drag the icon to wherever you want it.",
+  "setting.showCompass": "Show a direction needle under each target",
+  "setting.showCompass.help": "A small needle that turns with your facing and points at the target. Up means straight ahead, green means on course. It shows the straight line, not a walkable route. It becomes a ring once you have arrived.",
   "setting.showRankMarkers": "Number the top FATEs on the map",
   "setting.showRankMarkers.help": "Places the game's own markers on the map and minimap, so the running order is visible there.",
 
@@ -105,6 +107,7 @@
 
   "route.walkFaster": "Go direct",
   "route.noAetheryte": "No aetheryte in this zone.",
+  "route.comparison": "Direct {0}s   ·   Teleport {1}s",
   "route.returnFirst": "Casts Return to get you back to camp. The rest of the way is the camp travel menu.",
   "route.tooLate": "Too late, it ends before you arrive",
   "route.saves": "saves ~{0}s",
@@ -163,7 +166,7 @@
   "setting.travelSpeed.exploratory": "Travel speed in Eureka, Bozja, and the Crescent (riding map bought)",
   "setting.travelSpeed.exploratorySlow": "The same zones without the riding map",
   "setting.teleportOverhead": "Assumed teleport cost (seconds)",
-  "setting.returnOverhead": "Cost of returning to camp (seconds)",
+  "setting.returnOverhead": "Cost of a journey in an exploratory zone (seconds)",
   "setting.nearlyDone": "Treat as finished from (percent)",
   "setting.minimumRemaining": "Minimum time left (seconds)",
   "setting.weight.distance": "Weight: distance",
