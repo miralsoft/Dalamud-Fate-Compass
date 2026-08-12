@@ -286,3 +286,25 @@ Each entry: date, decision, short rationale.
   Each detector proves it can fire before it is trusted (R-20), and the attribution probe is
   assembled from pieces rather than written out, because a line that looks like a marker is one
   as far as the check is concerned and the workflow file is checked like any other.
+
+- (2026-08-12) **The attribution pattern is duplicated in CI, and that is a known weakness
+  rather than an oversight.** The commit-msg hook owns the list; the CI step carries a copy.
+  Copies drift, and this one drifted within a day: the foundation widened the patterns and
+  added an exception for the entrypoint filename, and the copy here would have rejected a
+  commit the hook accepts. Local and server-side disagreeing is the exact failure R-17 exists
+  to prevent.
+
+  It is a copy because the foundation is a private repository and this public one's CI cannot
+  clone it without a token in the repository secrets. Handing a public workflow a credential to
+  a private repository is a worse trade than a list that has to be resynced, so the copy stays
+  and says so in the workflow, with a pointer here.
+
+  Reduced rather than removed: the pattern is now defined once in the workflow's `env` block
+  instead of three times in two steps, so the drift can only ever be against the foundation and
+  never within this file. The self-test carries a third probe, a message naming the entrypoint
+  file, which is the case that would catch the drift if it happens again.
+
+  Found by installing the updated hook and running both directions rather than reading it. The
+  adversarial case matters: `Co-Authored-By: CLAUDE.md` is still rejected, because stripping the
+  filename leaves the marker behind. An exception that removed the whole line would have opened
+  a hole.
