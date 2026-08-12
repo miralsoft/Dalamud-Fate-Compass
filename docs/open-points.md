@@ -3,6 +3,24 @@
 Purpose: open questions and unresolved items. Distinct from `todos.md`, which is planned work.
 These still need a decision or a verification.
 
+## Open work in other repositories
+
+M-18 allows reading another repository and forbids changing it, however small the change and
+however obviously right it looks. Where something decided here has a consequence somewhere else,
+it is written down here, marked as belonging there, and it stops. Whoever works in that
+repository picks it up.
+
+- **(open since 2026-08-12, `miralsoft/Dalamud-Plugins`) Does the aggregate index actually
+  satisfy D-06?** D-06 says an automated index never removes an entry as a consequence of a
+  failure, only as a deliberate act. The index rebuilds hourly and reads this plugin's
+  `pluginmaster.json` from its release assets. What happens when that read fails, whether the
+  entry survives or the rebuild publishes a list without it, has not been looked at. If it drops
+  the entry, this plugin disappears from every player's installer until the next successful run,
+  for a reason on the index's side rather than ours.
+
+  D-07 applies to the answer as much as to the question: this gets settled by reading that
+  repository's workflow, not by assuming it behaves sensibly.
+
 ## Resolved on 2026-08-01
 
 Verified by reflecting over the installed Dalamud 15.0.3. Details in `platform-notes.md`.

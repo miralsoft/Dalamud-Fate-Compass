@@ -177,6 +177,9 @@ the plugin still does nothing in game.
   is in `decisions.md`, listing what was checked and found holding rather than only what changed.
 - **Next:** Review the declared version whenever a release is cut (M-17): read the foundation
   changelog from 2.0.0 onward, then either raise it and do the work, or leave it and record why.
+  That review now includes re-copying what was copied: the content checks in
+  `.github/workflows/ci.yml` carry a provenance line naming the foundation version they came
+  from (M-19), and it is what the comparison is against.
 
 ## Solution scaffold (Phase 1, done)
 

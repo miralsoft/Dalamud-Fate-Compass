@@ -308,3 +308,39 @@ Each entry: date, decision, short rationale.
   adversarial case matters: `Co-Authored-By: CLAUDE.md` is still rejected, because stripping the
   filename leaves the marker behind. An exception that removed the whole line would have opened
   a hole.
+
+- (2026-08-12) **The content checks now come from the foundation's template, and the entry above
+  is superseded.** That entry treated a copied pattern list as something to maintain carefully.
+  The better answer was that the checks should never have been written here at all: they are the
+  same everywhere, so they belong in the foundation as a template that projects copy, the way the
+  git hooks already work. The foundation now carries one at `enforcement/ci/content-checks.yml`,
+  and this repository uses it.
+
+  Arrangement: the template's second variant, its steps pasted into the existing build job rather
+  than a workflow of their own. The template describes both and asks that the choice be recorded.
+  Branch protection here requires the check named "Build, test, format, scan"; a job of its own
+  would have reported a failure and let the merge through, which is the kind of green tick this
+  whole ruleset exists to prevent.
+
+  One deviation, and only one: each copied step carries `shell: bash`. The template needs a POSIX
+  shell and this job runs on a Windows runner, where the default is PowerShell. Git Bash ships
+  with the runner, so the scripts are otherwise unchanged. Verified by diffing the copied steps
+  against the template: five added lines, all of them `shell: bash`, and nothing else.
+
+  The header carries the provenance line M-19 requires, naming the foundation version and the
+  date. That is what the release-time review under M-17 compares against, so re-copying becomes
+  part of raising the declared version rather than something discovered later.
+
+  What this gained beyond tidiness: a secret scan this repository never had. It found nothing,
+  which is the answer worth having only because the detectors prove they can fire first (R-20).
+
+- (2026-08-12) **Cross-repository consequences go into `open-points.md`, not into the other
+  repository.** M-18 forbids changing any repository other than the one being worked in, and its
+  reasoning is the part that matters: nobody reaches into a foreign repository for a big reason,
+  they do it because the edit is two lines and obviously right, formed without having seen that
+  repository's state.
+
+  This project had been keeping such consequences in conversation, which is not a place anything
+  is found. `open-points.md` now has a section for them. The first entry is the D-06 question
+  about the aggregate index, which affects this plugin directly and is nonetheless not ours to
+  change.

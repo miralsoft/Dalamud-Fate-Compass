@@ -17,10 +17,14 @@ C# and Dalamud profiles and the plugin blueprint that this project had been carr
 - `docs/platform-notes.md`, holding the reflected Dalamud API surface, the enum values, the
   ClientStructs signatures and the general action ids that used to live in the local platform
   profile. Research about one platform version, kept with the project.
-- CI now mirrors the git hooks (R-17): em-dashes across everything the enforcement globs cover,
-  and AI-attribution markers across the commit messages a push or pull request contains. Each
-  detector proves it can fire on a planted case and stay quiet on a clean one before it is
-  trusted (R-20). The steps sit in the existing required job so a failure blocks a merge.
+- CI now mirrors the git hooks (R-17), using the foundation's own template rather than a check
+  written here: em-dashes across everything the enforcement globs cover, a secret scan this
+  repository never had, and AI-attribution markers across the commit messages a push or pull
+  request contains. Every detector proves it can fire on a planted case and stay quiet on a
+  clean one before it is trusted (R-20). The steps sit in the existing required job so a failure
+  blocks a merge, and the header names the foundation version they were copied from (M-19).
+- A section in `docs/open-points.md` for consequences that belong to another repository (M-18),
+  starting with the question of whether the aggregate index really satisfies D-06.
 
 ### Changed
 
