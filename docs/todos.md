@@ -143,4 +143,4 @@ trusting it, since none of this can be covered by tests.
 
 - [ ] Wire `dotnet format --verify-no-changes` into the pre-commit hook, since the shared hook
       only knows PHP and JavaScript
-- [ ] Recheck `rules/dalamud.md` when Dalamud publishes a new major version
+- [ ] Recheck `platform-notes.md` when Dalamud publishes a new major version

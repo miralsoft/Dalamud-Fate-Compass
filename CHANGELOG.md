@@ -6,6 +6,39 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
+Nothing here changes what the plugin does. It adopts foundation ruleset 2.0.0, which added the
+C# and Dalamud profiles and the plugin blueprint that this project had been carrying itself.
+
+### Added
+
+- `CLAUDE.md` at the repository root, from the foundation's entrypoint template. It is what
+  tells an agent starting in this repository that the foundation exists, how to clone and
+  exclude it, and in which order to read it. Until now nothing here pointed back at the rules.
+- `docs/platform-notes.md`, holding the reflected Dalamud API surface, the enum values, the
+  ClientStructs signatures and the general action ids that used to live in the local platform
+  profile. Research about one platform version, kept with the project.
+- CI now mirrors the git hooks (R-17): em-dashes across everything the enforcement globs cover,
+  and AI-attribution markers across the commit messages a push or pull request contains. Each
+  detector proves it can fire on a planted case and stay quiet on a clean one before it is
+  trusted (R-20). The steps sit in the existing required job so a failure blocks a merge.
+
+### Changed
+
+- The project declares `Kind: external` (M-12), its committer identity (R-19) and foundation
+  version 2.0.0 (M-06) in `docs/project.md`.
+- `.miralsoft-enforcement` now covers source, JSON, PowerShell and workflow files, not only
+  markdown. The widened I-02 counts prose written for humans, which includes code comments.
+- Six em-dash characters removed from XML doc comments in `Plugin.cs`, `ConfigWindow.cs`,
+  `MainWindow.cs` and `ReleaseNotesWindow.cs`. They had been there for months because the
+  enforcement globs stopped at markdown.
+- `docs/release.md` records the draft pull request trap (D-09), which cost a pull request
+  during the 1.1.0 release and was written down nowhere.
+
+### Removed
+
+- `docs/rules/csharp.md` and `docs/rules/dalamud.md`. Both are in the foundation now, largely
+  derived from these two files, and a second copy would only have gone stale.
+
 ## [1.1.0] - 2026-08-06
 
 ### Added

@@ -8,9 +8,11 @@ The plugin is a single assembly in three layers. The split is not decoration, it
 two hard constraints from the rules:
 
 1. Code that touches Dalamud cannot be unit tested, because it needs a running game process
-   (`rules/csharp.md`). So everything worth testing has to be reachable without Dalamud types.
+   (`.foundation-docs/rules/languages/csharp.md`). So everything worth testing has to be
+   reachable without Dalamud types.
 2. Every call that reaches the game server has to stay visible and auditable
-   (`rules/dalamud.md`). So those calls live in exactly one place instead of being scattered
+   (`.foundation-docs/rules/frameworks/dalamud.md`). So those calls live in exactly one place
+   instead of being scattered
    across features.
 
 ```

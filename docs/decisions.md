@@ -115,7 +115,7 @@ Each entry: date, decision, short rationale.
 
 - (2026-08-01) The API surface was verified by reflecting over the locally installed Dalamud
   15.0.3 rather than trusting documentation or recollection, and the findings are recorded in
-  `rules/dalamud.md`. Rationale: I-10. This immediately caught one error that would otherwise
+  `platform-notes.md`. Rationale: I-10. This immediately caught one error that would otherwise
   have been written into the adapters: `IClientState.LocalPlayer` no longer exists in v15, the
   local player now comes from `IObjectTable.LocalPlayer`.
 
@@ -228,3 +228,61 @@ Each entry: date, decision, short rationale.
 
   What this costs is a line in the README's "what it will not do", which has been rewritten to
   say what actually happens rather than a version of it that reads better.
+
+- (2026-08-12) **This project targets foundation 2.0.0, and the work M-17 asks for was done
+  rather than deferred.** M-17 says a project is bound by the version it declares and that
+  raising the declaration means either doing the work or recording why not. The audit came out
+  almost entirely green, which is unsurprising: most of 2.0.0 was written from this project, so
+  the rules describe what was already here. What actually needed doing was R-17 and the widened
+  I-02, both below.
+
+  Checked and holding without changes: the release chain and its two delays are documented
+  (D-01, D-02), the tag is checked against the built version before anything is published
+  (D-04), the configuration carries a version and a migration per step and only corrects
+  defaults nobody chose (D-10, D-11), the three audiences have three documents (D-12), the
+  licence and the trademark notice are in place (D-13), the README says what the plugin will
+  not do (D-14), one command runs the same gates as CI (R-18), a feature that switches itself
+  off says so through a status rather than going quiet (S-11), unknown aetheryte heights fall
+  back to the old flat measurement instead of a confident wrong answer (S-12), the actions are
+  pinned to digests with least privilege (S-13), developer surfaces are absent from a release
+  and CI proves it (C-10), the language catalogues are covered by thirteen tests including
+  missing keys, orphan keys and every fallback (C-11), and the speed measurement already
+  carries both bounds and discards rather than clamps (C-14). The seven construction points
+  that were added to the blueprint late are all present in the code, which is where they came
+  from.
+
+  One gap that was not a rule but a runbook omission: the draft pull request trap (D-09) was
+  documented nowhere here, although it cost a pull request during the 1.1.0 release. It is now
+  in `release.md` at the step where it strikes.
+
+- (2026-08-12) **The project's own C# and Dalamud profiles were retired.** They existed because
+  the foundation had none, which `project.md` said in as many words. Foundation 2.0.0 ships
+  both, largely derived from these two files, so keeping them would have left two sources for
+  the same facts and the second one would have gone stale first. What was research rather than
+  rule moved to `platform-notes.md`: the reflected API surface, the enum values, the
+  ClientStructs signatures and the general action ids. That is a finding about one version of
+  one platform, not something another project should inherit, which is exactly why the
+  foundation left it out.
+
+  Rejected: keeping the local profiles as a thinning layer of project-specific tightenings.
+  That is what `rules-project.md` and FH-01 upwards already are, so it would have been a third
+  place for the same kind of statement.
+
+- (2026-08-12) **The content checks were added to the existing CI job rather than a job of
+  their own.** R-17 requires every hook check to run in CI too, and this repository had none of
+  them: the build job checked build, tests, format, local switches and dependencies, while the
+  hooks checked em-dashes, secrets and identity. A separate `content` job would have been
+  tidier, and it would also have run without blocking anything, because branch protection
+  requires the check named "Build, test, format, scan" and nothing else. A check that reports
+  but cannot stop a merge is the kind of green tick this ruleset spends its time warning about,
+  so the steps went into the job that is already required.
+
+  Deliberately not mirrored: the committer identity check. A merge commit created by GitHub
+  carries GitHub's own committer identity, so the check would fail on every merge for something
+  that is not a violation. The hook still enforces it where commits are actually made. Recorded
+  rather than left silent, because an unexplained hole in "CI mirrors the hooks" reads like an
+  oversight.
+
+  Each detector proves it can fire before it is trusted (R-20), and the attribution probe is
+  assembled from pieces rather than written out, because a line that looks like a marker is one
+  as far as the check is concerned and the workflow file is checked like any other.

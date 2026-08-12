@@ -152,15 +152,31 @@ the plugin still does nothing in game.
 - **Done:** Repository connected to `miralsoft/Dalamud-Fate-Compass`, branch `main`, tracking
   `origin/main`. Foundation cloned to `.foundation-docs/` and locally excluded. Git identity
   set locally to `Sanaka <20637644+miralsoft@users.noreply.github.com>`. Both foundation hooks
-  installed and verified by direct invocation. `.miralsoft-enforcement` configured.
-- **Next:** Wire the C# format check into the pre-commit hook, since the shared hook only
-  covers PHP and JavaScript.
+  installed and verified by direct invocation. `.miralsoft-enforcement` configured, and since
+  the move to foundation 2.0.0 its globs cover source, JSON, PowerShell and workflow files
+  rather than markdown alone. CI mirrors the hooks (R-17), with each detector proving it can
+  fire before it is trusted (R-20).
+- **Next:** Nothing outstanding. The C# format check does not go into the shared pre-commit
+  hook, which cannot perform it; it runs in `build.ps1` and in CI, which is what R-17 asks for.
 
 ## Documentation
 
-- **Done:** `docs/README.md`, the C# and Dalamud rule profiles under `docs/rules/`, and all
-  seven project memory files required by M-03.
+- **Done:** `docs/README.md`, all seven project memory files required by M-03, and
+  `platform-notes.md`. The C# and Dalamud profiles this project used to carry under
+  `docs/rules/` were retired when foundation 2.0.0 shipped both.
 - **Next:** Keep this file and `decisions.md` current as implementation proceeds.
+
+## Foundation 2.0.0 (2026-08-12)
+
+- **Done:** This project declares foundation version 2.0.0 and did the work M-17 asks for
+  rather than deferring it. `CLAUDE.md` at the root is the entrypoint an agent starting here
+  needs; `docs/project.md` declares kind, committer identity and version; the local C# and
+  Dalamud profiles were retired in favour of the foundation's, with the research they contained
+  moved to `platform-notes.md`; CI mirrors the hooks; six em-dashes left over from the narrower
+  I-02 are gone; and the draft pull request trap is written into `release.md`. The audit itself
+  is in `decisions.md`, listing what was checked and found holding rather than only what changed.
+- **Next:** Review the declared version whenever a release is cut (M-17): read the foundation
+  changelog from 2.0.0 onward, then either raise it and do the work, or leave it and record why.
 
 ## Solution scaffold (Phase 1, done)
 
@@ -225,10 +241,11 @@ the plugin still does nothing in game.
 ## Notes for whoever picks this up
 
 - Scope boundary is not negotiable inside the project: the plugin assists, it does not play.
-  See FH-05 in `rules-project.md` and the restriction list in `rules/dalamud.md`.
+  See FH-05 in `rules-project.md` and the automation boundary in
+  `.foundation-docs/rules/frameworks/dalamud.md`.
 - The engage sequence is planned in `EngagePlanner` and must be executed only through
   `IGameActions` (FH-01). Both triggers run the same plan on purpose, and a test locks that in.
-- Platform facts in `rules/dalamud.md` were verified on 2026-08-01 against Dalamud 15.0.3 as
+- Platform facts in `platform-notes.md` were verified on 2026-08-01 against Dalamud 15.0.3 as
   installed locally. Recheck on a Dalamud major bump.
 - Nothing has been committed yet. The first commit will carry documentation, scaffold, and
   core together.
