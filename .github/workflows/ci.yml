@@ -15,11 +15,20 @@ name: CI
 # a POSIX shell and this job runs on a Windows runner, where the default is PowerShell. Git
 # Bash ships with the runner, so the scripts themselves are unchanged.
 
+# Every branch, not only the default one. This used to be `branches: [main]`, which meant a
+# collection branch gathering work towards a release was checked by nothing until somebody
+# opened a pull request at the end. The checks existed and never ran, which is worse than not
+# having them, because the branch looks like it is being looked after.
 on:
   push:
-    branches: [main]
   pull_request:
   workflow_dispatch:
+
+# One run per ref, as the template does it. Without this a branch with an open pull request
+# runs twice for the same commit, once from push and once from pull_request.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
