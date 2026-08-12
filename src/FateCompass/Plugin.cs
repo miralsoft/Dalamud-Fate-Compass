@@ -243,8 +243,8 @@ public sealed class Plugin : IDalamudPlugin
     /// Opens the release notes once after an update, and never on a first installation.
     /// </summary>
     /// <remarks>
-    /// The two cases look identical from the settings alone — a fresh installation has seen no
-    /// version, and so has somebody updating from a build that predates this window — so they are
+    /// The two cases look identical from the settings alone (a fresh installation has seen no
+    /// version, and so has somebody updating from a build that predates this window), so they are
     /// told apart by whether a configuration file existed at all.
     /// <para>
     /// A first installation is marked as read rather than left alone. Leaving it would make the

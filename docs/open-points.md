@@ -5,7 +5,7 @@ These still need a decision or a verification.
 
 ## Resolved on 2026-08-01
 
-Verified by reflecting over the installed Dalamud 15.0.3. Details in `rules/dalamud.md`.
+Verified by reflecting over the installed Dalamud 15.0.3. Details in `platform-notes.md`.
 
 - FATE data, player state, condition flags, framework ticks, and the interface language are
   all available and their exact members are recorded.
@@ -203,6 +203,10 @@ which is the dangerous kind.
 
 - Cross-zone FATE awareness. Impossible without an own backend, deliberately out of scope for
   now (FH-03).
-- Publishing to the official Dalamud repository. Would require open source, which is already
-  the case, and disclosure of AI assistance in the submission pull request. Neither applies
-  while the plugin stays private. See `rules/dalamud.md`.
+- Publishing to the official Dalamud repository. Two conditions apply there. Open source is
+  already met: this repository is public. Disclosure of AI assistance in the submission pull
+  request would apply at the moment of submitting, and it is the owner's statement to make.
+  It does not conflict with I-06, which keeps an AI out of the codebase, the commits, the
+  metadata and the product text, all of which stay clean either way. Deferred because nothing
+  has been submitted, not because anything blocks it. The general shape of this question is in
+  `.foundation-docs/rules/frameworks/dalamud.md`; what is above is this project's answer.

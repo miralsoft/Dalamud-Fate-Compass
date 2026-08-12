@@ -1421,7 +1421,7 @@ internal sealed class MainWindow : Window, IDisposable
     /// <remarks>
     /// Two lines, and the destination is the first thing on the first one. This used to run to
     /// four lines of prose that repeated the destination once and the timings twice, and the one
-    /// thing being looked for — which waypoint — was buried in the middle of a sentence.
+    /// thing being looked for, which waypoint, was buried in the middle of a sentence.
     /// </remarks>
     /// <summary>
     /// What the travel button says. Inside an exploratory zone it does something different, so

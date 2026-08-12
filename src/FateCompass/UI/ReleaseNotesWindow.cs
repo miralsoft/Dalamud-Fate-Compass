@@ -17,8 +17,8 @@ namespace FateCompass.UI;
 /// always like that", which is otherwise unanswerable from inside the game.
 /// <para>
 /// Each line carries a badge saying whether it is new, changed, repaired, or gone, because the
-/// three questions people actually arrive with — what can I do now, what moved, and was my bug
-/// fixed — are answered by sorting, not by reading.
+/// three questions people actually arrive with (what can I do now, what moved, and was my bug
+/// fixed) are answered by sorting, not by reading.
 /// </para>
 /// </remarks>
 internal sealed class ReleaseNotesWindow : Window, IDisposable

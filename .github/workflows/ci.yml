@@ -21,6 +21,118 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # The commit-message check below walks the range this push or pull request adds, and
+          # the default shallow checkout has no base commit to walk from.
+          fetch-depth: 0
+
+      # R-17: every check the git hooks perform also runs here. A hook lives in a clone and
+      # has to be installed again after every fresh clone, so it is fast feedback and never
+      # the guarantee. These steps sit in this job rather than a job of their own on purpose:
+      # branch protection requires the check named "Build, test, format, scan", so a separate
+      # job would run and report while a failure still merged.
+      #
+      # Not mirrored here: the committer-identity check. A merge commit created by GitHub
+      # carries GitHub's own committer identity, so the check would fail on every merge for
+      # something that is not a violation. The hook still enforces it where commits are made.
+
+      # R-20: a detector whose only outcome is silence cannot be told apart from one that does
+      # nothing. Each pattern is tried against something it must match and something it must
+      # not, before it is trusted on the real files.
+      - name: The content detectors can fail
+        shell: bash
+        run: |
+          set -euf
+          emdash=$(printf '\342\200\224')
+          probe=$(mktemp -d)/probe.txt
+
+          printf 'planted %s here\n' "$emdash" > "$probe"
+          grep -q -- "$emdash" "$probe" || {
+            echo "The em-dash detector did not fire on a planted character." >&2
+            echo "The check below would pass over anything." >&2; exit 1; }
+          printf 'clean, no such character\n' > "$probe"
+          grep -q -- "$emdash" "$probe" && {
+            echo "The em-dash detector fired on a clean file." >&2; exit 1; }
+
+          # Assembled rather than written out: a line that looks like a marker is one as far
+          # as this check is concerned, and this file is checked like any other.
+          marker="Co-Authored""-By: someone"
+          printf '%s\n' "$marker" > "$probe"
+          grep -Eiq 'Co-Authored-By|Generated with|Claude|Anthropic|OpenAI|Gemini|GPT|Copilot|AI-generated' "$probe" || {
+            echo "The attribution detector did not fire on a planted marker." >&2; exit 1; }
+          printf 'Add the release procedure\n' > "$probe"
+          grep -Eiq 'Co-Authored-By|Generated with|Claude|Anthropic|OpenAI|Gemini|GPT|Copilot|AI-generated' "$probe" && {
+            echo "The attribution detector matched an ordinary message." >&2; exit 1; }
+
+          echo "Both detectors fire on a planted case and stay quiet on a clean one."
+          rm -rf "$(dirname "$probe")"
+
+      - name: No em-dash in prose
+        shell: bash
+        run: |
+          set -euf
+          # -f matters as much as the patterns do. Without it, `for g in $globs` expands each
+          # pattern against the working directory first, so `*.md` becomes the markdown files
+          # sitting in the repository root and every pattern loses its meaning. The step then
+          # passes having checked almost nothing, which is worse than no step at all.
+          set -f
+          emdash=$(printf '\342\200\224')
+
+          globs=$(sed -n 's/^CONTENT_GLOBS=//p' .miralsoft-enforcement)
+          excludes=$(sed -n 's/^CONTENT_EXCLUDE=//p' .miralsoft-enforcement)
+          if [ -z "$globs" ]; then
+            echo "CONTENT_GLOBS is empty, so nothing would be checked (I-02)." >&2
+            exit 1
+          fi
+          echo "globs:    $globs"
+          echo "excludes: ${excludes:-none}"
+
+          hits=""
+          for f in $(git ls-files); do
+            skip=""
+            for e in $excludes; do
+              case "$f" in $e) skip=1; break ;; esac
+            done
+            [ -n "$skip" ] && continue
+            for g in $globs; do
+              case "$f" in
+              $g)
+                if grep -q -- "$emdash" "$f"; then hits="$hits $f"; fi
+                break ;;
+              esac
+            done
+          done
+
+          if [ -n "$hits" ]; then
+            echo "Em-dash characters found (I-02):" >&2
+            for h in $hits; do echo "  $h" >&2; done
+            echo "Use commas, parentheses, or separate sentences." >&2
+            exit 1
+          fi
+          echo "No em-dash characters found."
+
+      - name: No AI attribution in commit messages
+        shell: bash
+        run: |
+          set -euf
+          # The commit-msg hook rejects these markers as a commit is written. It only ever sees
+          # commits made in a clone that has it installed, so the same patterns run here over
+          # everything the push or the pull request actually contains (R-09, I-06).
+          range="${{ github.event_name == 'pull_request'
+            && format('{0}..{1}', github.event.pull_request.base.sha, github.event.pull_request.head.sha)
+            || format('{0}..{1}', github.event.before, github.sha) }}"
+          if ! git rev-parse --quiet --verify "${range%%..*}" >/dev/null 2>&1; then
+            echo "Base commit not available (first push or shallow fetch), checking HEAD only."
+            range="HEAD~0"
+            messages=$(git log -1 --format=%B)
+          else
+            messages=$(git log --format=%B "$range")
+          fi
+          if printf '%s' "$messages" | grep -Eiq 'Co-Authored-By|Generated with|Claude|Anthropic|OpenAI|Gemini|GPT|Copilot|AI-generated'; then
+            echo "AI-attribution marker found in a commit message (R-09, I-06)." >&2
+            exit 1
+          fi
+          echo "No AI-attribution markers in the commit messages checked."
 
       - name: Set up .NET
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0

@@ -34,8 +34,8 @@ rule prefix this project introduces.
 - **FH-05 The player plays.** The plugin never performs combat actions, never moves the
   character, and never joins or completes content on its own. Preparation steps around an
   action the player already took are the limit. Anything past that line is out of scope,
-  regardless of how it is requested. Serves P-01 and the Dalamud restrictions in
-  `rules/dalamud.md`.
+  regardless of how it is requested. Serves P-01 and the automation boundary in
+  `.foundation-docs/rules/frameworks/dalamud.md`.
 
 - **FH-06 Traceable actions.** Every execution in `IGameActions` logs what was sent and which
   trigger caused it, manual or automatic. Extends S-10.
