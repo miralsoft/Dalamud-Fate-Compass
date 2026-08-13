@@ -172,9 +172,20 @@ the plugin still does nothing in game.
   rather than deferring it. `CLAUDE.md` at the root is the entrypoint an agent starting here
   needs; `docs/project.md` declares kind, committer identity and version; the local C# and
   Dalamud profiles were retired in favour of the foundation's, with the research they contained
-  moved to `platform-notes.md`; CI mirrors the hooks; six em-dashes left over from the narrower
-  I-02 are gone; and the draft pull request trap is written into `release.md`. The audit itself
-  is in `decisions.md`, listing what was checked and found holding rather than only what changed.
+  moved to `platform-notes.md`; six em-dashes left over from the narrower I-02 are gone; and the
+  draft pull request trap is written into `release.md`. The audit itself is in `decisions.md`,
+  listing what was checked and found holding rather than only what changed.
+- **Done:** The content checks are the foundation's template (`enforcement/ci/content-checks.yml`),
+  copied rather than written here, with its steps inside the existing build job because branch
+  protection names that job. The one deviation is `shell: bash` on each step, since the template
+  needs a POSIX shell and this job runs on Windows. Two things were wrong on the way and are
+  worth knowing: the checks first landed with the trigger still limited to `main`, so they ran
+  nowhere on this branch, and an earlier hand-written copy of the attribution patterns went stale
+  against the foundation within a day. Both are why the run is now read step by step rather than
+  taken as green.
+- **Done:** Consequences belonging to another repository have a section in `open-points.md`
+  (M-18). The one entry is whether the aggregate index really satisfies D-06, which affects this
+  plugin directly and is still not this project's to change.
 - **Next:** Review the declared version whenever a release is cut (M-17): read the foundation
   changelog from 2.0.0 onward, then either raise it and do the work, or leave it and record why.
   That review now includes re-copying what was copied: the content checks in
