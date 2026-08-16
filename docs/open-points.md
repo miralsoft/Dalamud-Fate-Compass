@@ -3,25 +3,6 @@
 Purpose: open questions and unresolved items. Distinct from `todos.md`, which is planned work.
 These still need a decision or a verification.
 
-## Found while confirming the 1.2.0 release
-
-Both came out of unpacking the published zip rather than reading the repository, which is the
-step D-03 exists for. Neither blocked the release.
-
-- **`images/icon.png` is not in the package.** The plugin list gets its picture from `IconUrl` in
-  the manifest and that works, but an installed plugin reads `images/icon.png` out of its own
-  directory, and there is none. The file is in the repository and the csproj copies it under a
-  condition, so something about that condition is not met in the release build. Not a regression:
-  the 1.1.0 zip does not contain it either, so it has been this way since the icon existed.
-
-- **`MapService.ProbeMarkerIcons` is in the released assembly.** It is a developer probe that
-  drops eight markers on the map, and its only caller sits behind the developer-tools switch, so
-  nothing in a released build can reach it. C-10 asks for developer surfaces to be absent rather
-  than switched off, and dead code in the assembly is neither exactly: there is no switch anybody
-  could find. Still the wrong side of the line, and it is one `#if` to fix. Checking for it is
-  also worth adding to whatever the release confirmation greps for, since three releases went out
-  before anybody looked.
-
 ## Open work in other repositories
 
 M-18 allows reading another repository and forbids changing it, however small the change and

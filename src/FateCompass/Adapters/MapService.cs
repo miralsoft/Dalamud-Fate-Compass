@@ -130,6 +130,8 @@ internal static unsafe class MapService
         }
     }
 
+#if FATECOMPASS_DEVTOOLS
+
     /// <summary>
     /// Places a row of markers around a position, one per icon id in a range, so it can be seen
     /// which of them actually look like digits.
@@ -181,6 +183,8 @@ internal static unsafe class MapService
 
         return report.ToString();
     }
+
+#endif
 
     /// <summary>
     /// Turns the marker list into the nodes that are actually drawn.
