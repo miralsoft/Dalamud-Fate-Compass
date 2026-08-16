@@ -94,6 +94,19 @@ public sealed class FateCompassSettings
     /// <summary>Remount automatically once the FATE is over. Ships disabled (FH-02).</summary>
     public bool AutoRemountAfterFate { get; set; }
 
+    /// <summary>
+    /// Remount automatically after arriving somewhere by teleport, and only inside Eureka, Bozja
+    /// and the Occult Crescent. Ships disabled (FH-02).
+    /// </summary>
+    /// <remarks>
+    /// Limited to those three zones on purpose rather than for want of ambition. Everywhere else
+    /// a teleport ends roughly where the player meant to go, so mounting them would be the plugin
+    /// deciding what they do next. In an exploratory zone the aetheryte is never the destination,
+    /// only the nearest the game will put you to it, and the next thing anybody does is get on a
+    /// mount.
+    /// </remarks>
+    public bool AutoRemountAfterTeleport { get; set; }
+
     public bool EngageDismount { get; set; } = true;
 
     public bool EngageLevelSync { get; set; } = true;

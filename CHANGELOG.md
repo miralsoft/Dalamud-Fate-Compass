@@ -6,10 +6,29 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
-Nothing here changes what the plugin does. It adopts foundation ruleset 2.0.0, which added the
-C# and Dalamud profiles and the plugin blueprint that this project had been carrying itself.
-
 ### Added
+
+- **Mounting again after a teleport, in Eureka, Bozja and the Occult Crescent.** In those zones
+  an aetheryte is never where anybody is going, only the nearest the game will put them to it,
+  so the next thing after arriving is always getting back on a mount. Covers every way of
+  arriving: aetheryte to aetheryte, Return, and porting in from outside. Off by default (FH-02),
+  switchable in the settings and through `/fate mount on|off|toggle`.
+
+  Restricted to those three zones deliberately. Anywhere else a teleport ends roughly where the
+  player meant to be, and mounting them would be the plugin having an opinion about what they do
+  next.
+
+  How it knows is worth recording, because guessing would have failed: inside those zones an
+  aetheryte hop does not change territory, so watching for a territory change sees nothing. The
+  client does report what kind of warp is running, and the values were measured rather than
+  assumed. An aetheryte hop reports `TownTranslate`, not `Teleport`, which is what anybody would
+  have guessed and what would have made the feature never fire once. The reading also disappears
+  two or three seconds after arriving, so it is sampled continuously rather than asked for. The
+  measurements are in `docs/platform-notes.md`.
+
+The rest of this section changes nothing about what the plugin does. It adopts foundation ruleset
+2.0.0, which added the C# and Dalamud profiles and the plugin blueprint that this project had
+been carrying itself.
 
 - `CLAUDE.md` at the repository root, from the foundation's entrypoint template. It is what
   tells an agent starting in this repository that the foundation exists, how to clone and

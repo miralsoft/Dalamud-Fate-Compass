@@ -317,6 +317,10 @@ public sealed class Plugin : IDalamudPlugin
                 ToggleAutomation(value);
                 break;
 
+            case "mount":
+                ToggleRemountAfterTeleport(value);
+                break;
+
             case "news":
             case "whatsnew":
             case "changelog":
@@ -458,5 +462,28 @@ public sealed class Plugin : IDalamudPlugin
 
         DalamudServices.ChatGui.Print(localizer.Get(
             settings.AutoEngageOnFateEnter ? StringKeys.CommandAutoOn : StringKeys.CommandAutoOff));
+    }
+
+    /// <summary>
+    /// Switches mounting after a teleport on or off from a command, so it can sit in a macro
+    /// (FH-02).
+    /// </summary>
+    private void ToggleRemountAfterTeleport(string value)
+    {
+        var settings = configuration.Settings;
+
+        settings.AutoRemountAfterTeleport = value switch
+        {
+            "on" or "1" or "true" => true,
+            "off" or "0" or "false" => false,
+            _ => !settings.AutoRemountAfterTeleport,
+        };
+
+        configuration.Save();
+
+        DalamudServices.ChatGui.Print(localizer.Get(
+            settings.AutoRemountAfterTeleport
+                ? StringKeys.CommandMountOn
+                : StringKeys.CommandMountOff));
     }
 }

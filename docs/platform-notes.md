@@ -58,6 +58,48 @@ bool ActionManager.UseAction(
     UseActionMode mode, uint comboRouteId, bool* outOptAreaTargeted);
 ```
 
+## What kind of warp is happening
+
+`FFXIVClientStructs.FFXIV.Client.Game.UI.WarpInfo` is a singleton reached through
+`WarpInfo.Instance()` and carries a `WarpType` field. `GameMain.Instance()` carries
+`TerritoryTransitionState`, `TerritoryLoadState` and `CurrentTerritoryTypeId` alongside it.
+
+The enum has thirty values. The ones that matter here:
+
+| Value | Name |
+|---|---|
+| 0 | `None` |
+| 3 | `Translate` |
+| 4 | `Teleport` |
+| 7 | `Return` |
+| 12 | `EnterInstanceContent` |
+| 13 | `LeaveInstanceContent` |
+| 15 | `TownTranslate` |
+
+**Measured in the Occult Crescent (territory 1346) on 2026-08-12**, by sampling every framework
+tick and recording the changes:
+
+- An **aetheryte hop inside the zone** reports `TownTranslate` (15), not `Teleport` and not
+  `Translate`. This is the finding that justified measuring instead of assuming: `Teleport` is
+  what anybody would guess, and a feature built on that guess would never have fired once.
+- **Return** reports `Return` (7).
+- The value is **transient**. It appeared about four seconds before the sample and was back to
+  `None` within two to three: roughly 1.8 seconds for the aetheryte hop and 2.7 for Return.
+  Reading it on demand after arriving therefore sees nothing, which is why anything built on it
+  has to sample continuously rather than ask when it wants to know.
+- `TerritoryTransitionState` ran 2 to 1 and back to 2 across the warp, with the 1 at the moment
+  of the transition itself.
+- `CurrentTerritoryTypeId` never changed. That is the whole reason this exists: inside these
+  zones an aetheryte hop is not a territory change, so watching for one sees nothing.
+
+Not yet measured: what a teleport from outside **into** such a zone reports, `Teleport` or
+`EnterInstanceContent`. Both are treated as an arrival, so the answer confirms rather than
+decides.
+
+The name `TownTranslate` says plainly that the same value is used by the aethernet in cities, so
+anything acting on it needs its own reason to be in an exploratory zone rather than treating the
+value as proof of one.
+
 ## General actions
 
 Read out of the game's own `GeneralAction` sheet rather than assumed, because the numbers are

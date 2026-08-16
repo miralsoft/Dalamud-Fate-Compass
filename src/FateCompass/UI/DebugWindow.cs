@@ -184,7 +184,7 @@ internal sealed class DebugWindow : Window, IDisposable
         ImGui.SameLine();
         if (ImGui.Button("Clear warps"))
         {
-            Adapters.WarpProbe.Clear();
+            Adapters.WarpWatcher.Reset();
             output = "Warp history cleared. Teleport, then press \"Warp state\".";
         }
 
@@ -409,14 +409,15 @@ internal sealed class DebugWindow : Window, IDisposable
     /// </remarks>
     private static string DescribeWarpState()
     {
-        var last = Adapters.WarpProbe.Last;
-        var history = Adapters.WarpProbe.History;
+        var last = Adapters.WarpWatcher.Last;
+        var history = Adapters.WarpWatcher.History;
 
         var lines = new System.Text.StringBuilder();
         lines.AppendLine("Warp state");
-        lines.AppendLine($"  probe    : {Adapters.WarpProbe.Status}");
+        lines.AppendLine($"  watcher     : {Adapters.WarpWatcher.Status}");
+        lines.AppendLine($"  last arrival: {WarpName(Adapters.WarpWatcher.LastArrivalKind)}");
         lines.AppendLine(
-            $"  now      : warp={last.Warp} ({(int)last.Warp})  transition={last.TransitionState}  " +
+            $"  now         : warp={WarpName(last.Warp)}  transition={last.TransitionState}  " +
             $"load={last.LoadState}  territory={last.TerritoryId}");
         lines.AppendLine();
 
@@ -431,17 +432,35 @@ internal sealed class DebugWindow : Window, IDisposable
         foreach (var o in history)
         {
             lines.AppendLine(
-                $"    -{(now - o.AtUtc).TotalSeconds,6:F1}s  warp={o.Warp,-22} ({(int)o.Warp,2})  " +
+                $"    -{(now - o.AtUtc).TotalSeconds,6:F1}s  warp={WarpName(o.Warp),-24}  " +
                 $"transition={o.TransitionState,3}  load={o.LoadState,3}  territory={o.TerritoryId}");
         }
 
         lines.AppendLine();
-        lines.AppendLine("  What to look for: whether a warp value other than None appears at all,");
-        lines.AppendLine("  which one it is for an aetheryte hop inside this zone, and whether it");
-        lines.AppendLine("  stays set afterwards or falls back to None once you have arrived.");
+        lines.AppendLine("  An arrival is the step where a warp gives way to None. Everything the");
+        lines.AppendLine("  feature does hangs off that moment, and off where you are standing when");
+        lines.AppendLine("  it happens rather than where the journey started.");
 
         return lines.ToString();
     }
+
+    /// <summary>
+    /// Names the kinds this project acts on and shows the rest as a bare number.
+    /// </summary>
+    /// <remarks>
+    /// Deliberately not the platform's full enum. The core cannot see that type (FH-04), so these
+    /// travel as plain numbers, and spelling out the four that matter is more useful here than
+    /// reproducing thirty names, most of which nothing will ever report in these zones.
+    /// </remarks>
+    private static string WarpName(uint code) => code switch
+    {
+        Core.Routing.WarpArrival.None => "None (0)",
+        Core.Routing.WarpArrival.Teleport => "Teleport (4)",
+        Core.Routing.WarpArrival.Return => "Return (7)",
+        Core.Routing.WarpArrival.EnterInstanceContent => "EnterInstanceContent (12)",
+        Core.Routing.WarpArrival.TownTranslate => "TownTranslate (15)",
+        _ => $"other ({code})",
+    };
 
     private static string DescribeNativeMarkers() => $"""
         Native map markers (KamiToolKit)

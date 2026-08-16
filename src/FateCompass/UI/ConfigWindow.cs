@@ -264,6 +264,13 @@ internal sealed class ConfigWindow : Window, IDisposable
         changed |= Checkbox(StringKeys.SettingConfirmReturnPrompt, StringKeys.SettingConfirmReturnPromptHelp,
             settings.ConfirmReturnPrompt, value => settings.ConfirmReturnPrompt = value);
 
+        changed |= Checkbox(StringKeys.SettingAutoRemountTeleport, StringKeys.SettingAutoRemountTeleportHelp,
+            settings.AutoRemountAfterTeleport, value => settings.AutoRemountAfterTeleport = value);
+
+        changed |= Dependent(settings.AutoRemountAfterTeleport, () =>
+            IntSlider(StringKeys.SettingRemountDelay, settings.RemountDelaySeconds, 0, 15,
+                value => settings.RemountDelaySeconds = value));
+
         Save(changed);
     }
 
