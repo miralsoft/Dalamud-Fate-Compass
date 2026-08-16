@@ -47,6 +47,13 @@ public sealed class WarpArrivalTests
     /// the player chose to end here. Leaving instanced content is a departure, not an arrival
     /// anywhere this cares about.
     /// </summary>
+    /// <remarks>
+    /// These four numbers are the platform's, not this project's: they were read out of the
+    /// installed client's own enum by reflection on 2026-08-12 and are listed in
+    /// <c>docs/platform-notes.md</c>. Said out loud because T-07 asks for it, and because a test
+    /// that invents the values it claims something about agrees with whatever the code assumed
+    /// and goes green either way.
+    /// </remarks>
     [Theory]
     [InlineData(8u)]   // Resurrection
     [InlineData(10u)]  // ChocoboTaxi

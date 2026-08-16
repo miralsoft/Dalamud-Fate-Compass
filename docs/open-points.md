@@ -10,6 +10,31 @@ however obviously right it looks. Where something decided here has a consequence
 it is written down here, marked as belonging there, and it stops. Whoever works in that
 repository picks it up.
 
+- **(open since 2026-08-16, here) Three call paths reach the game from the draw thread.** Found
+  by redoing the crash-safety pass as R-21 asks, by reachability rather than by grep. All three
+  are in this repository and are this project's to fix; listed here rather than under another
+  repository, and only until they are.
+
+  - `MainWindow.PreDraw` calls `GameSnapshotProvider.CurrentInstance`, which calls
+    `UIState.Instance()->PublicInstance.IsInstancedArea()`.
+  - `MainWindow.DrawGemstones` calls `CurrencyProvider.GemstoneCount`, which calls
+    `InventoryManager->GetInventoryItemCount`.
+  - `MainWindow.DrawRidingMapHint` calls `MountSpeedProvider.CanFlyHere`, which reads
+    `PlayerState.Instance()->CanFly`.
+
+  FH-08 permits reads of **addon geometry** from the draw callback, with a stated reason: an
+  overlay cannot know where the game's window is without them. Neither `PlayerState` nor
+  `InventoryManager` nor `UIState` is an addon, and two of the three are function calls rather
+  than field reads.
+
+  Nothing has crashed because of these. That is not evidence they are safe, only that the shape
+  which took the client down twice has not been hit here yet.
+
+  The fix is not a wrapper: these are needed while drawing and `OnGameThread` is asynchronous, so
+  a value cannot be awaited mid-frame. The shape that works is the one `WarpWatcher` already
+  uses: sample on the framework tick, let the window read what was captured. Three call paths,
+  each small, and the values change slowly enough that a frame of staleness is invisible.
+
 - **(open since 2026-08-12, `miralsoft/Dalamud-Plugins`) Does the aggregate index actually
   satisfy D-06?** D-06 says an automated index never removes an entry as a consequence of a
   failure, only as a deliberate act. The index rebuilds hourly and reads this plugin's
