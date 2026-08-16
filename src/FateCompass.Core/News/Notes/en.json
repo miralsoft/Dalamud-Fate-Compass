@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "1.2.0",
+      "date": "2026-08-16",
+      "added": [
+        "In Eureka, Bozja and the Occult Crescent the plugin can put you back on your mount after a teleport. An aetheryte there is never where you are going, only the nearest the game will drop you to it, and getting back on a mount is what everybody does next anyway. Covers every way of arriving: aetheryte to aetheryte, by Return, and porting in from outside. Off by default; switch it on under Settings, Travel, or with /fate mount on.",
+        "Nothing happens outside those three zones, and that is deliberate. A teleport elsewhere usually ends where you meant to be, and mounting you there would be the plugin having an opinion about what you do next."
+      ],
+      "changed": [
+        "Mounting again now waits one second instead of two, after a FATE as well as after a teleport. If you are still in combat it waits for that regardless. If you moved the slider yourself, your value stays."
+      ],
+      "fixed": [
+        "Three places asked the game a question while a frame was being drawn: the instance number in the window title, your gemstone count, and whether you can fly here. That is the shape that has taken the client down twice before. Nothing crashed because of these, but the question is now asked in the right place."
+      ]
+    },
+    {
       "version": "1.1.0",
       "date": "2026-08-06",
       "added": [

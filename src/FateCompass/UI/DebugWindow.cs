@@ -167,6 +167,32 @@ internal sealed class DebugWindow : Window, IDisposable
             ImGui.SetTooltip("Occult Crescent, Bozja, Zadnor: every engagement slot with its raw fields.");
         }
 
+        // Not run on the game thread: the probe samples on the framework thread every tick and
+        // this only formats what it already captured. Nothing here follows a game pointer.
+        ImGui.SameLine();
+        if (ImGui.Button("Warp state"))
+        {
+            output = DescribeWarpState();
+        }
+
+        if (ImGui.IsItemHovered())
+        {
+            ImGui.SetTooltip(
+                "What kind of warp the client reports. Press after teleporting to see what it saw.");
+        }
+
+        ImGui.SameLine();
+        if (ImGui.Button("Clear warps"))
+        {
+            Adapters.WarpWatcher.Reset();
+            output = "Warp history cleared. Teleport, then press \"Warp state\".";
+        }
+
+        if (ImGui.IsItemHovered())
+        {
+            ImGui.SetTooltip("Empty the history so the next teleport stands alone.");
+        }
+
         ImGui.SameLine();
         if (ImGui.Button("Travel speed"))
         {
@@ -371,6 +397,70 @@ internal sealed class DebugWindow : Window, IDisposable
             Measured so far: {configuration.Settings.TravelSpeedByTerritory.Count} zone(s).
             """;
     }
+
+    /// <summary>
+    /// What the client reported about recent warps.
+    /// </summary>
+    /// <remarks>
+    /// The two questions this is meant to settle: which <c>WarpType</c> an aetheryte hop inside
+    /// an exploratory zone produces, and whether the value survives the warp or is only set
+    /// during it. Both decide how a later "mount after a teleport" feature detects anything at
+    /// all, and neither can be answered from outside the game.
+    /// </remarks>
+    private static string DescribeWarpState()
+    {
+        var last = Adapters.WarpWatcher.Last;
+        var history = Adapters.WarpWatcher.History;
+
+        var lines = new System.Text.StringBuilder();
+        lines.AppendLine("Warp state");
+        lines.AppendLine($"  watcher     : {Adapters.WarpWatcher.Status}");
+        lines.AppendLine($"  last arrival: {WarpName(Adapters.WarpWatcher.LastArrivalKind)}");
+        lines.AppendLine(
+            $"  now         : warp={WarpName(last.Warp)}  transition={last.TransitionState}  " +
+            $"load={last.LoadState}  territory={last.TerritoryId}");
+        lines.AppendLine();
+
+        if (history.Count == 0)
+        {
+            lines.AppendLine("  No changes recorded yet. Teleport, then press this again.");
+            return lines.ToString();
+        }
+
+        lines.AppendLine($"  Changes, newest first ({history.Count}):");
+        var now = DateTime.UtcNow;
+        foreach (var o in history)
+        {
+            lines.AppendLine(
+                $"    -{(now - o.AtUtc).TotalSeconds,6:F1}s  warp={WarpName(o.Warp),-24}  " +
+                $"transition={o.TransitionState,3}  load={o.LoadState,3}  territory={o.TerritoryId}");
+        }
+
+        lines.AppendLine();
+        lines.AppendLine("  An arrival is the step where a warp gives way to None. Everything the");
+        lines.AppendLine("  feature does hangs off that moment, and off where you are standing when");
+        lines.AppendLine("  it happens rather than where the journey started.");
+
+        return lines.ToString();
+    }
+
+    /// <summary>
+    /// Names the kinds this project acts on and shows the rest as a bare number.
+    /// </summary>
+    /// <remarks>
+    /// Deliberately not the platform's full enum. The core cannot see that type (FH-04), so these
+    /// travel as plain numbers, and spelling out the four that matter is more useful here than
+    /// reproducing thirty names, most of which nothing will ever report in these zones.
+    /// </remarks>
+    private static string WarpName(uint code) => code switch
+    {
+        Core.Routing.WarpArrival.None => "None (0)",
+        Core.Routing.WarpArrival.Teleport => "Teleport (4)",
+        Core.Routing.WarpArrival.Return => "Return (7)",
+        Core.Routing.WarpArrival.EnterInstanceContent => "EnterInstanceContent (12)",
+        Core.Routing.WarpArrival.TownTranslate => "TownTranslate (15)",
+        _ => $"other ({code})",
+    };
 
     private static string DescribeNativeMarkers() => $"""
         Native map markers (KamiToolKit)

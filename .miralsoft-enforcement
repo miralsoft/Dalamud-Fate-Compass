@@ -1,11 +1,30 @@
 # MIRAL Soft enforcement configuration.
-# Read by the git hooks in .git/hooks/ (see foundation-docs/enforcement/README.md).
+# Read by the git hooks in .git/hooks/ and by .github/workflows/ci.yml, which reads
+# these same keys so the local and the server-side check can never disagree about
+# what is covered (R-17). Install the hooks with the commands in CLAUDE.md; they live
+# in a clone, so a fresh clone needs them again.
 
-# Expected committer identity (R-03). This is a private game plugin, so the project
-# identity is the owner's in-game name and a GitHub noreply address. No personal
-# address is exposed in the repository.
+# Expected committer identity (R-03, R-19). This is a private game plugin, so the
+# project identity is the owner's in-game name and a GitHub noreply address. No
+# personal address is exposed in the repository. This must match what docs/project.md
+# declares.
 OWNER_NAME=Sanaka
 OWNER_EMAIL=20637644+miralsoft@users.noreply.github.com
 
 # Space-separated globs whose staged files are checked for em-dash characters (I-02).
-CONTENT_GLOBS=*.md docs/*.md docs/*/*.md
+#
+# These are shell `case` patterns, where `*` also matches `/`. So `*.md` already covers
+# every markdown file at any depth, and listing `docs/*.md` as well would add nothing.
+#
+# The scope is every file that carries prose a human reads, which since foundation
+# 2.0.0 explicitly includes source comments: six em-dashes sat in XML doc comments in
+# this repository for months because the globs stopped at markdown. It also includes
+# the JSON catalogues, because the release notes and the language catalogues are the
+# most user-facing prose the project ships.
+CONTENT_GLOBS=*.md *.cs *.json *.ps1 *.yml
+
+# Material the project did not write and must not rewrite, skipped rather than
+# reported. Empty on purpose: this repository contains no delivered third-party text.
+# The foundation clone lives at .foundation-docs/ and is excluded from git entirely,
+# so it is never staged and needs no entry here.
+CONTENT_EXCLUDE=

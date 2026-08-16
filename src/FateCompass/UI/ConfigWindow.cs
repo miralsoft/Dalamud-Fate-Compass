@@ -264,6 +264,13 @@ internal sealed class ConfigWindow : Window, IDisposable
         changed |= Checkbox(StringKeys.SettingConfirmReturnPrompt, StringKeys.SettingConfirmReturnPromptHelp,
             settings.ConfirmReturnPrompt, value => settings.ConfirmReturnPrompt = value);
 
+        changed |= Checkbox(StringKeys.SettingAutoRemountTeleport, StringKeys.SettingAutoRemountTeleportHelp,
+            settings.AutoRemountAfterTeleport, value => settings.AutoRemountAfterTeleport = value);
+
+        changed |= Dependent(settings.AutoRemountAfterTeleport, () =>
+            IntSlider(StringKeys.SettingRemountDelay, settings.RemountDelaySeconds, 0, 15,
+                value => settings.RemountDelaySeconds = value));
+
         Save(changed);
     }
 
@@ -527,7 +534,7 @@ internal sealed class ConfigWindow : Window, IDisposable
     /// <remarks>
     /// Every explanation used to sit permanently under its setting. Each one was justified on
     /// its own and together they doubled the height of the window and turned it into a wall of
-    /// grey text, where the settings themselves — the part anyone came for — were the minority
+    /// grey text, where the settings themselves, the part anyone came for, were the minority
     /// of what was on screen.
     /// <para>
     /// The text has not gone anywhere. It is one hover away, which is where an explanation

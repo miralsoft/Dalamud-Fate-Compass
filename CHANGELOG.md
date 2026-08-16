@@ -6,6 +6,78 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-08-16
+
+### Added
+
+- **Mounting again after a teleport, in Eureka, Bozja and the Occult Crescent.** In those zones
+  an aetheryte is never where anybody is going, only the nearest the game will put them to it,
+  so the next thing after arriving is always getting back on a mount. Covers every way of
+  arriving: aetheryte to aetheryte, Return, and porting in from outside. Off by default (FH-02),
+  switchable in the settings and through `/fate mount on|off|toggle`.
+
+  Restricted to those three zones deliberately. Anywhere else a teleport ends roughly where the
+  player meant to be, and mounting them would be the plugin having an opinion about what they do
+  next.
+
+  How it knows is worth recording, because guessing would have failed: inside those zones an
+  aetheryte hop does not change territory, so watching for a territory change sees nothing. The
+  client does report what kind of warp is running, and the values were measured rather than
+  assumed. An aetheryte hop reports `TownTranslate`, not `Teleport`, which is what anybody would
+  have guessed and what would have made the feature never fire once. The reading also disappears
+  two or three seconds after arriving, so it is sampled continuously rather than asked for. The
+  measurements are in `docs/platform-notes.md`.
+
+### Fixed
+
+- **Three places asked the game a question while a frame was being drawn.** Reading the public
+  instance number, the gemstone purse, and whether flying is unlocked all reached into the game
+  from the drawing thread, which is the shape that has taken this client down twice before.
+  Nothing had crashed because of them, which is not the same as their being safe. Those readings
+  now happen on the game's own tick and the windows read what was taken, one frame old at most,
+  on values that change when you zone or pick something up.
+
+  Found by redoing the crash-safety audit the way foundation 3.0.0 asks for: by following what
+  reaches the game and asking who calls it, instead of searching the source for the words that
+  usually appear near it. The previous passes had found the same files, checked them, and never
+  asked which thread called them.
+
+The rest of this section changes nothing about what the plugin does. It adopts foundation ruleset
+3.1.0, which added the C# and Dalamud profiles and the plugin blueprint that this project had
+been carrying itself, and later the rules that turned up the audit gap above.
+
+- `CLAUDE.md` at the repository root, from the foundation's entrypoint template. It is what
+  tells an agent starting in this repository that the foundation exists, how to clone and
+  exclude it, and in which order to read it. Until now nothing here pointed back at the rules.
+- `docs/platform-notes.md`, holding the reflected Dalamud API surface, the enum values, the
+  ClientStructs signatures and the general action ids that used to live in the local platform
+  profile. Research about one platform version, kept with the project.
+- CI now mirrors the git hooks (R-17), using the foundation's own template rather than a check
+  written here: em-dashes across everything the enforcement globs cover, a secret scan this
+  repository never had, and AI-attribution markers across the commit messages a push or pull
+  request contains. Every detector proves it can fire on a planted case and stay quiet on a
+  clean one before it is trusted (R-20). The steps sit in the existing required job so a failure
+  blocks a merge, and the header names the foundation version they were copied from (M-19).
+- A section in `docs/open-points.md` for consequences that belong to another repository (M-18),
+  starting with the question of whether the aggregate index really satisfies D-06.
+
+### Changed
+
+- The project declares `Kind: external` (M-12), its committer identity (R-19) and foundation
+  version 2.0.0 (M-06) in `docs/project.md`.
+- `.miralsoft-enforcement` now covers source, JSON, PowerShell and workflow files, not only
+  markdown. The widened I-02 counts prose written for humans, which includes code comments.
+- Six em-dash characters removed from XML doc comments in `Plugin.cs`, `ConfigWindow.cs`,
+  `MainWindow.cs` and `ReleaseNotesWindow.cs`. They had been there for months because the
+  enforcement globs stopped at markdown.
+- `docs/release.md` records the draft pull request trap (D-09), which cost a pull request
+  during the 1.1.0 release and was written down nowhere.
+
+### Removed
+
+- `docs/rules/csharp.md` and `docs/rules/dalamud.md`. Both are in the foundation now, largely
+  derived from these two files, and a second copy would only have gone stale.
+
 ## [1.1.0] - 2026-08-06
 
 ### Added

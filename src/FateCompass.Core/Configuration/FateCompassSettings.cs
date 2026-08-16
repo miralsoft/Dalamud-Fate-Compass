@@ -94,6 +94,19 @@ public sealed class FateCompassSettings
     /// <summary>Remount automatically once the FATE is over. Ships disabled (FH-02).</summary>
     public bool AutoRemountAfterFate { get; set; }
 
+    /// <summary>
+    /// Remount automatically after arriving somewhere by teleport, and only inside Eureka, Bozja
+    /// and the Occult Crescent. Ships disabled (FH-02).
+    /// </summary>
+    /// <remarks>
+    /// Limited to those three zones on purpose rather than for want of ambition. Everywhere else
+    /// a teleport ends roughly where the player meant to go, so mounting them would be the plugin
+    /// deciding what they do next. In an exploratory zone the aetheryte is never the destination,
+    /// only the nearest the game will put you to it, and the next thing anybody does is get on a
+    /// mount.
+    /// </remarks>
+    public bool AutoRemountAfterTeleport { get; set; }
+
     public bool EngageDismount { get; set; } = true;
 
     public bool EngageLevelSync { get; set; } = true;
@@ -101,10 +114,17 @@ public sealed class FateCompassSettings
     public bool EngageTankStance { get; set; } = true;
 
     /// <summary>
-    /// Seconds to wait after a FATE ends before attempting a remount, so the attempt does not
-    /// collide with the tail of combat.
+    /// Seconds to wait before attempting a remount, after a FATE ends or after arriving by
+    /// teleport.
     /// </summary>
-    public int RemountDelaySeconds { get; set; } = 2;
+    /// <remarks>
+    /// One second rather than two. The delay exists so the attempt does not land in the tail of
+    /// combat, but an attempt that lands too early costs nothing: the window stays open for a
+    /// minute and mounts the moment it becomes possible. Waiting longer than necessary is
+    /// therefore the only cost the delay actually has, and after a teleport there is no combat
+    /// tail to avoid in the first place.
+    /// </remarks>
+    public int RemountDelaySeconds { get; set; } = 1;
 
     // --- Ranking ---------------------------------------------------------------------
 

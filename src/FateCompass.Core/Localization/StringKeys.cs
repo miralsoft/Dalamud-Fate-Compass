@@ -199,6 +199,9 @@ public static class StringKeys
     public const string SettingAutoEngageHelp = "setting.autoEngage.help";
     public const string SettingAutoRemount = "setting.autoRemount";
     public const string SettingAutoRemountHelp = "setting.autoRemount.help";
+
+    public const string SettingAutoRemountTeleport = "setting.autoRemountTeleport";
+    public const string SettingAutoRemountTeleportHelp = "setting.autoRemountTeleport.help";
     public const string SettingStepDismount = "setting.step.dismount";
     public const string SettingStepLevelSync = "setting.step.levelSync";
     public const string SettingStepTankStance = "setting.step.tankStance";
@@ -233,6 +236,9 @@ public static class StringKeys
     // Command feedback
     public const string CommandAutoOn = "command.auto.on";
     public const string CommandAutoOff = "command.auto.off";
+
+    public const string CommandMountOn = "command.mount.on";
+    public const string CommandMountOff = "command.mount.off";
     public const string CommandEngageNothing = "command.engage.nothing";
     public const string CommandEngageBlockedCombat = "command.engage.blocked.combat";
     public const string CommandEngageBlockedOccupied = "command.engage.blocked.occupied";
@@ -312,7 +318,9 @@ public static class StringKeys
         SettingsGeneral, SettingsEngage, SettingsRanking, SettingsFilter,
         SettingsNotifications, SettingsLanguage,
         SettingEnabled, SettingEnabledHelp, SettingAutoEngage, SettingAutoEngageHelp,
-        SettingAutoRemount, SettingAutoRemountHelp, SettingStepDismount, SettingStepLevelSync,
+        SettingAutoRemount, SettingAutoRemountHelp,
+        SettingAutoRemountTeleport, SettingAutoRemountTeleportHelp,
+        SettingStepDismount, SettingStepLevelSync,
         SettingStepTankStance, SettingRemountDelay, SettingTravelSpeed,
         SettingTravelSpeedExploratory, SettingTravelSpeedExploratorySlow, SettingTeleportOverhead,
         SettingReturnOverhead,
@@ -323,7 +331,8 @@ public static class StringKeys
         SettingGemstoneHeadroom, SettingTrackHistory, SettingLanguageChoice, SettingLanguageAuto,
         SettingLevelMinimum, SettingLevelMaximum,
         SettingTypeFlagIntoChat, SettingTypeFlagIntoChatHelp,
-        CommandAutoOn, CommandAutoOff, CommandEngageNothing, CommandEngageBlockedCombat,
+        CommandAutoOn, CommandAutoOff, CommandMountOn, CommandMountOff,
+        CommandEngageNothing, CommandEngageBlockedCombat,
         CommandEngageBlockedOccupied, CommandUnknown, CommandHelp,
         NotificationNewFate,
         WindowNewsTitle, ButtonNewsTooltip, ButtonNewsTooltipUnseen,

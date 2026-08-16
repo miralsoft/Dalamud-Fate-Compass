@@ -115,7 +115,7 @@ Each entry: date, decision, short rationale.
 
 - (2026-08-01) The API surface was verified by reflecting over the locally installed Dalamud
   15.0.3 rather than trusting documentation or recollection, and the findings are recorded in
-  `rules/dalamud.md`. Rationale: I-10. This immediately caught one error that would otherwise
+  `platform-notes.md`. Rationale: I-10. This immediately caught one error that would otherwise
   have been written into the adapters: `IClientState.LocalPlayer` no longer exists in v15, the
   local player now comes from `IObjectTable.LocalPlayer`.
 
@@ -228,3 +228,142 @@ Each entry: date, decision, short rationale.
 
   What this costs is a line in the README's "what it will not do", which has been rewritten to
   say what actually happens rather than a version of it that reads better.
+
+- (2026-08-12) **This project targets foundation 2.0.0, and the work M-17 asks for was done
+  rather than deferred.** M-17 says a project is bound by the version it declares and that
+  raising the declaration means either doing the work or recording why not. The audit came out
+  almost entirely green, which is unsurprising: most of 2.0.0 was written from this project, so
+  the rules describe what was already here. What actually needed doing was R-17 and the widened
+  I-02, both below.
+
+  Checked and holding without changes: the release chain and its two delays are documented
+  (D-01, D-02), the tag is checked against the built version before anything is published
+  (D-04), the configuration carries a version and a migration per step and only corrects
+  defaults nobody chose (D-10, D-11), the three audiences have three documents (D-12), the
+  licence and the trademark notice are in place (D-13), the README says what the plugin will
+  not do (D-14), one command runs the same gates as CI (R-18), a feature that switches itself
+  off says so through a status rather than going quiet (S-11), unknown aetheryte heights fall
+  back to the old flat measurement instead of a confident wrong answer (S-12), the actions are
+  pinned to digests with least privilege (S-13), developer surfaces are absent from a release
+  and CI proves it (C-10), the language catalogues are covered by thirteen tests including
+  missing keys, orphan keys and every fallback (C-11), and the speed measurement already
+  carries both bounds and discards rather than clamps (C-14). The seven construction points
+  that were added to the blueprint late are all present in the code, which is where they came
+  from.
+
+  One gap that was not a rule but a runbook omission: the draft pull request trap (D-09) was
+  documented nowhere here, although it cost a pull request during the 1.1.0 release. It is now
+  in `release.md` at the step where it strikes.
+
+- (2026-08-12) **The project's own C# and Dalamud profiles were retired.** They existed because
+  the foundation had none, which `project.md` said in as many words. Foundation 2.0.0 ships
+  both, largely derived from these two files, so keeping them would have left two sources for
+  the same facts and the second one would have gone stale first. What was research rather than
+  rule moved to `platform-notes.md`: the reflected API surface, the enum values, the
+  ClientStructs signatures and the general action ids. That is a finding about one version of
+  one platform, not something another project should inherit, which is exactly why the
+  foundation left it out.
+
+  Rejected: keeping the local profiles as a thinning layer of project-specific tightenings.
+  That is what `rules-project.md` and FH-01 upwards already are, so it would have been a third
+  place for the same kind of statement.
+
+- (2026-08-12) **The content checks were added to the existing CI job rather than a job of
+  their own.** R-17 requires every hook check to run in CI too, and this repository had none of
+  them: the build job checked build, tests, format, local switches and dependencies, while the
+  hooks checked em-dashes, secrets and identity. A separate `content` job would have been
+  tidier, and it would also have run without blocking anything, because branch protection
+  requires the check named "Build, test, format, scan" and nothing else. A check that reports
+  but cannot stop a merge is the kind of green tick this ruleset spends its time warning about,
+  so the steps went into the job that is already required.
+
+  Deliberately not mirrored: the committer identity check. A merge commit created by GitHub
+  carries GitHub's own committer identity, so the check would fail on every merge for something
+  that is not a violation. The hook still enforces it where commits are actually made. Recorded
+  rather than left silent, because an unexplained hole in "CI mirrors the hooks" reads like an
+  oversight.
+
+  Each detector proves it can fire before it is trusted (R-20), and the attribution probe is
+  assembled from pieces rather than written out, because a line that looks like a marker is one
+  as far as the check is concerned and the workflow file is checked like any other.
+
+- (2026-08-12) **The attribution pattern is duplicated in CI, and that is a known weakness
+  rather than an oversight.** The commit-msg hook owns the list; the CI step carries a copy.
+  Copies drift, and this one drifted within a day: the foundation widened the patterns and
+  added an exception for the entrypoint filename, and the copy here would have rejected a
+  commit the hook accepts. Local and server-side disagreeing is the exact failure R-17 exists
+  to prevent.
+
+  It is a copy because the foundation is a private repository and this public one's CI cannot
+  clone it without a token in the repository secrets. Handing a public workflow a credential to
+  a private repository is a worse trade than a list that has to be resynced, so the copy stays
+  and says so in the workflow, with a pointer here.
+
+  Reduced rather than removed: the pattern is now defined once in the workflow's `env` block
+  instead of three times in two steps, so the drift can only ever be against the foundation and
+  never within this file. The self-test carries a third probe, a message naming the entrypoint
+  file, which is the case that would catch the drift if it happens again.
+
+  Found by installing the updated hook and running both directions rather than reading it. The
+  adversarial case matters: `Co-Authored-By: CLAUDE.md` is still rejected, because stripping the
+  filename leaves the marker behind. An exception that removed the whole line would have opened
+  a hole.
+
+- (2026-08-12) **The content checks now come from the foundation's template, and the entry above
+  is superseded.** That entry treated a copied pattern list as something to maintain carefully.
+  The better answer was that the checks should never have been written here at all: they are the
+  same everywhere, so they belong in the foundation as a template that projects copy, the way the
+  git hooks already work. The foundation now carries one at `enforcement/ci/content-checks.yml`,
+  and this repository uses it.
+
+  Arrangement: the template's second variant, its steps pasted into the existing build job rather
+  than a workflow of their own. The template describes both and asks that the choice be recorded.
+  Branch protection here requires the check named "Build, test, format, scan"; a job of its own
+  would have reported a failure and let the merge through, which is the kind of green tick this
+  whole ruleset exists to prevent.
+
+  One deviation, and only one: each copied step carries `shell: bash`. The template needs a POSIX
+  shell and this job runs on a Windows runner, where the default is PowerShell. Git Bash ships
+  with the runner, so the scripts are otherwise unchanged. Verified by diffing the copied steps
+  against the template: five added lines, all of them `shell: bash`, and nothing else.
+
+  The header carries the provenance line M-19 requires, naming the foundation version and the
+  date. That is what the release-time review under M-17 compares against, so re-copying becomes
+  part of raising the declared version rather than something discovered later.
+
+  What this gained beyond tidiness: a secret scan this repository never had. It found nothing,
+  which is the answer worth having only because the detectors prove they can fire first (R-20).
+
+- (2026-08-16) **Both remounts keep shipping switched off, and the argument for switching them
+  on was wrong rather than merely overruled.** The owner asked for mounting after a FATE and
+  after a teleport to be on by default. This project could not do that, because the requirement
+  is in the foundation's Dalamud profile rather than in FH-02, and M-01 forbids a project
+  relaxing a global rule. Raised as work belonging to the foundation instead.
+
+  The foundation answered it in 3.0.0, and better than the question was put. What a behaviour
+  ships as now depends on what it touches rather than on whether it is automatic: automation that
+  reaches the game server or acts in the world ships off, automation that only affects the
+  plugin's own presentation ships in whatever state makes a fresh install work. Mounting sends an
+  action to the game server, so it stays off. P-05 gives the test: who pays if the default is
+  wrong. Here it is the player, under rules a third party writes and enforces against them, so a
+  default cannot agree to it for somebody who never opened the settings.
+
+  Recorded because the reasoning is worth keeping and because the argument this project made was
+  refuted rather than outvoted. The suggestion was that the release-notes window removes the
+  surprise a silent default would cause. It does not: that window opens after an update and never
+  on a first installation, which is exactly the person a default decides for. Telling somebody
+  what has already started happening is not the same as being asked.
+
+  What did change here: the shared remount delay dropped from two seconds to one, migrated only
+  where the stored value was still the two nobody chose.
+
+- (2026-08-12) **Cross-repository consequences go into `open-points.md`, not into the other
+  repository.** M-18 forbids changing any repository other than the one being worked in, and its
+  reasoning is the part that matters: nobody reaches into a foreign repository for a big reason,
+  they do it because the edit is two lines and obviously right, formed without having seen that
+  repository's state.
+
+  This project had been keeping such consequences in conversation, which is not a place anything
+  is found. `open-points.md` now has a section for them. The first entry is the D-06 question
+  about the aggregate index, which affects this plugin directly and is nonetheless not ours to
+  change.

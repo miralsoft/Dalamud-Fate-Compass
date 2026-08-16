@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "1.2.0",
+      "date": "2026-08-16",
+      "added": [
+        "In Eureka, Bozja und Kreszentia kannst du dich nach einem Port automatisch wieder aufsitzen lassen. Dort ist ein Ätheryt nie das Ziel, sondern nur die nächste Stelle, an die das Spiel dich bringt, und das Erste danach ist ohnehin immer das Reittier. Gilt für jeden Weg: von Ätheryt zu Ätheryt, per Rückführung und auch beim Port von außen herein. Ausgeschaltet ausgeliefert, einzuschalten unter Einstellungen, Reisen, oder mit /fate mount on.",
+        "Außerhalb dieser drei Gebiete passiert bewusst nichts. Ein Port endet dort meistens da, wo du hinwolltest, und dann hätte das Plugin eine Meinung darüber, was du als Nächstes tust."
+      ],
+      "changed": [
+        "Das automatische Aufsitzen wartet jetzt eine Sekunde statt zwei, nach einem FATE genauso wie nach einem Port. Ist gerade Kampf, wird ohnehin gewartet, bis es geht. Wer den Wert selbst verstellt hat, behält seinen."
+      ],
+      "fixed": [
+        "Drei Stellen haben das Spiel etwas gefragt, während gerade ein Bild gezeichnet wurde: die Instanznummer im Fenstertitel, dein Edelsteinstand und ob du hier fliegen kannst. Genau diese Form hat den Client früher schon zweimal mitgenommen. Abgestürzt ist deswegen nichts, aber die Frage wird jetzt an der richtigen Stelle gestellt."
+      ]
+    },
+    {
       "version": "1.1.0",
       "date": "2026-08-06",
       "added": [

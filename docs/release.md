@@ -59,6 +59,13 @@ exist, or when `CHANGELOG.md` has no section for it. That is deliberate: the "Wh
 is the only place a player can find out what changed, so shipping a version it does not mention
 would make it a liar.
 
+**Open the pull request ready, never as a draft** (D-09). Marking a draft as ready fires
+`ready_for_review`, which is not one of the events a `pull_request` workflow listens to by
+default, so no check ever attaches and the pull request sits at "blocked" with nothing to click.
+It looks like a permissions problem and it is not. This cost one pull request that could only be
+fixed by closing it and opening a new one; neither reopening it nor pushing another commit
+brought the check back.
+
 ### Merge it
 
 ```powershell

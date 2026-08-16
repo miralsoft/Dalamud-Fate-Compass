@@ -243,8 +243,8 @@ public sealed class Plugin : IDalamudPlugin
     /// Opens the release notes once after an update, and never on a first installation.
     /// </summary>
     /// <remarks>
-    /// The two cases look identical from the settings alone — a fresh installation has seen no
-    /// version, and so has somebody updating from a build that predates this window — so they are
+    /// The two cases look identical from the settings alone (a fresh installation has seen no
+    /// version, and so has somebody updating from a build that predates this window), so they are
     /// told apart by whether a configuration file existed at all.
     /// <para>
     /// A first installation is marked as read rather than left alone. Leaving it would make the
@@ -315,6 +315,10 @@ public sealed class Plugin : IDalamudPlugin
 
             case "auto":
                 ToggleAutomation(value);
+                break;
+
+            case "mount":
+                ToggleRemountAfterTeleport(value);
                 break;
 
             case "news":
@@ -458,5 +462,28 @@ public sealed class Plugin : IDalamudPlugin
 
         DalamudServices.ChatGui.Print(localizer.Get(
             settings.AutoEngageOnFateEnter ? StringKeys.CommandAutoOn : StringKeys.CommandAutoOff));
+    }
+
+    /// <summary>
+    /// Switches mounting after a teleport on or off from a command, so it can sit in a macro
+    /// (FH-02).
+    /// </summary>
+    private void ToggleRemountAfterTeleport(string value)
+    {
+        var settings = configuration.Settings;
+
+        settings.AutoRemountAfterTeleport = value switch
+        {
+            "on" or "1" or "true" => true,
+            "off" or "0" or "false" => false,
+            _ => !settings.AutoRemountAfterTeleport,
+        };
+
+        configuration.Save();
+
+        DalamudServices.ChatGui.Print(localizer.Get(
+            settings.AutoRemountAfterTeleport
+                ? StringKeys.CommandMountOn
+                : StringKeys.CommandMountOff));
     }
 }
