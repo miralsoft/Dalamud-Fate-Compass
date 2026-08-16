@@ -46,10 +46,13 @@ internal sealed class PluginConfiguration : IPluginConfiguration
     /// retired rather than carried forward: the sum meant something different from what the new
     /// value means, so there is nothing to convert.
     /// </remarks>
-    private const int CurrentVersion = 4;
+    private const int CurrentVersion = 5;
 
     /// <summary>The teleport overhead as it shipped before it was timed.</summary>
     private const float PreviousTeleportOverhead = 15f;
+
+    /// <summary>The remount delay as it shipped while remounting only followed a FATE.</summary>
+    private const int PreviousRemountDelay = 2;
 
     public FateCompassSettings Settings { get; set; } = new();
 
@@ -136,6 +139,14 @@ internal sealed class PluginConfiguration : IPluginConfiguration
         if (Version < 4)
         {
             Settings.ExploratoryTravelOverheadSeconds = fresh.ExploratoryTravelOverheadSeconds;
+        }
+
+        // Same rule as the teleport overhead above: only where it is still the value nobody
+        // chose. The delay was two seconds because a remount used to happen after a FATE, where
+        // combat runs on; after a teleport there is nothing to wait for.
+        if (Version < 5 && Settings.RemountDelaySeconds == PreviousRemountDelay)
+        {
+            Settings.RemountDelaySeconds = fresh.RemountDelaySeconds;
         }
 
         DalamudServices.Log.Information(

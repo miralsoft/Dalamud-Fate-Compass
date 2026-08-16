@@ -78,7 +78,50 @@ so there is no way to ask it to write "1" next to a FATE. Two mechanisms now run
 next to ours for the same screen point, which settles an offset error against a scale error in
 one press. **The conversion has not yet been confirmed in game.**
 
-## Crash safety audit (FH-11)
+## Crash safety audit, redone by reachability (2026-08-16, R-21)
+
+The passes below were greps: every `unsafe`, `fixed`, `->`, `Instance()` and `.Address` in the
+plugin, each hit inspected. R-21 says that is a filter and not an audit, and it was right here.
+
+**What this pass looked for**, written down because R-21 asks for it and because it is what makes
+a gap visible without waiting for a measurement to surface one:
+
+1. Every type under `Adapters/` and `Services/` that touches game memory or calls a game
+   function. Twelve of them: `ChatInput`, `CurrencyProvider`, `Diagnostics`,
+   `DynamicEventProvider`, `GameActions`, `GameSnapshotProvider`, `MapService`,
+   `MountSpeedProvider`, `NativeMapMarkers`, `NotificationService`, `SharedFateProvider`,
+   `WarpWatcher`.
+2. For each, every caller, and for each caller the thread it runs on. The two that matter are
+   the framework tick (`OnUpdate`, and anything inside `DalamudServices.OnGameThread`) and the
+   ImGui draw callback (`Draw`, `PreDraw`, `PostDraw` on any window).
+3. The question asked at each call site: does this reach a game function or game memory from the
+   draw callback without going through the marshalling helper.
+
+**Found three, all in `MainWindow`, all fixed the same day.** `PreDraw` reaching
+`IsInstancedArea()`, `DrawGemstones` reaching `GetInventoryItemCount`, and `DrawRidingMapHint`
+reading `PlayerState->CanFly`. Two were function calls; FH-08 permits only reads of addon
+geometry from that thread.
+
+Fixed by reversing the direction rather than by wrapping: `Adapters.GameFacts` takes those
+readings on the framework tick and the windows read what it left behind. A wrapper was not
+available, because these values are wanted while a frame is being built and the marshalling
+helper is asynchronous. The cost is one frame of staleness on values that change when the player
+zones, mounts or picks up a gemstone.
+
+**Re-run after the fix**, the same three steps: no window in a released build reaches a
+native-touching adapter directly any more. Both `MapService.SetFlagAndEcho` call sites are inside
+`OnGameThread`, the diagnostics probes likewise, `WarpWatcher` and `GameFacts` are read as
+managed snapshots, and `NativeMapMarkers` exposes managed status fields.
+
+Every other path is clean. The diagnostics probes and both `MapService.SetFlagAndEcho` call sites
+already go through `OnGameThread`. `WarpWatcher` is polled from the tick and the window reads only
+the managed snapshot it kept, behind a lock. `NativeMapMarkers` exposes managed status fields.
+
+Why the greps missed it: they found the adapter files, confirmed their null checks, and never
+asked who called them from where. The constraint is on the call site and the search was on the
+spelling, which is the sentence R-21 is built around.
+
+## Crash safety audit (FH-11), the earlier grep passes
 
 Last run 2026-08-01, against every `unsafe`, `fixed`, `->`, `Instance()`, and `.Address` in the
 plugin. Three defects found and fixed:

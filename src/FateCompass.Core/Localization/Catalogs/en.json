@@ -158,6 +158,8 @@
   "setting.autoEngage.help": "Off by default. When off, use the Prepare button or the /fate engage command.",
   "setting.autoRemount": "Remount automatically after a FATE",
   "setting.autoRemount.help": "Skipped while in combat or while casting.",
+  "setting.autoRemountTeleport": "Remount automatically after a teleport",
+  "setting.autoRemountTeleport.help": "Only in Eureka, Bozja and the Occult Crescent, and there after every teleport: aetheryte to aetheryte, by Return, or arriving from outside. Nothing happens anywhere else, because a teleport there usually ends where you meant to be. Skipped while in combat or while casting.",
   "setting.step.dismount": "Dismount",
   "setting.step.levelSync": "Level sync",
   "setting.step.tankStance": "Tank stance",
@@ -191,11 +193,13 @@
 
   "command.auto.on": "Automatic preparation is now on.",
   "command.auto.off": "Automatic preparation is now off.",
+  "command.mount.on": "Mounting after a teleport is now on, in Eureka, Bozja and the Occult Crescent.",
+  "command.mount.off": "Mounting after a teleport is now off.",
   "command.engage.nothing": "Nothing to prepare.",
   "command.engage.blocked.combat": "Not possible in combat.",
   "command.engage.blocked.occupied": "Not possible right now.",
   "command.unknown": "Unknown command. Try /fate help.",
-  "command.help": "/fate opens the window, /fate cfg the settings, /fate engage prepares now, /fate auto on|off|toggle switches the automatic trigger, /fate news shows what changed.",
+  "command.help": "/fate opens the window, /fate cfg the settings, /fate engage prepares now, /fate auto on|off|toggle switches the automatic trigger, /fate mount on|off|toggle mounting after a teleport, /fate news shows what changed.",
 
   "notification.newFate": "New FATE: {0}",
 

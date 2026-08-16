@@ -158,6 +158,8 @@
   "setting.autoEngage.help": "Standardmäßig aus. Aus heißt: Knopf Jetzt ausführen oder Befehl /fate engage benutzen.",
   "setting.autoRemount": "Nach dem FATE automatisch aufsitzen",
   "setting.autoRemount.help": "Wird im Kampf und beim Wirken übersprungen.",
+  "setting.autoRemountTeleport": "Nach einem Port automatisch aufsitzen",
+  "setting.autoRemountTeleport.help": "Nur in Eureka, Bozja und Kreszentia, und dort nach jedem Port: von Ätheryt zu Ätheryt, per Rückführung oder von außen herein. Anderswo passiert nichts, weil ein Port dort meist schon am Ziel endet. Wird im Kampf und beim Wirken übersprungen.",
   "setting.step.dismount": "Absteigen",
   "setting.step.levelSync": "Stufe angleichen",
   "setting.step.tankStance": "Verteidigungshaltung",
@@ -191,11 +193,13 @@
 
   "command.auto.on": "FATE-Automatik ist jetzt an.",
   "command.auto.off": "FATE-Automatik ist jetzt aus.",
+  "command.mount.on": "Aufsitzen nach einem Port ist jetzt an, in Eureka, Bozja und Kreszentia.",
+  "command.mount.off": "Aufsitzen nach einem Port ist jetzt aus.",
   "command.engage.nothing": "Du bist schon kampfbereit.",
   "command.engage.blocked.combat": "Im Kampf nicht möglich.",
   "command.engage.blocked.occupied": "Gerade nicht möglich.",
   "command.unknown": "Unbekannter Befehl. Versuche /fate help.",
-  "command.help": "/fate öffnet das Fenster, /fate cfg die Einstellungen, /fate engage bereitet jetzt vor, /fate auto on|off|toggle schaltet die Automatik, /fate news zeigt die Neuerungen.",
+  "command.help": "/fate öffnet das Fenster, /fate cfg die Einstellungen, /fate engage bereitet jetzt vor, /fate auto on|off|toggle schaltet die Automatik, /fate mount on|off|toggle das Aufsitzen nach einem Port, /fate news zeigt die Neuerungen.",
 
   "notification.newFate": "Neues FATE: {0}",
 

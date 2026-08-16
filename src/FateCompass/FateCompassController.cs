@@ -90,6 +90,12 @@ internal sealed class FateCompassController : IDisposable
             Tab = 0,
         };
 
+        // A plugin is loaded and unloaded repeatedly within one game session, and a reload that
+        // lands in the middle of a warp would otherwise read a value it never saw begin and call
+        // the next quiet tick an arrival.
+        Adapters.WarpWatcher.Reset();
+        Adapters.GameFacts.Reset();
+
         DalamudServices.Framework.Update += OnUpdate;
     }
 
@@ -119,6 +125,8 @@ internal sealed class FateCompassController : IDisposable
         // rather than walking native pointers while the plugin is being torn down.
         disposed = true;
         DalamudServices.Framework.Update -= OnUpdate;
+        Adapters.WarpWatcher.Reset();
+        Adapters.GameFacts.Reset();
     }
 
     /// <summary>
@@ -238,6 +246,19 @@ internal sealed class FateCompassController : IDisposable
             {
                 return;
             }
+
+            // Sampled every tick and ahead of the Enabled check, because the reading only exists
+            // while a warp is running: it is set for two or three seconds and gone by the time
+            // anybody could ask for it. Missing a tick means missing the journey.
+            if (Adapters.WarpWatcher.Poll())
+            {
+                HandleWarpArrival();
+            }
+
+            // Everything the windows need from the game is read here, on this thread, and the
+            // windows read what was left behind. Ahead of the Enabled check because the windows
+            // can be open while the plugin's own work is switched off.
+            Adapters.GameFacts.Refresh();
 
             if (!configuration.Settings.Enabled)
             {
@@ -671,13 +692,72 @@ internal sealed class FateCompassController : IDisposable
 
         if (left && configuration.Settings.AutoRemountAfterFate)
         {
-            remountDueAt = DateTime.UtcNow.AddSeconds(
-                Math.Max(configuration.Settings.RemountDelaySeconds, 0));
-
-            // Combat can drag on well past the FATE, so keep watching for a chance rather than
-            // giving up after one look. Bounded, so it can never become a loop (FH-07).
-            remountGiveUpAt = DateTime.UtcNow.AddSeconds(RemountWindowSeconds);
+            ArmRemount();
         }
+    }
+
+    /// <summary>
+    /// Opens the window in which a remount will be attempted as soon as it becomes possible.
+    /// </summary>
+    /// <remarks>
+    /// Combat can drag on well past the moment that opened this, so the window is watched for a
+    /// chance rather than tried once and abandoned. Bounded, so it can never become a loop
+    /// (FH-07).
+    /// </remarks>
+    private void ArmRemount()
+    {
+        remountDueAt = DateTime.UtcNow.AddSeconds(
+            Math.Max(configuration.Settings.RemountDelaySeconds, 0));
+        remountGiveUpAt = DateTime.UtcNow.AddSeconds(RemountWindowSeconds);
+    }
+
+    /// <summary>
+    /// Handles the moment a journey ends: inside an exploratory zone, and only if the player
+    /// asked for it, get back on the mount they were on before.
+    /// </summary>
+    /// <remarks>
+    /// The gate is where the player has landed, not where the journey began, which is what makes
+    /// arriving from outside work and leaving the zone do nothing. That falls out of asking the
+    /// question at the arrival rather than at the departure.
+    /// <para>
+    /// Restricted to Eureka, Bozja and the Occult Crescent on purpose. Everywhere else a teleport
+    /// usually ends where the player wanted to be, and mounting them would be the plugin having
+    /// an opinion about what they do next. In those three zones the aetheryte is never the
+    /// destination, only the closest the game will drop you to it.
+    /// </para>
+    /// </remarks>
+    private void HandleWarpArrival()
+    {
+        if (!configuration.Settings.Enabled || !configuration.Settings.AutoRemountAfterTeleport)
+        {
+            return;
+        }
+
+        var player = GameSnapshotProvider.Player();
+
+        // An arrival is reported once and then it is gone, so losing it here loses it for good.
+        // Measured, it lands about four seconds after the loading screen ends and the player is
+        // long readable by then. Saying so out loud anyway: a silent miss would look exactly like
+        // a feature that does not work, and this is skipped rather than retried (FH-07).
+        if (player is null)
+        {
+            DalamudServices.Log.Debug(
+                "Controller: arrived by warp kind {Kind} but no local player yet, skipping the remount",
+                Adapters.WarpWatcher.LastArrivalKind);
+            return;
+        }
+
+        if (!player.Content.IsExploratory())
+        {
+            return;
+        }
+
+        DalamudServices.Log.Debug(
+            "Controller: arrived by warp kind {Kind} in {Content}, arming the remount",
+            Adapters.WarpWatcher.LastArrivalKind,
+            player.Content);
+
+        ArmRemount();
     }
 
     /// <summary>
