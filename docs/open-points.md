@@ -10,6 +10,23 @@ however obviously right it looks. Where something decided here has a consequence
 it is written down here, marked as belonging there, and it stops. Whoever works in that
 repository picks it up.
 
+- **(open since 2026-08-16, `miralsoft-foundation-docs`) Two global rules pull against each other
+  over whether automation may ship switched on.** The Dalamud profile says every automatic
+  behaviour "ships disabled". P-04 says a fresh installation should do its job without anybody
+  opening the settings, because most people never do. For a plugin whose usefulness is partly the
+  automation, those two cannot both be satisfied: the feature is either off and unfound, or on
+  and in breach.
+
+  Raised by wanting to ship mounting after a teleport, and after a FATE, switched on. Not done
+  here, because M-01 and M-04 forbid a project relaxing a global rule and FH-02 is only the local
+  restatement of one. The owner decides, and the decision belongs in the foundation.
+
+  Worth putting to it: the reason behind "ships disabled" is that an automatic behaviour should
+  never surprise somebody who did not ask for it. This plugin now has a release-notes window that
+  opens once after an update and says what arrived. That removes the surprise without removing
+  the behaviour, so the rule may be protecting against something its own machinery already
+  handles. That is an argument for changing the rule, not for making an exception to it.
+
 - **(open since 2026-08-12, `miralsoft/Dalamud-Plugins`) Does the aggregate index actually
   satisfy D-06?** D-06 says an automated index never removes an entry as a consequence of a
   failure, only as a deliberate act. The index rebuilds hourly and reads this plugin's

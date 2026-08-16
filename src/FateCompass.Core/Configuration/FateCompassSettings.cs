@@ -114,10 +114,17 @@ public sealed class FateCompassSettings
     public bool EngageTankStance { get; set; } = true;
 
     /// <summary>
-    /// Seconds to wait after a FATE ends before attempting a remount, so the attempt does not
-    /// collide with the tail of combat.
+    /// Seconds to wait before attempting a remount, after a FATE ends or after arriving by
+    /// teleport.
     /// </summary>
-    public int RemountDelaySeconds { get; set; } = 2;
+    /// <remarks>
+    /// One second rather than two. The delay exists so the attempt does not land in the tail of
+    /// combat, but an attempt that lands too early costs nothing: the window stays open for a
+    /// minute and mounts the moment it becomes possible. Waiting longer than necessary is
+    /// therefore the only cost the delay actually has, and after a teleport there is no combat
+    /// tail to avoid in the first place.
+    /// </remarks>
+    public int RemountDelaySeconds { get; set; } = 1;
 
     // --- Ranking ---------------------------------------------------------------------
 
