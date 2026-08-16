@@ -117,6 +117,13 @@ gh release view v1.2.3 --repo miralsoft/Dalamud-Fate-Compass
 - `https://xivarsenal.app/plugins.json` names `FateCompass` at the new `AssemblyVersion`, once
   the ten minutes have passed.
 
+  **Read the entry, never the status code** (D-16). Measured on 2026-08-16: a path invented on
+  the spot at that host also answers `200 OK`, because the site is a single-page application and
+  serves its shell for anything it does not recognise. A status code there proves a web server is
+  running and nothing whatever about the address asked for. Parse the document and look for the
+  entry by `InternalName`; `Invoke-RestMethod` and a `Where-Object` do it in one line, and if the
+  address were wrong the parse itself would fail on the HTML.
+
 ## Before the first release of a plugin
 
 The aggregate index needs three things to be true, and none of them involve this repository

@@ -116,6 +116,30 @@ The name `TownTranslate` says plainly that the same value is used by the aethern
 anything acting on it needs its own reason to be in an exploratory zone rather than treating the
 value as proof of one.
 
+## What the packager puts in the zip
+
+Measured on 2026-08-16, against DalamudPackager 15.0.0, after three releases shipped without the
+plugin icon inside the package.
+
+The packager writes the assemblies and the manifest into the archive and nothing else. Files that
+sit in the output folder, the icon among them, do not travel with it. Its MSBuild task takes
+`Include`, `Exclude`, `HandleImages` and `ImagesPath`, none of which the SDK's default targets
+pass, and a project can override those targets by putting its own `DalamudPackager.targets` next
+to the csproj: the package imports that file when it exists and stands its own targets down.
+
+What was tried and what it did:
+
+- **`HandleImages="true"`** puts `images/icon.png` into the staging folder. It does not put it
+  into the zip.
+- **`Include`** is a list of **literal filenames** relative to the output path, and it **replaces**
+  the default set rather than adding to it. Setting it to just the icon produced a 22 byte archive
+  with zero entries. Globs are not patterns there: `*.dll` is opened as a filename and the build
+  fails with an invalid-path exception.
+
+So using `Include` would mean naming every assembly by hand and getting it wrong the next time a
+dependency arrives. The icon is added to the archive in the release workflow instead, next to a
+step that fails the release if the package is missing the assembly, the manifest or the icon.
+
 ## General actions
 
 Read out of the game's own `GeneralAction` sheet rather than assumed, because the numbers are

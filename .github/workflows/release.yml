@@ -58,6 +58,59 @@ jobs:
           if (-not (Test-Path $zip)) { Write-Error "Packaged zip not found at $zip"; exit 1 }
           Copy-Item $zip -Destination "latest.zip" -Force
 
+          # The packager puts the assemblies and the manifest into the archive and nothing else,
+          # so the icon has to be added here. Dalamud resolves it along two separate paths: the
+          # list of available plugins downloads IconUrl from the manifest, and an installed
+          # plugin reads images/icon.png out of its own directory. Only the second one was
+          # missing, so only somebody who had installed the plugin ever saw the wrong picture,
+          # which is why it survived three releases.
+          #
+          # Done here rather than through the packager's own Include parameter: that takes a list
+          # of literal filenames and replaces the default set rather than adding to it, so using
+          # it would mean naming every assembly and getting it wrong the next time a dependency
+          # is added. Measured, not assumed: a glob there is treated as a filename and the build
+          # fails trying to open a file called "*.dll".
+          $icon = "src/FateCompass/images/icon.png"
+          if (-not (Test-Path $icon)) { Write-Error "No icon at $icon"; exit 1 }
+
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          $archive = [System.IO.Compression.ZipFile]::Open((Resolve-Path "latest.zip"), 'Update')
+          try {
+            [System.IO.Compression.ZipFileExtensions]::CreateEntryFromFile(
+              $archive, (Resolve-Path $icon), "images/icon.png") | Out-Null
+          } finally {
+            $archive.Dispose()
+          }
+
+      # Proving the package can be wrong is the point: a step that only ever says "added" cannot
+      # be told apart from one that adds nothing (R-20).
+      - name: The package carries what a player needs
+        shell: pwsh
+        run: |
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          $archive = [System.IO.Compression.ZipFile]::OpenRead((Resolve-Path "latest.zip"))
+          try {
+            $names = $archive.Entries | ForEach-Object { $_.FullName }
+          } finally {
+            $archive.Dispose()
+          }
+
+          $names | ForEach-Object { "  $_" }
+
+          foreach ($required in @("FateCompass.dll", "FateCompass.json", "images/icon.png")) {
+            if ($names -notcontains $required) {
+              Write-Error "The package is missing $required"
+              exit 1
+            }
+          }
+
+          if ($names -contains "DebugWindow.dll" -or ($names | Where-Object { $_ -like "*.local.props" })) {
+            Write-Error "The package contains something that belongs to a developer build"
+            exit 1
+          }
+
+          Write-Output "Package carries the assembly, the manifest and the icon."
+
       - name: Generate pluginmaster.json
         shell: pwsh
         run: ./scripts/generate-pluginmaster.ps1 -Tag "${{ github.ref_name }}"

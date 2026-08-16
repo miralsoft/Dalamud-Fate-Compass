@@ -6,6 +6,37 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
+## [1.2.1] - 2026-08-16
+
+Both of these came out of confirming 1.2.0 by unpacking what was published rather than by reading
+the repository. Neither could have been found any other way.
+
+### Fixed
+
+- **The plugin icon is inside the package again.** The packager writes the assemblies and the
+  manifest into the archive and drops everything else, so `images/icon.png` never travelled with
+  it. Dalamud resolves the icon along two separate paths, downloading `IconUrl` from the manifest
+  for the list of available plugins and reading `images/icon.png` out of the plugin's own
+  directory once it is installed. Only the second one was broken, so only somebody who had
+  installed the plugin ever saw a default picture, which is how it survived three releases.
+
+  Added in the release workflow rather than through the packager's `Include` parameter. That
+  parameter takes literal filenames and replaces the default set instead of adding to it, so
+  using it would mean naming every assembly and getting it wrong the next time a dependency
+  arrives. Measured rather than assumed, and written down in `docs/platform-notes.md`.
+
+- **A developer probe is no longer in the released assembly.** `MapService.ProbeMarkerIcons`
+  drops eight markers on the map to work out which icon ids look like digits. Its only caller was
+  already behind the developer-tools switch so nothing could reach it, but C-10 asks for
+  developer surfaces to be absent rather than unreachable, and dead code in a shipped assembly is
+  neither.
+
+### Added
+
+- The release workflow now lists what the package contains and fails if the assembly, the
+  manifest or the icon is missing. A step that only ever says "added" cannot be told apart from
+  one that adds nothing (R-20), and three releases went out before anybody looked inside the zip.
+
 ## [1.2.0] - 2026-08-16
 
 ### Added

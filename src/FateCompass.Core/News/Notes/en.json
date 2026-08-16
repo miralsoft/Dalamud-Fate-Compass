@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.1",
+      "date": "2026-08-16",
+      "fixed": [
+        "The plugin icon was missing from the package, so the list of installed plugins showed a placeholder instead of its own. It is in there now."
+      ]
+    },
+    {
       "version": "1.2.0",
       "date": "2026-08-16",
       "added": [

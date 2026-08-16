@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "1.2.1",
+      "date": "2026-08-16",
+      "fixed": [
+        "Das Symbol des Plugins fehlte im Paket, weshalb in der Liste der installierten Plugins ein Ersatzbild stand statt des eigenen. Liegt jetzt bei."
+      ]
+    },
+    {
       "version": "1.2.0",
       "date": "2026-08-16",
       "added": [

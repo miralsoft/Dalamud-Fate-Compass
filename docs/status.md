@@ -209,6 +209,21 @@ the plugin still does nothing in game.
   `docs/rules/` were retired when foundation 2.0.0 shipped both.
 - **Next:** Keep this file and `decisions.md` current as implementation proceeds.
 
+## 1.2.0 released (2026-08-16)
+
+Out and confirmed by looking rather than by a green tick: the release carries both assets and is
+neither draft nor pre-release, the manifest **inside the zip** says `1.2.0.0`, the developer
+window and its probes are absent from the shipped assembly, and the public index names
+`FateCompass` at `1.2.0.0` with a download link pointing at the `v1.2.0` tag. The index took
+about ten minutes to show it, which is the documented cache and not a fault.
+
+Two things turned up in that confirmation, both in `open-points.md` and neither blocking: the
+plugin icon is not inside the package, which has been true since 1.1.0, and one developer probe
+in `MapService` sits in the released assembly although nothing can reach it.
+
+One measured fact went back into `release.md`: a made-up path at the index host answers `200`
+too, so that step has to read the entry and never the status code.
+
 ## Foundation 2.0.0 (2026-08-12)
 
 - **Done:** This project declares foundation version 2.0.0 and did the work M-17 asks for
