@@ -194,7 +194,9 @@ internal sealed class MainWindow : Window, IDisposable
 
         if (!string.IsNullOrEmpty(zone))
         {
-            var instance = GameSnapshotProvider.CurrentInstance();
+            // Read from the tick's sample rather than from the game. This runs inside PreDraw,
+            // and asking the game here would be a call from the draw thread (FH-08).
+            var instance = GameFacts.PublicInstance;
             title = instance > 0
                 ? $"{title} - {zone} ({localizer.Format(StringKeys.InstanceLabel, instance)})"
                 : $"{title} - {zone}";
@@ -1080,12 +1082,12 @@ internal sealed class MainWindow : Window, IDisposable
     {
         // Nothing to say where the player flies. The map raises ground speed, and in a zone with
         // its aether currents attuned the ground is not how anyone crosses it.
-        if (MountSpeedProvider.CanFlyHere())
+        if (GameFacts.CanFly)
         {
             return;
         }
 
-        var upgrades = MountSpeedProvider.Current();
+        var upgrades = GameFacts.MountUpgrades;
         if (!upgrades.HasMissing)
         {
             return;
@@ -1118,8 +1120,8 @@ internal sealed class MainWindow : Window, IDisposable
             return false;
         }
 
-        var current = CurrencyProvider.GemstoneCount();
-        var cap = CurrencyProvider.GemstoneCap();
+        var current = GameFacts.GemstoneCount;
+        var cap = GameFacts.GemstoneCap;
         if (cap <= 0)
         {
             return false;

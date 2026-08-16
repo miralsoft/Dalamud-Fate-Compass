@@ -26,9 +26,23 @@ All notable changes to this project are recorded here. The format follows
   two or three seconds after arriving, so it is sampled continuously rather than asked for. The
   measurements are in `docs/platform-notes.md`.
 
+### Fixed
+
+- **Three places asked the game a question while a frame was being drawn.** Reading the public
+  instance number, the gemstone purse, and whether flying is unlocked all reached into the game
+  from the drawing thread, which is the shape that has taken this client down twice before.
+  Nothing had crashed because of them, which is not the same as their being safe. Those readings
+  now happen on the game's own tick and the windows read what was taken, one frame old at most,
+  on values that change when you zone or pick something up.
+
+  Found by redoing the crash-safety audit the way foundation 3.0.0 asks for: by following what
+  reaches the game and asking who calls it, instead of searching the source for the words that
+  usually appear near it. The previous passes had found the same files, checked them, and never
+  asked which thread called them.
+
 The rest of this section changes nothing about what the plugin does. It adopts foundation ruleset
-2.0.0, which added the C# and Dalamud profiles and the plugin blueprint that this project had
-been carrying itself.
+3.1.0, which added the C# and Dalamud profiles and the plugin blueprint that this project had
+been carrying itself, and later the rules that turned up the audit gap above.
 
 - `CLAUDE.md` at the repository root, from the foundation's entrypoint template. It is what
   tells an agent starting in this repository that the foundation exists, how to clone and

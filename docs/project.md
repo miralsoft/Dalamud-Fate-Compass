@@ -43,8 +43,15 @@ this project's own research rather than a rule, the reflected Dalamud API surfac
 
 ## Targeted foundation version
 
-2.0.0 (M-06). Reviewed whenever a release is cut (M-17): read the foundation changelog from
+3.1.0 (M-06). Reviewed whenever a release is cut (M-17): read the foundation changelog from
 this version onward, then either raise it and do the work, or leave it and record why.
+
+Raised from 2.0.0 on 2026-08-16, with the work done rather than deferred. 3.0.0 asked four
+things of a project: an audit by reachability rather than by grep (R-21), test values taken from
+the reality they describe (T-07), an install instruction naming the address the channel
+documents (D-15), and endpoint checks that look at the payload (D-16). The last two already
+held. The first found three real defects and they are fixed. 3.1.0 permits something rather than
+requiring it, so it asked for nothing.
 
 ## Code repositories
 

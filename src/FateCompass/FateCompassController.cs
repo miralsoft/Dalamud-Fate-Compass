@@ -94,6 +94,7 @@ internal sealed class FateCompassController : IDisposable
         // lands in the middle of a warp would otherwise read a value it never saw begin and call
         // the next quiet tick an arrival.
         Adapters.WarpWatcher.Reset();
+        Adapters.GameFacts.Reset();
 
         DalamudServices.Framework.Update += OnUpdate;
     }
@@ -125,6 +126,7 @@ internal sealed class FateCompassController : IDisposable
         disposed = true;
         DalamudServices.Framework.Update -= OnUpdate;
         Adapters.WarpWatcher.Reset();
+        Adapters.GameFacts.Reset();
     }
 
     /// <summary>
@@ -252,6 +254,11 @@ internal sealed class FateCompassController : IDisposable
             {
                 HandleWarpArrival();
             }
+
+            // Everything the windows need from the game is read here, on this thread, and the
+            // windows read what was left behind. Ahead of the Enabled check because the windows
+            // can be open while the plugin's own work is switched off.
+            Adapters.GameFacts.Refresh();
 
             if (!configuration.Settings.Enabled)
             {

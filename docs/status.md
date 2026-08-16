@@ -97,10 +97,21 @@ a gap visible without waiting for a measurement to surface one:
 3. The question asked at each call site: does this reach a game function or game memory from the
    draw callback without going through the marshalling helper.
 
-**Found: three, all in `MainWindow`, all recorded in `open-points.md` and not yet fixed.**
-`PreDraw` reaching `IsInstancedArea()`, `DrawGemstones` reaching `GetInventoryItemCount`, and
-`DrawRidingMapHint` reading `PlayerState->CanFly`. Two are function calls; FH-08 permits only
-reads of addon geometry from that thread.
+**Found three, all in `MainWindow`, all fixed the same day.** `PreDraw` reaching
+`IsInstancedArea()`, `DrawGemstones` reaching `GetInventoryItemCount`, and `DrawRidingMapHint`
+reading `PlayerState->CanFly`. Two were function calls; FH-08 permits only reads of addon
+geometry from that thread.
+
+Fixed by reversing the direction rather than by wrapping: `Adapters.GameFacts` takes those
+readings on the framework tick and the windows read what it left behind. A wrapper was not
+available, because these values are wanted while a frame is being built and the marshalling
+helper is asynchronous. The cost is one frame of staleness on values that change when the player
+zones, mounts or picks up a gemstone.
+
+**Re-run after the fix**, the same three steps: no window in a released build reaches a
+native-touching adapter directly any more. Both `MapService.SetFlagAndEcho` call sites are inside
+`OnGameThread`, the diagnostics probes likewise, `WarpWatcher` and `GameFacts` are read as
+managed snapshots, and `NativeMapMarkers` exposes managed status fields.
 
 Every other path is clean. The diagnostics probes and both `MapService.SetFlagAndEcho` call sites
 already go through `OnGameThread`. `WarpWatcher` is polled from the tick and the window reads only
