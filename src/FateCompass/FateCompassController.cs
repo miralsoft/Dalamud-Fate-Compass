@@ -727,7 +727,20 @@ internal sealed class FateCompassController : IDisposable
         }
 
         var player = GameSnapshotProvider.Player();
-        if (player is null || !player.Content.IsExploratory())
+
+        // An arrival is reported once and then it is gone, so losing it here loses it for good.
+        // Measured, it lands about four seconds after the loading screen ends and the player is
+        // long readable by then. Saying so out loud anyway: a silent miss would look exactly like
+        // a feature that does not work, and this is skipped rather than retried (FH-07).
+        if (player is null)
+        {
+            DalamudServices.Log.Debug(
+                "Controller: arrived by warp kind {Kind} but no local player yet, skipping the remount",
+                Adapters.WarpWatcher.LastArrivalKind);
+            return;
+        }
+
+        if (!player.Content.IsExploratory())
         {
             return;
         }

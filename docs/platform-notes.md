@@ -92,9 +92,25 @@ tick and recording the changes:
 - `CurrentTerritoryTypeId` never changed. That is the whole reason this exists: inside these
   zones an aetheryte hop is not a territory change, so watching for one sees nothing.
 
-Not yet measured: what a teleport from outside **into** such a zone reports, `Teleport` or
-`EnterInstanceContent`. Both are treated as an arrival, so the answer confirms rather than
-decides.
+A teleport from outside **into** such a zone reports `EnterInstanceContent` (12), measured the
+same day. That run also settled a question about where the reading has to be taken, and the
+answer was not the obvious one:
+
+```
+-10.2s  EnterInstanceContent  transition=2  load=2  territory=1278   the origin zone
+- 9.0s  EnterInstanceContent  transition=1  load=1  territory=0      the loading screen
+- 5.0s  EnterInstanceContent  transition=2  load=2  territory=1346   arrived in the zone
+- 4.6s  None                  transition=2  load=2  territory=1346   the arrival
+```
+
+The warp is already set while the player is still in the origin zone, and `TerritoryTypeId` is
+**zero** during the loading screen. So anything watching this has to watch everywhere: sampling
+only inside the zones the feature cares about would miss the start of the journey and therefore
+never see its end. Gate the action on where the player is standing when the warp ends, not the
+sampling on where it began.
+
+Note also how much longer the value lives here, roughly 5.6 seconds against 1.8 for a hop inside
+the zone, because a loading screen sits in the middle of it.
 
 The name `TownTranslate` says plainly that the same value is used by the aethernet in cities, so
 anything acting on it needs its own reason to be in an exploratory zone rather than treating the
