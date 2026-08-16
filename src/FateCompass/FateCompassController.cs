@@ -239,6 +239,14 @@ internal sealed class FateCompassController : IDisposable
                 return;
             }
 
+#if FATECOMPASS_DEVTOOLS
+            // Sampled here rather than on demand: a warp lasts a second or two, and the question
+            // being answered is partly whether the value survives it. Developer builds only, and
+            // it acts on nothing. Ahead of the Enabled check so a switched-off plugin can still
+            // be used to observe.
+            Adapters.WarpProbe.Poll();
+#endif
+
             if (!configuration.Settings.Enabled)
             {
                 return;
