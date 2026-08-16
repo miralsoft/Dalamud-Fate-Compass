@@ -334,6 +334,29 @@ Each entry: date, decision, short rationale.
   What this gained beyond tidiness: a secret scan this repository never had. It found nothing,
   which is the answer worth having only because the detectors prove they can fire first (R-20).
 
+- (2026-08-16) **Both remounts keep shipping switched off, and the argument for switching them
+  on was wrong rather than merely overruled.** The owner asked for mounting after a FATE and
+  after a teleport to be on by default. This project could not do that, because the requirement
+  is in the foundation's Dalamud profile rather than in FH-02, and M-01 forbids a project
+  relaxing a global rule. Raised as work belonging to the foundation instead.
+
+  The foundation answered it in 3.0.0, and better than the question was put. What a behaviour
+  ships as now depends on what it touches rather than on whether it is automatic: automation that
+  reaches the game server or acts in the world ships off, automation that only affects the
+  plugin's own presentation ships in whatever state makes a fresh install work. Mounting sends an
+  action to the game server, so it stays off. P-05 gives the test: who pays if the default is
+  wrong. Here it is the player, under rules a third party writes and enforces against them, so a
+  default cannot agree to it for somebody who never opened the settings.
+
+  Recorded because the reasoning is worth keeping and because the argument this project made was
+  refuted rather than outvoted. The suggestion was that the release-notes window removes the
+  surprise a silent default would cause. It does not: that window opens after an update and never
+  on a first installation, which is exactly the person a default decides for. Telling somebody
+  what has already started happening is not the same as being asked.
+
+  What did change here: the shared remount delay dropped from two seconds to one, migrated only
+  where the stored value was still the two nobody chose.
+
 - (2026-08-12) **Cross-repository consequences go into `open-points.md`, not into the other
   repository.** M-18 forbids changing any repository other than the one being worked in, and its
   reasoning is the part that matters: nobody reaches into a foreign repository for a big reason,
