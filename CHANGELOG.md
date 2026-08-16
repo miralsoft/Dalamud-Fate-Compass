@@ -6,6 +6,8 @@ All notable changes to this project are recorded here. The format follows
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-08-16
+
 ### Added
 
 - **Mounting again after a teleport, in Eureka, Bozja and the Occult Crescent.** In those zones

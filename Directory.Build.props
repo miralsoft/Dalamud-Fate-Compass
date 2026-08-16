@@ -34,7 +34,7 @@
     <Authors>Sanaka</Authors>
     <Company>Sanaka</Company>
     <Copyright>Sanaka</Copyright>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <PackageLicenseExpression>AGPL-3.0-or-later</PackageLicenseExpression>
   </PropertyGroup>
 
