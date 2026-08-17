@@ -10,16 +10,24 @@ however obviously right it looks. Where something decided here has a consequence
 it is written down here, marked as belonging there, and it stops. Whoever works in that
 repository picks it up.
 
-- **(open since 2026-08-12, `miralsoft/Dalamud-Plugins`) Does the aggregate index actually
-  satisfy D-06?** D-06 says an automated index never removes an entry as a consequence of a
-  failure, only as a deliberate act. The index rebuilds hourly and reads this plugin's
-  `pluginmaster.json` from its release assets. What happens when that read fails, whether the
-  entry survives or the rebuild publishes a list without it, has not been looked at. If it drops
-  the entry, this plugin disappears from every player's installer until the next successful run,
-  for a reason on the index's side rather than ours.
+None open at the moment. The one entry this section carried is resolved below.
 
-  D-07 applies to the answer as much as to the question: this gets settled by reading that
-  repository's workflow, not by assuming it behaves sensibly.
+## Resolved on 2026-08-17
+
+- **(open since 2026-08-12, resolved 2026-08-17, `miralsoft/Dalamud-Plugins`) Does the aggregate
+  index actually satisfy D-06?** Yes. Read `scripts/build-index.ps1` and `.github/workflows/index.yml`
+  in that repository rather than assuming: before rebuilding, the script loads the previous
+  `pluginmaster.json` and keys each entry by the repository parsed out of its own
+  `DownloadLinkInstall`, not out of the manifest's self-declared `RepoUrl`. Where a plugin's
+  release cannot be read this run, its previous entry is carried over unchanged and the run is
+  marked failed (`::warning::` per plugin, the workflow step goes red) so the cause gets looked
+  at, but the file committed still carries the plugin. The `git commit` step runs unconditionally
+  before the step that fails the workflow, so a partial failure this hour still ships a correct
+  file. Only a plugin that has **never** resolved successfully (no previous entry to fall back on)
+  is missing from the index on a failed run, which is not a removal in the sense D-06 forbids
+  since there was nothing published yet to remove. Fate Compass has resolved successfully since
+  1.2.0, so this case does not apply to it. D-07 is satisfied the same way: the answer came from
+  reading the actual script and workflow, not from assuming the index behaves sensibly.
 
 ## Resolved on 2026-08-01
 
