@@ -209,6 +209,24 @@ the plugin still does nothing in game.
   `docs/rules/` were retired when foundation 2.0.0 shipped both.
 - **Next:** Keep this file and `decisions.md` current as implementation proceeds.
 
+## 1.2.1 released (2026-08-16)
+
+The two things 1.2.0's confirmation turned up, fixed and verified in the published package rather
+than in the build folder: `images/icon.png` is inside the archive at 530311 bytes, the same file
+`IconUrl` serves, so both of the paths Dalamud resolves an icon along now agree. And
+`ProbeMarkerIcons`, `DebugWindow` and `DumpFateProgress` are absent from the shipped assembly
+while `WarpWatcher` and `GameFacts` are present, which is the split that should exist.
+
+The release workflow now lists the package contents and fails when the assembly, the manifest or
+the icon is missing. That matters more than either fix: three releases went out before anybody
+looked inside the zip, and the reason the icon went unnoticed is that the two resolution paths
+have different sources, so the one everybody looks at was always right.
+
+**A caution for whoever does the next confirmation.** The first assembly check in this session
+reported "not present" because the read had failed and the comparison ran on an empty string. It
+looked exactly like a pass. Check that the file was actually read before believing what the scan
+says about it, or let the workflow do it, which is why that step now exists.
+
 ## 1.2.0 released (2026-08-16)
 
 Out and confirmed by looking rather than by a green tick: the release carries both assets and is

@@ -66,6 +66,38 @@ hooks perform also runs in CI (R-17), because a hook lives in a clone and gets f
 
 If a hook blocks a commit, fix the cause. Do not bypass it (R-08).
 
+## The rest of the local setup
+
+None of this is in the repository, so a fresh clone or a new machine needs all of it again. It is
+listed here because the first three are silent when missing: commits get the wrong author, the
+developer tools are simply absent, and `gh` fails only at the moment it is needed.
+
+**The committer identity**, set for this clone alone so it cannot leak into another project:
+
+```sh
+git config user.name  "Sanaka"
+git config user.email "20637644+miralsoft@users.noreply.github.com"
+```
+
+This is what `.miralsoft-enforcement` checks and what `docs/project.md` declares (R-03, R-19).
+The noreply address keeps a personal address out of a public repository.
+
+**The developer tools**, which exist only where this file does:
+
+```sh
+cp Directory.Build.local.props.example Directory.Build.local.props
+```
+
+It is ignored by git and CI fails if it is ever committed, so no build anybody else makes can
+contain the diagnostics window or the probes behind it. `build.ps1` says which of the two kinds
+of build it just made.
+
+**GitHub access** for releases and pull requests: `gh auth login`, HTTPS.
+
+**The plugin itself**, once built: register the path `build.ps1` prints under `/xlsettings`,
+Experimental, Dev Plugin Locations. It prints the staging folder rather than `bin/`, because the
+main assembly is copied there last so a reload never sees a half-updated set of files.
+
 ## While working
 
 - Global rules are binding and read-only. This project may tighten them in `docs/rules-project.md`,
