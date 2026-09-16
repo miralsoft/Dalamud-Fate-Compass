@@ -367,3 +367,14 @@ Each entry: date, decision, short rationale.
   is found. `open-points.md` now has a section for them. The first entry is the D-06 question
   about the aggregate index, which affects this plugin directly and is nonetheless not ours to
   change.
+
+- (2026-08-17) **The D-06 question about the aggregate index is answered: it holds.** Read
+  `miralsoft/Dalamud-Plugins`' `scripts/build-index.ps1` and `.github/workflows/index.yml`
+  directly rather than assuming (D-07, M-18's reading side). A plugin whose release cannot be
+  read on a given run keeps its previous entry, keyed by the repository parsed out of the
+  download link the index itself wrote rather than out of the manifest's self-declared `RepoUrl`,
+  and the file is committed before the workflow step that reports the run as failed. Only a
+  plugin that has never once resolved successfully would be absent, which is not a case D-06
+  covers since nothing published is being removed. Fate Compass has resolved since 1.2.0, so a
+  bad hour on GitHub's side costs it nothing. No change was made to that repository; this closes
+  the open point recorded on 2026-08-12.
