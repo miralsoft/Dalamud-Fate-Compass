@@ -394,3 +394,48 @@ Each entry: date, decision, short rationale.
   and not the whole rule; `platform-notes.md` now says so. And this was found by running
   `build.ps1` rather than by reading anything, on a branch whose own changes touched no C# at
   all, a month after the last session. CI would have found it too, at the cost of a run.
+- (2026-09-16) **This project targets foundation 4.1.0, raised outside a release rather than at
+  one.** M-17 names the release as the moment the declaration is reviewed, which is a floor and
+  not a ceiling: the owner asked for it before starting a feature, so the feature is built under
+  the ruleset it will ship under instead of being written twice. What each version between 3.1.0
+  and 4.1.0 asked is in `project.md`; only R-23 cost work, and the details of that are below.
+
+- (2026-09-16) **R-23 found two gates that reported success over material they never read.**
+  The rule says a gate that could not run has not passed, and it was right about this repository
+  twice over.
+
+  The vulnerable dependency scan read the console output for the English phrase "has the
+  following vulnerable" and never looked at the exit code. A scan that failed to run printed its
+  error, matched nothing, and the step went green. It now reads `--format json`, fails on a
+  non-zero exit, fails when the payload names no project of this solution, and proves its own
+  detector fires against a planted finding and stays quiet on a clean one before any of that is
+  believed (R-20).
+
+  The test step asserted nothing about how many tests ran. `dotnet test` over a solution with no
+  test project exits zero, so removing the test project from `FateCompass.slnx` would have left
+  CI green over nothing. The count now comes out of the trx file.
+
+  A third, smaller one: the commit-message check reported success and stopped when its commit
+  range came out empty. An empty range means the range was computed wrongly, not that there is
+  nothing to check, so it now falls back to the head commit and reports how many messages it
+  read.
+
+  **A finding that came out of fixing them and is worth more than either fix.** The dotnet CLI
+  translates its output. On this machine `dotnet test` prints "Bestanden!" and the scan prints
+  "keine anfaelligen Pakete", so both of the string checks above were English-only by accident of
+  the CI runner's locale, and a check written against them reads as passing on a German machine
+  without having read anything. The steps now read structured output (trx, JSON) instead of
+  prose, and `DOTNET_CLI_UI_LANGUAGE` is pinned so anything still reading text reads the same
+  text everywhere. This is R-21's sentence in a new place: the constraint was on what the tool
+  reported, and the check was on how it happened to be spelled here.
+
+  `build.ps1` is the one lenient caller R-23 permits, and it was silent about it: `-SkipChecks`
+  dropped the format check and the tests with no output, so a build that verified nothing looked
+  exactly like one that passed everything. It now says which gates it skipped and that CI
+  enforces them.
+
+- (2026-09-16) **The content checks were re-copied from the foundation and had not changed.**
+  M-19 makes re-copying part of raising the declared version. The template's steps were diffed
+  against this repository's copy before the provenance line moved: identical since 2.0.0. The
+  line now reads 4.1.0, and the header says the comparison was made and came back empty, because
+  a date alone would imply work that did not happen.
