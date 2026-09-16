@@ -378,3 +378,19 @@ Each entry: date, decision, short rationale.
   covers since nothing published is being removed. Fate Compass has resolved since 1.2.0, so a
   bad hour on GitHub's side costs it nothing. No change was made to that repository; this closes
   the open point recorded on 2026-08-12.
+
+- (2026-09-16) **Dalamud 15.0.3.4 broke the build without changing a signature this project
+  calls, and the status bar entry is now disposed rather than removed.** `IDtrBarEntry` gained
+  `IDisposable`, so the field holding one became a disposable that `Dispose()` never disposed,
+  which is CA2213, which is an error here because warnings are errors.
+
+  Checked rather than assumed before swapping the call: Dalamud's own `DtrBarEntry.Dispose()`
+  does nothing but call `Remove()`. That mattered, because the entry has to leave the server info
+  bar when the plugin unloads, and a `Dispose` that only released a handle would have left it
+  standing there, which is exactly the teardown promise the Dalamud profile makes to the player.
+
+  Two things recorded because they generalise. The platform can tighten a build through an
+  analyzer without altering anything this project calls, so "recheck on a major bump" is a floor
+  and not the whole rule; `platform-notes.md` now says so. And this was found by running
+  `build.ps1` rather than by reading anything, on a branch whose own changes touched no C# at
+  all, a month after the last session. CI would have found it too, at the cost of a run.
