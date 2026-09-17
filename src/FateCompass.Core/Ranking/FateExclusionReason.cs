@@ -41,4 +41,14 @@ public enum FateExclusionReason
 
     /// <summary>Would expire before the player could get there.</summary>
     Unreachable,
+
+    /// <summary>
+    /// So far under the player's level that going there is probably wasted time.
+    /// </summary>
+    /// <remarks>
+    /// Last in this enum on purpose, because the excluded entries are ordered by it and this is
+    /// the softest of the reasons: every other one states something the game has settled, while
+    /// this one is an estimate the player can overrule by walking there anyway.
+    /// </remarks>
+    LevelTooLow,
 }

@@ -439,3 +439,59 @@ Each entry: date, decision, short rationale.
   against this repository's copy before the provenance line moved: identical since 2.0.0. The
   line now reads 4.1.0, and the header says the comparison was made and came back empty, because
   a date alone would imply work that did not happen.
+
+- (2026-09-16) **The plugin marks how a FATE sits against your level, and refuses to claim one is
+  impossible.** Requested for levelling: while working a job up, which of the FATEs on screen are
+  actually worth walking to.
+
+  The game data was read before the feature was designed, which changed what got built. There is
+  **no minimum level for a FATE**, anywhere: searched across every RowRef on the Fate sheet,
+  every sheet whose name contains "Fate", and the whole of `FateRuleEx`, and the client's own
+  accessor is `GetRecommendedLevel`. Anybody can join anything; being under-levelled costs a
+  contribution that counts for less, not entry. Details in `platform-notes.md`.
+
+  So the plugin says how far under you are and grades it, and never says a FATE cannot be done.
+  The grade boundaries are the owner's own play experience, five levels under still fine and ten
+  getting hard, and because they rest on nothing published they are **settings rather than
+  constants** (C-12). Four of them: on or off, both thresholds, and whether an out-of-reach FATE
+  disappears or is set aside.
+
+  **Set aside rather than hidden, by default.** For an open-world FATE the game reports no
+  participant count, so the plugin cannot tell an empty field from twenty people standing in it,
+  and with twenty people a FATE fifteen levels above you is trivial. Hiding it removes a judgement
+  the player could have made by looking; greying it out at the end does not. Whoever wants the
+  shorter list can switch it on (S-12).
+
+  **Rejected: letting the level feed the ranking.** It was the obvious third option and it is
+  worse than it looks. The ranking already balances distance, time and progress, and adding level
+  to it would sink a FATE that thirty people are standing in, silently, with no way to see why.
+  A marker states the fact and leaves the decision; a weight makes the decision and hides the
+  fact.
+
+  **Rejected: filtering the exploratory zones by `ActivitySource`.** This is the trap that would
+  have shipped. Eureka's notorious monsters are ordinary FATEs and arrive through the FATE table
+  with `ActivitySource.Fate`, so that check passes them straight through, and there an elemental
+  level decides the fight while the job level says nothing at all. The gate is `ContentKind`,
+  which the codebase already had as `IsExploratory()`. A test names each of the three zones.
+
+  Colour alone was ruled out by the blueprint rather than by preference: a filled badge with the
+  word inside, which survives greyscale and a reader who does not separate amber from red. The
+  existing `Widgets.Badge` already did exactly this, so the feature reuses it (C-01).
+
+- (2026-09-16) **Two defects fell out of reading the Fate sheet, and both shipped in 1.2.1.**
+  `ClassJobLevelMax` is the top of the FATE's level band, not the level somebody is synced to,
+  which is what this codebase said it was.
+
+  292 of the 1712 named FATEs carry 255 in that field as a stand-in for "no cap", 142 of them
+  Eureka rows that reach the plugin through the ordinary FATE table. `SyncLevel` passed it
+  through, so the window's sync column would read "to 255". Named as a constant with the finding
+  beside it rather than silently clamped.
+
+  Separately, `EngagePlanner` asked for a level sync when the player was above the FATE's
+  displayed level while the window showed the sync against the band top. On a level 100 FATE
+  running to 104, a level 102 player was told both that a sync was needed and that none was. One
+  of them had to be wrong and the game data says which: the band is what counts. Both now measure
+  against `SyncLevel`.
+
+  Neither was found by looking for defects. Both came out of establishing what a field means
+  before building on it, which is the argument for doing that first rather than after.

@@ -21,6 +21,16 @@ public sealed record RankedFate
 
     public required FateExclusionReason ExclusionReason { get; init; }
 
+    /// <summary>
+    /// How this FATE sits against the player's level. <see cref="LevelFit.NotApplicable"/>
+    /// wherever no honest comparison exists, which is the default so a snapshot built without
+    /// one says nothing rather than something wrong.
+    /// </summary>
+    public LevelFit LevelFit { get; init; } = LevelFit.NotApplicable;
+
+    /// <summary>How many levels the player is under this FATE, zero when they are not.</summary>
+    public int LevelsBelow { get; init; }
+
     public bool IsRecommended => ExclusionReason == FateExclusionReason.None;
 
     /// <summary>

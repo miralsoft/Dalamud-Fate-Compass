@@ -11,6 +11,7 @@ internal static class TestData
     public static FateSnapshot Fate(
         uint id = 1,
         ushort level = 50,
+        ushort maxLevel = 0,
         FateKind kind = FateKind.Slay,
         FateProgressState state = FateProgressState.Running,
         int progressPercent = 0,
@@ -30,6 +31,7 @@ internal static class TestData
             DefinitionId = definitionId ?? id,
             Name = $"FATE {id}",
             Level = level,
+            MaxLevel = maxLevel,
             Kind = kind,
             State = state,
             Position = new WorldPosition(x, 0f, z),

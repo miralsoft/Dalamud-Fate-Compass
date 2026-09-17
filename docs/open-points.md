@@ -207,6 +207,20 @@ which is the dangerous kind.
 - Default weights for the ranking. Distance against remaining time against progress is a
   matter of taste and probably needs tuning after real use.
 
+## Requested, not yet built: the quest gate
+
+**58 of the 1712 named FATEs carry a `RequiredQuest`** (read from the Fate sheet on 2026-09-16,
+see `platform-notes.md`). That is a real prerequisite rather than an estimate: a player who has
+not done that quest cannot take part at all, and the plugin currently offers no hint of it.
+
+This is the hard gate that the level fit feature deliberately does not claim to be. It would be
+worth having for exactly the reason the level one is only advice: the answer is yes or no rather
+than probably.
+
+What is not yet known, and has to be checked before this is planned rather than guessed:
+whether quest completion is readable at all. `QuestManager` is the obvious place to look. If it
+is readable, the display is the easy half.
+
 ## Idea, agreed but not started
 
 - **Hand-written travel points for individual objectives.** The route advice measures straight

@@ -157,3 +157,46 @@ not guessable and a wrong one sends the player somewhere unintended.
 - `8` Return
 - `9` Mount Roulette
 - `23` Dismount
+
+## The FATE level band, and the minimum level that does not exist
+
+Read on 2026-09-16 with Lumina 7.0 against the installed client, over all 2111 rows of the
+`Fate` sheet, 1712 of which carry a name.
+
+**Every FATE has a level band, not a level.** `ClassJobLevel` is what the map shows.
+`ClassJobLevelMax` is the top of the band, and it is not the level anybody is synced to, which
+is what the code used to say it was.
+
+| Band width | FATEs | Example |
+|---|---|---|
+| level + 4 | 676 | The Serpentlord Seethes, 100 to 104 |
+| level + 5 | 371 | Sprig Cleaning, 30 to 35 |
+| level + 3 | 114 | |
+| exactly the level | 219 | Excitable Boys, 60 to 60 |
+| 255 | 292 | Eureka rows, Mendicant's Court, Base Camp Alpha |
+
+For modern content the band is almost always plus four: of the 364 FATEs at level 70 or above,
+300 are plus four, 58 have no band, and 6 are plus ten.
+
+**255 is a sentinel and not a level.** It is a one-byte field standing in for "no cap". 142 of
+those 292 rows are flagged `EurekaFate`, and Eureka's notorious monsters arrive through the
+ordinary FATE table, so the value reaches the plugin's own snapshot type. Handed through it
+produced a sync column reading "to 255".
+
+**There is no minimum level for a FATE anywhere in the game data**, and this was searched for
+rather than assumed (R-21). What the search covered:
+
+- all ten `RowRef` fields on `Fate`: they point at `EventItem`, `Quest`, `BGM`, `ScreenImage`,
+  `Status` and `FateRuleEx`, and none of them is a level gate;
+- every sheet type whose name contains "Fate", which is eighteen, eight of them `GFate*` gold
+  saucer minigames, plus `FateMode`, `FateShop`, `FateTokenType`, `FateProgressUI` and
+  `WKSFateControl`;
+- `FateRuleEx` in full: 38 rows carrying a single byte that mirrors the row id. Nothing.
+
+The client's own accessor is `FateDirector.GetRecommendedLevel`, **recommended** rather than
+required, and the game lets anybody join anything. Being under-levelled costs a contribution
+that counts for less, not a closed door. So any threshold the plugin draws is a judgement, which
+is why the level fit thresholds are settings rather than constants (C-12).
+
+**A separate gate that does exist:** `RequiredQuest` is set on 58 of the 1712 named FATEs. That
+is a real prerequisite and the plugin does not check it today. Noted in `open-points.md`.

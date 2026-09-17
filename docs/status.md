@@ -3,6 +3,33 @@
 Purpose: the current state of the project. The shared handover channel between sessions and
 between different people or tools. Update at the end of every working session (M-08, R-02).
 
+## Where this stands: the 1.3.0 line (2026-09-17)
+
+Work collects on `release/1.3.0` and reaches `main` only when the version is finished. Three
+pieces are in so far, each through its own branch and pull request.
+
+**A Dalamud patch had broken the build before any of this started.** 15.0.3.4 made
+`IDtrBarEntry` inherit `IDisposable`, which turned a `Remove()` call into a CA2213 error and
+stopped the plugin project compiling although nothing here had changed. Worth keeping: a patch
+version tightened a build through an analyzer without altering a signature this project calls,
+so "recheck on a major bump" is a floor rather than the whole rule.
+
+**Foundation raised from 3.1.0 to 4.1.0.** Most of what arrived does not bind a plugin. R-23 did,
+and it found four gates reporting success over material they never read, including a
+vulnerability scan that ignored its own exit code. Underneath them sat something worth more than
+the fixes: the dotnet CLI translates its output, so both string-matching checks were English only
+by accident of the runner locale. They now read trx and JSON, and the runs were read line by line
+rather than taken as green: `Tests executed: 198`, `Scan inspected 3 project(s)`.
+
+**Level fit is built and not yet seen in game.** 228 tests pass, 30 of them new. What the feature
+rests on came out of reading the `Fate` sheet with Lumina before designing anything, and that
+reading changed the design twice: there is no minimum level for a FATE to derive a threshold
+from, and Eureka had to be excluded by zone rather than by activity source because its notorious
+monsters are ordinary FATEs. Details in `platform-notes.md`, reasoning in `decisions.md`.
+
+Still open for the version: the three in-game checks under Phase 7 in `todos.md`, then the
+version number, the changelog and the release notes, which are set once at the end (C-13).
+
 ## How to test a build
 
 ```
