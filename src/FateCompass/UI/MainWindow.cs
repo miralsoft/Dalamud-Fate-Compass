@@ -58,6 +58,58 @@ internal sealed class MainWindow : Window, IDisposable
     /// <summary>Stands in for the rank number on a fight that is running but can no longer be joined.</summary>
     private const string SidelinedGlyph = "•";
 
+    /// <summary>A little over your level. Amber: worth noticing, not worth avoiding.</summary>
+    private static readonly Vector4 LevelMarginalColour = new(0.85f, 0.68f, 0.22f, 1f);
+
+    /// <summary>Well over your level. Orange, one step short of the warning colour.</summary>
+    private static readonly Vector4 LevelTightColour = new(0.88f, 0.48f, 0.20f, 1f);
+
+    /// <summary>Far over your level. Muted red rather than a bright one: this is advice, not an error.</summary>
+    private static readonly Vector4 LevelTooLowColour = new(0.76f, 0.32f, 0.30f, 1f);
+
+    /// <summary>
+    /// The word that goes inside the level badge, or null where nothing should be drawn.
+    /// </summary>
+    private string? LevelFitWord(LevelFit fit) => fit switch
+    {
+        LevelFit.Marginal => localizer.Get(StringKeys.LevelFitMarginal),
+        LevelFit.Tight => localizer.Get(StringKeys.LevelFitTight),
+        LevelFit.OutOfReach => localizer.Get(StringKeys.LevelFitTooLow),
+        _ => null,
+    };
+
+    private static Vector4 LevelFitColour(LevelFit fit) => fit switch
+    {
+        LevelFit.Marginal => LevelMarginalColour,
+        LevelFit.Tight => LevelTightColour,
+        _ => LevelTooLowColour,
+    };
+
+    /// <summary>
+    /// Draws the level badge for an entry, if it has one, and hangs the explanation off it.
+    /// </summary>
+    /// <remarks>
+    /// A filled shape with a word inside rather than a coloured number. Colour on its own is
+    /// decoration: it does not survive greyscale, and it does not survive a reader who does not
+    /// separate amber from orange from red, which is exactly the three-way distinction being
+    /// made here. The word carries the state and the colour makes it scannable.
+    /// </remarks>
+    private void DrawLevelFitBadge(RankedFate entry)
+    {
+        if (LevelFitWord(entry.LevelFit) is not { } word)
+        {
+            return;
+        }
+
+        ImGui.SameLine(0f, 6f);
+        Widgets.Badge(word, LevelFitColour(entry.LevelFit));
+
+        if (ImGui.IsItemHovered())
+        {
+            ImGui.SetTooltip(localizer.Format(StringKeys.LevelFitTooltip, entry.LevelsBelow));
+        }
+    }
+
     private const float ActionIconSize = 22f;
 
     /// <summary>Breathing room between the controls in the bottom bar.</summary>
@@ -239,7 +291,15 @@ internal sealed class MainWindow : Window, IDisposable
             return;
         }
 
-        var ranked = controller.Ranked;
+        // Dropped here rather than in the ranker, because this is a question about what to show
+        // and not about what is worth going to. The ranker keeps returning every FATE in the
+        // zone so the counts, the history and the notifier still see the whole picture; only
+        // this window's two lists get the shorter version, and only when asked for it.
+        IReadOnlyList<RankedFate> ranked = configuration.Settings.LevelFitHideOutOfReach
+            ? [.. controller.Ranked.Where(
+                entry => entry.ExclusionReason != FateExclusionReason.LevelTooLow)]
+            : controller.Ranked;
+
         if (ranked.Count == 0)
         {
             ImGui.TextUnformatted(localizer.Get(StringKeys.ListEmpty));
@@ -894,7 +954,36 @@ internal sealed class MainWindow : Window, IDisposable
         }
 
         ImGui.TextDisabled($"{entry.DistanceYalms:F0}{localizer.Get(StringKeys.UnitYalms)}");
+
+        // Only the hard case earns a badge here. A tile is pictures rather than words by
+        // design, and marking every FATE a level or two above you would badge nearly every tile
+        // while levelling, which is noise rather than information. Out of reach never reaches
+        // this view at all, because it is no longer a recommendation. What is left is the one
+        // state that looks like an ordinary recommendation and is not.
+        if (entry.LevelFit == LevelFit.Tight)
+        {
+            DrawTileLevelWarning(entry);
+        }
+
         DrawCompass(entry, TileWidth);
+    }
+
+    /// <summary>The hard-level badge under a tile, centred like everything else on it.</summary>
+    private void DrawTileLevelWarning(RankedFate entry)
+    {
+        if (LevelFitWord(entry.LevelFit) is not { } word)
+        {
+            return;
+        }
+
+        var width = Widgets.BadgeWidth(word);
+        ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ((TileWidth - width) * 0.5f));
+        Widgets.Badge(word, LevelFitColour(entry.LevelFit));
+
+        if (ImGui.IsItemHovered())
+        {
+            ImGui.SetTooltip(localizer.Format(StringKeys.LevelFitTooltip, entry.LevelsBelow));
+        }
     }
 
     /// <summary>Radius of the needle drawn under a tile.</summary>
@@ -1239,6 +1328,7 @@ internal sealed class MainWindow : Window, IDisposable
 
             ImGui.TableNextColumn();
             ImGui.TextUnformatted(entry.Fate.Level.ToString(CultureInfo.CurrentCulture));
+            DrawLevelFitBadge(entry);
 
             // Whether entering this one will sync you down, and to what.
             ImGui.TableNextColumn();
@@ -1791,6 +1881,7 @@ internal sealed class MainWindow : Window, IDisposable
         FateExclusionReason.NearlyComplete => StringKeys.ExcludedNearlyComplete,
         FateExclusionReason.ExpiringSoon => StringKeys.ExcludedExpiringSoon,
         FateExclusionReason.Unreachable => StringKeys.ExcludedUnreachable,
+        FateExclusionReason.LevelTooLow => StringKeys.ExcludedLevelTooLow,
         _ => StringKeys.ListEmpty,
     });
 

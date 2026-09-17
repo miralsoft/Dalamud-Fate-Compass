@@ -363,6 +363,54 @@ internal sealed class ConfigWindow : Window, IDisposable
             changed = true;
         }
 
+        // Its own section with its own heading, deliberately not folded into the one above.
+        // Both talk about levels and they mean different things: the sliders above are absolute
+        // numbers the player picks, this one is measured against whatever job they are on right
+        // now. Side by side under one heading, the two would read as variants of each other.
+        Section(StringKeys.SettingLevelFit, StringKeys.SettingLevelFitHint);
+
+        changed |= Checkbox(StringKeys.SettingLevelFitEnabled, StringKeys.SettingLevelFitEnabledHelp,
+            settings.LevelFitEnabled, value => settings.LevelFitEnabled = value);
+
+        // Greyed out rather than hidden while the feature is off. A window that changes height
+        // as you use it is disorienting, and a setting that vanishes looks like it was removed.
+        changed |= Dependent(settings.LevelFitEnabled, () =>
+        {
+            var touched = false;
+
+            var marginal = settings.LevelFitMarginalBelow;
+            if (IntSliderRaw(StringKeys.SettingLevelFitMarginal, ref marginal, 1, 30))
+            {
+                settings.LevelFitMarginalBelow = marginal;
+
+                // The upper bound is pushed along rather than allowed to fall below the lower
+                // one. Letting them cross would silently swallow the middle band, and the
+                // window would show no reason for it.
+                if (settings.LevelFitTightBelow < marginal)
+                {
+                    settings.LevelFitTightBelow = marginal;
+                }
+
+                touched = true;
+            }
+
+            HelpMarker(StringKeys.SettingLevelFitMarginalHelp);
+
+            var tight = settings.LevelFitTightBelow;
+            if (IntSliderRaw(StringKeys.SettingLevelFitTight, ref tight, 1, 60))
+            {
+                settings.LevelFitTightBelow = Math.Max(tight, settings.LevelFitMarginalBelow);
+                touched = true;
+            }
+
+            HelpMarker(StringKeys.SettingLevelFitTightHelp);
+
+            touched |= Checkbox(StringKeys.SettingLevelFitHide, StringKeys.SettingLevelFitHideHelp,
+                settings.LevelFitHideOutOfReach, value => settings.LevelFitHideOutOfReach = value);
+
+            return touched;
+        });
+
         Section(StringKeys.SettingsWhichFates, StringKeys.SettingExcludedKinds);
 
         // Two columns. Eight checkboxes stacked in one column pushed the rest of the tab off

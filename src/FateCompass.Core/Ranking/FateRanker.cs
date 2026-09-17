@@ -68,7 +68,13 @@ public static class FateRanker
         var speed = settings.SpeedFor(player);
         var travelSeconds = EstimateTravelSeconds(distance, speed);
 
-        var reason = DetermineExclusion(fate, settings, travelSeconds);
+        // Worked out once and carried on the result, because the window needs it for every row
+        // and not only for the ones it excludes: a FATE four levels above you is worth marking
+        // and is still perfectly worth going to.
+        var fit = LevelFitEvaluator.Evaluate(fate, player, settings);
+        var levelsBelow = LevelFitEvaluator.LevelsBelow(fate, player);
+
+        var reason = DetermineExclusion(fate, settings, travelSeconds, fit);
         if (reason != FateExclusionReason.None)
         {
             return new RankedFate
@@ -79,6 +85,8 @@ public static class FateRanker
                 DistanceYalms = distance,
                 EstimatedTravelSeconds = travelSeconds,
                 ExclusionReason = reason,
+                LevelFit = fit,
+                LevelsBelow = levelsBelow,
             };
         }
 
@@ -90,13 +98,16 @@ public static class FateRanker
             DistanceYalms = distance,
             EstimatedTravelSeconds = travelSeconds,
             ExclusionReason = FateExclusionReason.None,
+            LevelFit = fit,
+            LevelsBelow = levelsBelow,
         };
     }
 
     private static FateExclusionReason DetermineExclusion(
         FateSnapshot fate,
         FateCompassSettings settings,
-        float travelSeconds)
+        float travelSeconds,
+        LevelFit fit)
     {
         // A closed registration window is checked before anything else, because it is the one
         // exclusion the player cannot do anything about. The encounter carries on and keeps
@@ -114,6 +125,14 @@ public static class FateRanker
         if (!FateFilter.IsIncluded(fate, settings))
         {
             return FateExclusionReason.Filtered;
+        }
+
+        // Ahead of the time-based reasons on purpose. Being too far under the level is the more
+        // useful thing to say: how much of the fight is left stops mattering once you would not
+        // survive it, and unlike a countdown this one does not change while you stand there.
+        if (fit == LevelFit.OutOfReach)
+        {
+            return FateExclusionReason.LevelTooLow;
         }
 
         if (fate.IsNearlyDone(settings.NearlyDoneThresholdPercent))

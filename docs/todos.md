@@ -139,6 +139,29 @@ core rather than needing a second one:
 pass-through, and existing FATE behaviour is unchanged. Verify in each zone type before
 trusting it, since none of this can be covered by tests.
 
+## Phase 7: Level fit while levelling (1.3.0)
+
+Requested 2026-09-16. The game data was read before any of it was planned, so the following
+rests on what the sheet actually holds rather than on an assumption about it
+(see `platform-notes.md`).
+
+- [x] `LevelFitEvaluator` in the core, a pure function, with the exploratory zones ruled out by
+      `ContentKind` rather than by `ActivitySource` (Eureka FATEs come through the FATE table)
+- [x] Four settings: on/off, the two thresholds, and whether out-of-reach FATEs vanish or move
+- [x] `FateExclusionReason.LevelTooLow`, so the existing sidelining machinery does the work
+- [x] Badge with a word inside next to the level, in the table and on a hard tile
+- [x] Both catalogues, enforced by the completeness tests
+- [x] The sync defect that came out of the same reading: 255 as a sentinel, and the planner and
+      the window measuring against the same thing
+- [ ] **In game:** confirm a FATE in Eureka shows no level badge and no sync figure of 255
+- [ ] **In game:** confirm the badge reads sensibly while actually levelling a job, which is the
+      only situation this feature exists for
+- [ ] **In game:** confirm the tile badge does not widen the compact row out of alignment
+
+**Gates:** the core stays free of Dalamud types (FH-04), every new string is in both catalogues
+(C-11), and the threshold values live in settings rather than constants because the game carries
+no minimum level to derive them from (C-12).
+
 ## Ongoing
 
 - [ ] Wire `dotnet format --verify-no-changes` into the pre-commit hook, since the shared hook

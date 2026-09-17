@@ -149,6 +149,14 @@ public static class StringKeys
     public const string ExcludedUnreachable = "excluded.unreachable";
     public const string ExcludedRegistrationClosed = "excluded.registrationClosed";
     public const string ExcludedRegistrationTooLate = "excluded.registrationTooLate";
+    public const string ExcludedLevelTooLow = "excluded.levelTooLow";
+
+    // Level fit: how a FATE sits against the current job level. Short words on purpose, they
+    // are drawn inside a badge next to the level number.
+    public const string LevelFitMarginal = "levelFit.marginal";
+    public const string LevelFitTight = "levelFit.tight";
+    public const string LevelFitTooLow = "levelFit.tooLow";
+    public const string LevelFitTooltip = "levelFit.tooltip";
 
     /// <summary>Countdown to a registration cut-off, taking one argument: the formatted time.</summary>
     public const string StateRegistrationCloses = "state.registrationCloses";
@@ -233,6 +241,17 @@ public static class StringKeys
     public const string SettingLevelMinimum = "setting.level.minimum";
     public const string SettingLevelMaximum = "setting.level.maximum";
 
+    public const string SettingLevelFit = "setting.levelFit";
+    public const string SettingLevelFitHint = "setting.levelFit.hint";
+    public const string SettingLevelFitEnabled = "setting.levelFit.enabled";
+    public const string SettingLevelFitEnabledHelp = "setting.levelFit.enabled.help";
+    public const string SettingLevelFitMarginal = "setting.levelFit.marginal";
+    public const string SettingLevelFitMarginalHelp = "setting.levelFit.marginal.help";
+    public const string SettingLevelFitTight = "setting.levelFit.tight";
+    public const string SettingLevelFitTightHelp = "setting.levelFit.tight.help";
+    public const string SettingLevelFitHide = "setting.levelFit.hide";
+    public const string SettingLevelFitHideHelp = "setting.levelFit.hide.help";
+
     // Command feedback
     public const string CommandAutoOn = "command.auto.on";
     public const string CommandAutoOff = "command.auto.off";
@@ -307,6 +326,10 @@ public static class StringKeys
         ExcludedNotPermittedHere, SettingWeightOccupancy, SettingWeightRegistration,
         ExcludedNotJoinable, ExcludedFiltered, ExcludedNearlyComplete, ExcludedExpiringSoon,
         ExcludedUnreachable, ExcludedRegistrationClosed, ExcludedRegistrationTooLate,
+        ExcludedLevelTooLow, LevelFitMarginal, LevelFitTight, LevelFitTooLow, LevelFitTooltip,
+        SettingLevelFit, SettingLevelFitHint, SettingLevelFitEnabled, SettingLevelFitEnabledHelp,
+        SettingLevelFitMarginal, SettingLevelFitMarginalHelp, SettingLevelFitTight,
+        SettingLevelFitTightHelp, SettingLevelFitHide, SettingLevelFitHideHelp,
         StateRegistrationCloses,
         RouteWalkFaster, RouteNoAetheryte, RouteReturnFirst, RouteComparison,
         RouteTooLate, RouteSaves, RouteCosts,

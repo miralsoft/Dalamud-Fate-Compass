@@ -22,13 +22,32 @@ public sealed record FateSnapshot
     public required ushort Level { get; init; }
 
     /// <summary>
-    /// The level the player is synced down to on entering, which is not the same as
-    /// <see cref="Level"/> and is usually a little higher.
+    /// Top of the FATE's own level band, which is not the same as <see cref="Level"/> and is
+    /// usually a little higher.
     /// </summary>
+    /// <remarks>
+    /// This is <c>ClassJobLevelMax</c> from the game's Fate sheet. Read across all 1712 named
+    /// FATEs on 2026-09-16: the common band is the level plus four (676 of them) or plus five
+    /// (371), 219 have no band at all, and level 100 FATEs run to 104.
+    /// </remarks>
     public ushort MaxLevel { get; init; }
 
-    /// <summary>The level actually synced to, falling back to the FATE level when unknown.</summary>
-    public ushort SyncLevel => MaxLevel > 0 ? MaxLevel : Level;
+    /// <summary>
+    /// The value <see cref="MaxLevel"/> carries for a FATE with no upper bound at all.
+    /// </summary>
+    /// <remarks>
+    /// 292 of the named FATEs carry 255 here, among them 142 Eureka ones, which arrive through
+    /// the ordinary FATE table and therefore reach this type. It is a one-byte field standing in
+    /// for "no cap", not a level anybody can reach. Passed through untouched it produced a sync
+    /// column reading "to 255", which is why it is named rather than left as a magic number.
+    /// </remarks>
+    private const ushort UnboundedBand = 255;
+
+    /// <summary>
+    /// The level actually synced to, falling back to the FATE's own level where the game names
+    /// no band top or names one that means there is none.
+    /// </summary>
+    public ushort SyncLevel => MaxLevel is > 0 and not UnboundedBand ? MaxLevel : Level;
 
     public required FateKind Kind { get; init; }
 

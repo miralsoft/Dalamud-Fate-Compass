@@ -433,6 +433,39 @@ public sealed class FateCompassSettings
 
     public ushort? MaximumLevel { get; set; }
 
+    // --- Level fit ---------------------------------------------------------------------
+    //
+    // How a FATE's level sits against the player's own. On by default: this only reorders and
+    // labels what is already on screen, it reaches no game server and acts in no world, so P-04
+    // applies and the shipped default is the one that works.
+
+    /// <summary>Judge each FATE against the current job level and mark how it sits.</summary>
+    public bool LevelFitEnabled { get; set; } = true;
+
+    /// <summary>Up to this many levels under a FATE still counts as doable.</summary>
+    /// <remarks>
+    /// Five by default, from the owner's own play rather than from a published figure, because
+    /// there is no published figure: the game data carries no minimum level for a FATE at all.
+    /// That is exactly why it is a setting and not a constant (C-12).
+    /// </remarks>
+    public int LevelFitMarginalBelow { get; set; } = 5;
+
+    /// <summary>Beyond this many levels under, a FATE is treated as out of reach.</summary>
+    /// <remarks>Ten by default. Between the two bounds a FATE is marked as hard rather than hidden.</remarks>
+    public int LevelFitTightBelow { get; set; } = 10;
+
+    /// <summary>
+    /// Drop out-of-reach FATEs from the list entirely instead of setting them aside.
+    /// </summary>
+    /// <remarks>
+    /// Off by default, and the reason is not timidity. For an open-world FATE the game reports no
+    /// participant count, so the plugin cannot tell an empty field from twenty people standing in
+    /// it, and with twenty people a FATE fifteen levels above you is trivial. Setting it aside
+    /// says "probably not worth it" and can be overruled by looking; hiding it takes away the
+    /// looking. Whoever wants the shorter list can still ask for it.
+    /// </remarks>
+    public bool LevelFitHideOutOfReach { get; set; }
+
     // --- Notifications ---------------------------------------------------------------
 
     public bool PlaySoundOnNewFate { get; set; } = true;

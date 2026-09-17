@@ -110,10 +110,17 @@ public static class EngagePlanner
     /// Level sync is only worth requesting when the game offers it, the player is not already
     /// synced, and the player actually outlevels the FATE.
     /// </summary>
+    /// <remarks>
+    /// Measured against the top of the FATE's level band rather than against the level it
+    /// displays. Those differ by four or five for most FATEs, and this used to compare against
+    /// the displayed level while the window compared against the band top, so on a level 100
+    /// FATE that runs to 104 a level 102 player was told both that a sync was needed and that
+    /// none was. One of the two had to be wrong; the game data says the band is what counts.
+    /// </remarks>
     private static bool NeedsLevelSync(PlayerSnapshot player, FateSnapshot fate) =>
         player.IsLevelSyncAvailable
         && !player.IsLevelSynced
-        && player.Level > fate.Level;
+        && player.Level > fate.SyncLevel;
 
     private static bool AllStepsDisabled(FateCompassSettings settings) =>
         !settings.EngageDismount && !settings.EngageLevelSync && !settings.EngageTankStance;
