@@ -80,5 +80,14 @@ internal sealed class StatusBarEntry : IDisposable
         entry.Shown = configuration.Settings.ShowStatusBarEntry;
     }
 
-    public void Dispose() => entry.Remove();
+    /// <remarks>
+    /// Disposed rather than removed. Dalamud 15.0.3.4 made <see cref="IDtrBarEntry"/> inherit
+    /// <see cref="IDisposable"/>, which turned the old <c>Remove()</c> call into a CA2213 build
+    /// error: a disposable field that is never disposed. The two are the same thing, checked in
+    /// Dalamud's own source rather than assumed, where <c>Dispose()</c> does nothing but call
+    /// <c>Remove()</c>. That mattered before changing it, because the entry has to leave the
+    /// server info bar when the plugin unloads and a Dispose that merely released a handle would
+    /// have left it sitting there.
+    /// </remarks>
+    public void Dispose() => entry.Dispose();
 }

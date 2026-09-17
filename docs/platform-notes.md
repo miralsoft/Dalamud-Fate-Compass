@@ -13,13 +13,21 @@ else should inherit.
 
 ## Verified against
 
-- **Version:** Dalamud 15.0.3, API level 15
-- **Read on:** 2026-08-01
+- **Version:** Dalamud 15.0.3.4, API level 15
+- **Read on:** 2026-09-16 (the surface below on 2026-08-01, against 15.0.3)
 - **Method:** verified. Reflected over `Dalamud.dll` and `FFXIVClientStructs.dll` in the local
   installation, and read `Dalamud.xml`.
 
 Recheck on a major bump and record the outcome in `decisions.md`. The profile in the foundation
 says the same thing as a rule; this is where the answer lands.
+
+**A patch bump moved the surface too, so "recheck on a major" is not enough on its own.**
+15.0.3.4 made `IDtrBarEntry` inherit `IDisposable` and added `IReadOnlyDtrBarEntry` alongside it.
+Nothing was removed and nothing was marked obsolete, so no call stopped compiling; what broke the
+build was the analyzer, because a disposable field that is only `Remove()`d is a CA2213 error and
+warnings are errors here. The lesson worth keeping is the shape of it: the platform can tighten a
+build without changing a single signature this project calls, and the first sign of it is a build
+that fails on a machine where nothing was edited.
 
 ## Services
 
