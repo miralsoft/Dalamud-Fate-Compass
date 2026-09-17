@@ -3,8 +3,14 @@ name: CI
 # The content checks below are copied from the foundation, not written here (R-17, M-19).
 #
 # Copied from: miralsoft-foundation-docs, enforcement/ci/content-checks.yml
-# Foundation version: 2.0.0
-# Copied on: 2026-08-12
+# Foundation version: 4.1.0
+# Copied on: 2026-09-16
+#
+# Re-copied when this project raised its declared foundation version from 3.1.0 to 4.1.0.
+# The template's steps were diffed against this copy first: they are unchanged since 2.0.0,
+# so only the two lines above moved. That is the point of the provenance line, and it is
+# worth saying that the answer was "nothing changed" rather than leaving the date to imply
+# work that did not happen.
 #
 # Arrangement: the template's second variant, its steps pasted into the existing build job
 # rather than a workflow of their own. Branch protection on this repository requires the check
@@ -38,6 +44,12 @@ env:
   DOTNET_NOLOGO: "1"
   # Run JS-based actions on Node 24 (Node 20 is deprecated; Node 24 is the default from 2026-06-16).
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  # The dotnet CLI translates its output, so "Passed!" and "has the following vulnerable
+  # packages" are English only by accident of the runner's locale. A German developer machine
+  # prints "Bestanden!" and "keine anfaelligen Pakete", and any check reading those strings
+  # silently answers differently there than here. Pinning the CLI language makes the output the
+  # same everywhere; the steps below additionally read structured output rather than prose.
+  DOTNET_CLI_UI_LANGUAGE: "en"
 
 jobs:
   build:
@@ -192,15 +204,22 @@ jobs:
           if [ -n "${BASE_SHA:-}" ] && [ "${BASE_SHA}" != "$empty" ] \
             && git rev-parse -q --verify "${BASE_SHA}^{commit}" >/dev/null 2>&1; then
             echo "Checking ${BASE_SHA}..${HEAD_SHA}"
+            count=$(git rev-list --count "${BASE_SHA}..${HEAD_SHA}")
             msgs=$(git log --format='%H%n%B' "${BASE_SHA}..${HEAD_SHA}")
           else
             echo "No usable base, checking the head commit only."
+            count=1
             msgs=$(git log --format='%H%n%B' -1 "${HEAD_SHA}")
           fi
 
-          if [ -z "$msgs" ]; then
-            echo "No commits in range."
-            exit 0
+          # R-23. This used to report success and stop when the range came out empty, which is
+          # a gate reporting a pass over material it never read. An empty range means the range
+          # was computed wrongly rather than that there is nothing to check, so fall back to the
+          # head commit: the gate then always reads something, and always says how much.
+          if [ "$count" -eq 0 ] || [ -z "$msgs" ]; then
+            echo "The range named no commits; falling back to the head commit (R-23)."
+            count=1
+            msgs=$(git log --format='%H%n%B' -1 "${HEAD_SHA}")
           fi
 
           if printf '%s\n' "$msgs" \
@@ -210,7 +229,7 @@ jobs:
             echo "Naming an entrypoint file is allowed; claiming an author is not." >&2
             exit 1
           fi
-          echo "No AI-attribution markers in the commit messages checked."
+          echo "No AI-attribution markers in the $count commit message(s) checked."
 
       - name: Set up .NET
         uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
@@ -233,8 +252,35 @@ jobs:
       - name: Build (Release)
         run: dotnet build -c Release --no-restore
 
+      # R-23. A suite that executed nothing still exits zero, and a green tick over zero tests
+      # is precisely the failure that rule names: a gate that could not run, reporting a pass.
+      # Drop the test project out of the solution and the old step would have said nothing.
+      #
+      # The count is read out of the trx file rather than out of the console summary, because
+      # that summary is translated. On a German machine it reads "Bestanden!" and "gesamt",
+      # so a check written against the English words would pass there without reading anything.
       - name: Test
-        run: dotnet test -c Release --no-build --verbosity normal
+        shell: pwsh
+        run: |
+          dotnet test FateCompass.slnx -c Release --no-build --verbosity normal `
+            --logger "trx;LogFileName=results.trx" --results-directory artifacts/test
+          if ($LASTEXITCODE -ne 0) { Write-Error "Tests failed."; exit 1 }
+
+          $files = @(Get-ChildItem artifacts/test -Filter *.trx -Recurse -ErrorAction SilentlyContinue)
+          if ($files.Count -lt 1) {
+            Write-Error "No test result file was produced, so nothing here proves a test ran (R-23)."
+            exit 1
+          }
+          $total = 0
+          foreach ($file in $files) {
+            [xml]$doc = Get-Content $file.FullName
+            $total += [int]$doc.TestRun.ResultSummary.Counters.total
+          }
+          if ($total -lt 1) {
+            Write-Error "The run reported $total tests. Executing nothing is not passing (R-23)."
+            exit 1
+          }
+          Write-Host "Tests executed: $total"
 
       - name: Format check
         run: dotnet format FateCompass.slnx --verify-no-changes --verbosity minimal
@@ -251,12 +297,66 @@ jobs:
           }
           Write-Host "No local build switches present."
 
+      # S-08, with R-23 on top of it. The previous version of this step read the console text
+      # for an English phrase and never looked at the exit code, so a scan that failed to run
+      # printed its error, matched nothing, and went green. Two things were wrong with it: a
+      # failure was indistinguishable from a clean result, and the phrase it looked for only
+      # appears in English, which this machine is not.
+      #
+      # It now reads structured output, checks the scan actually inspected this solution, and
+      # proves its own detector can fire before a clean result is believed (R-20).
       - name: Vulnerable dependency scan
         shell: pwsh
         run: |
-          $out = dotnet list package --vulnerable --include-transitive 2>&1 | Out-String
-          Write-Host $out
-          if ($out -match "has the following vulnerable") {
-            Write-Error "Vulnerable packages detected."
+          function Get-Vulnerable($document) {
+            $hits = @()
+            foreach ($project in @($document.projects)) {
+              foreach ($framework in @($project.frameworks)) {
+                $packages = @($framework.topLevelPackages) + @($framework.transitivePackages)
+                foreach ($package in $packages) {
+                  if ($package -and $package.vulnerabilities) {
+                    $hits += "$($project.path): $($package.id)"
+                  }
+                }
+              }
+            }
+            return $hits
+          }
+
+          $planted = '{"projects":[{"path":"p","frameworks":[{"topLevelPackages":[{"id":"Bad","vulnerabilities":[{"severity":"high"}]}]}]}]}'
+          if (@(Get-Vulnerable ($planted | ConvertFrom-Json)).Count -lt 1) {
+            Write-Error "The vulnerability detector does not fire on a planted finding (R-20)."
             exit 1
           }
+          $clean = '{"projects":[{"path":"p","frameworks":[{"topLevelPackages":[{"id":"Fine"}]}]}]}'
+          if (@(Get-Vulnerable ($clean | ConvertFrom-Json)).Count -ne 0) {
+            Write-Error "The vulnerability detector flags a clean project (R-20)."
+            exit 1
+          }
+
+          $raw = dotnet list package --vulnerable --include-transitive --format json | Out-String
+          $code = $LASTEXITCODE
+          Write-Host $raw
+          if ($code -ne 0) {
+            Write-Error "The scan exited $code, so it did not run. A gate that could not run has not passed (R-23)."
+            exit 1
+          }
+          # Restore chatter can precede the payload, so start at the first brace rather than
+          # handing the whole stream to the parser.
+          $start = $raw.IndexOf('{')
+          if ($start -lt 0) {
+            Write-Error "The scan produced no JSON payload, so there is nothing to judge (R-23)."
+            exit 1
+          }
+          $document = $raw.Substring($start) | ConvertFrom-Json
+          $count = @($document.projects).Count
+          if ($count -lt 1) {
+            Write-Error "The scan named no project, so it cannot have inspected this solution (R-23)."
+            exit 1
+          }
+          $found = Get-Vulnerable $document
+          if ($found.Count -gt 0) {
+            Write-Error "Vulnerable packages detected: $($found -join ', ')"
+            exit 1
+          }
+          Write-Host "Scan inspected $count project(s) and found no vulnerable packages."

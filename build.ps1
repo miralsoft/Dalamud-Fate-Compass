@@ -11,6 +11,18 @@ param(
 $ErrorActionPreference = 'Stop'
 Set-Location $PSScriptRoot
 
+# R-23 allows exactly one lenient caller in a suite, so that somebody can still get a build out
+# while a check is in the way, and it requires that caller to say out loud what it skipped. This
+# script is that caller; CI never is. Silence here would leave a build that ran no checks looking
+# exactly like one that passed them all, which is the whole failure the rule is about.
+if ($SkipChecks) {
+    Write-Host ''
+    Write-Host 'SKIPPING the format check and the tests (-SkipChecks).' -ForegroundColor Yellow
+    Write-Host 'Nothing below has been verified against them. CI enforces both and will fail' -ForegroundColor Gray
+    Write-Host 'on what this run did not look at.' -ForegroundColor Gray
+    Write-Host ''
+}
+
 if (-not $SkipChecks) {
     Write-Host '--- format ---' -ForegroundColor Cyan
     dotnet format FateCompass.slnx --verify-no-changes

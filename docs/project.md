@@ -43,15 +43,35 @@ this project's own research rather than a rule, the reflected Dalamud API surfac
 
 ## Targeted foundation version
 
-3.1.0 (M-06). Reviewed whenever a release is cut (M-17): read the foundation changelog from
+4.1.0 (M-06). Reviewed whenever a release is cut (M-17): read the foundation changelog from
 this version onward, then either raise it and do the work, or leave it and record why.
 
-Raised from 2.0.0 on 2026-08-16, with the work done rather than deferred. 3.0.0 asked four
-things of a project: an audit by reachability rather than by grep (R-21), test values taken from
-the reality they describe (T-07), an install instruction naming the address the channel
-documents (D-15), and endpoint checks that look at the payload (D-16). The last two already
-held. The first found three real defects and they are fixed. 3.1.0 permits something rather than
-requiring it, so it asked for nothing.
+Raised from 3.1.0 on 2026-09-16, with the work done rather than deferred. What the four
+versions in between asked of this project, and what each one cost:
+
+- **3.2.0** widened M-18 so a hosted project's agents may write its own documentation folder in
+  the foundation. This project is external, so it never had that problem and gains nothing.
+- **3.3.0** added R-22, ask before a git action starts a metered CI run. Behavioural, and it
+  binds the agent rather than the code: every push, pull request and merge is asked for
+  separately from the approval of what the change contains.
+- **4.0.0** added the whole `O` operations area, S-14 to S-16, and R-23. The `O` area does not
+  bind here and says so in its own scope statement: it governs software operated out of its
+  repository, while a plugin somebody downloads is governed by `D`. S-14 and S-15 concern
+  secrets this plugin does not have, since it holds none and reaches no network (FH-03). S-16
+  forbids a development-only door in a deployment, which C-10 already answers here in the
+  stronger form: the developer surface is absent from a released build rather than switched off
+  in it, and CI proves it. **R-23 was the one that cost work**, and it found two real holes
+  rather than none. The C# profile's new "Operational configuration" section states outright
+  that a plugin has no instance configuration in O-03's sense.
+- **4.1.0** added D-17, which constrains what a user-facing announcement may report. The
+  existing release notes were read against it and hold, so it binds what gets written from here
+  on rather than obliging a rewrite.
+
+Raised from 2.0.0 on 2026-08-16. 3.0.0 asked four things of a project: an audit by reachability
+rather than by grep (R-21), test values taken from the reality they describe (T-07), an install
+instruction naming the address the channel documents (D-15), and endpoint checks that look at
+the payload (D-16). The last two already held. The first found three real defects and they are
+fixed. 3.1.0 permits something rather than requiring it, so it asked for nothing.
 
 ## Code repositories
 
