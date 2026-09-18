@@ -31,6 +31,9 @@ public sealed record RankedFate
     /// <summary>How many levels the player is under this FATE, zero when they are not.</summary>
     public int LevelsBelow { get; init; }
 
+    /// <summary>How many levels this FATE is under the player, zero when it is not.</summary>
+    public int LevelsAbove { get; init; }
+
     public bool IsRecommended => ExclusionReason == FateExclusionReason.None;
 
     /// <summary>

@@ -408,6 +408,28 @@ internal sealed class ConfigWindow : Window, IDisposable
             touched |= Checkbox(StringKeys.SettingLevelFitHide, StringKeys.SettingLevelFitHideHelp,
                 settings.LevelFitHideOutOfReach, value => settings.LevelFitHideOutOfReach = value);
 
+            touched |= Checkbox(
+                StringKeys.SettingLevelFitFarBelow, StringKeys.SettingLevelFitFarBelowHelp,
+                settings.LevelFitShowFarBelow, value => settings.LevelFitShowFarBelow = value);
+
+            touched |= Dependent(settings.LevelFitShowFarBelow, () =>
+            {
+                var farBelow = settings.LevelFitFarBelowBy;
+                var moved = IntSliderRaw(StringKeys.SettingLevelFitFarBelowBy, ref farBelow, 1, 60);
+
+                // Outside the branch: the help marker places itself beside the widget that was
+                // just drawn, so skipping it on the frames where nothing moved would make the
+                // question mark flicker away under the cursor.
+                HelpMarker(StringKeys.SettingLevelFitFarBelowByHelp);
+
+                if (moved)
+                {
+                    settings.LevelFitFarBelowBy = farBelow;
+                }
+
+                return moved;
+            });
+
             return touched;
         });
 

@@ -466,6 +466,25 @@ public sealed class FateCompassSettings
     /// </remarks>
     public bool LevelFitHideOutOfReach { get; set; }
 
+    /// <summary>Also mark FATEs that sit well under your own level, greyed out.</summary>
+    /// <remarks>
+    /// On by default, because with it on a badge appears on every FATE that is not at your level
+    /// in either direction, and an empty spot finally means one definite thing: this one suits
+    /// you. That was the complaint the whole feature came back for, and half a scale only answers
+    /// half of it.
+    /// <para>
+    /// The honest cost, so it is not a surprise: at maximum level in a starter zone every FATE in
+    /// the list qualifies and they all get the same grey mark, which tells you nothing. That is
+    /// the case to switch this off for, and switching it off costs one click. It is never an
+    /// exclusion either way, because those same FATEs are the ones somebody farming gemstones is
+    /// going to.
+    /// </para>
+    /// </remarks>
+    public bool LevelFitShowFarBelow { get; set; } = true;
+
+    /// <summary>How many levels under your own a FATE must be to count as well under it.</summary>
+    public int LevelFitFarBelowBy { get; set; } = 10;
+
     // --- Notifications ---------------------------------------------------------------
 
     public bool PlaySoundOnNewFate { get; set; } = true;

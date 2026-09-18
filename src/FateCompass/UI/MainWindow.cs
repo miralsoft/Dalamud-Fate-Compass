@@ -68,6 +68,13 @@ internal sealed class MainWindow : Window, IDisposable
     private static readonly Vector4 LevelTooLowColour = new(0.76f, 0.32f, 0.30f, 1f);
 
     /// <summary>
+    /// Well under your level. Grey, and deliberately the quietest mark on the tile: it says
+    /// "not what you are levelling on" rather than "do not go", which is a real difference for
+    /// anybody farming gemstones in a starter zone.
+    /// </summary>
+    private static readonly Vector4 LevelFarBelowColour = new(0.46f, 0.46f, 0.48f, 1f);
+
+    /// <summary>
     /// The word that goes inside the level badge, or null where nothing should be drawn.
     /// </summary>
     private string? LevelFitWord(LevelFit fit) => fit switch
@@ -75,6 +82,7 @@ internal sealed class MainWindow : Window, IDisposable
         LevelFit.Marginal => localizer.Get(StringKeys.LevelFitMarginal),
         LevelFit.Tight => localizer.Get(StringKeys.LevelFitTight),
         LevelFit.OutOfReach => localizer.Get(StringKeys.LevelFitTooLow),
+        LevelFit.FarBelow => localizer.Get(StringKeys.LevelFitLow),
         _ => null,
     };
 
@@ -82,8 +90,21 @@ internal sealed class MainWindow : Window, IDisposable
     {
         LevelFit.Marginal => LevelMarginalColour,
         LevelFit.Tight => LevelTightColour,
+        LevelFit.FarBelow => LevelFarBelowColour,
         _ => LevelTooLowColour,
     };
+
+    /// <summary>
+    /// The tooltip for a level badge, which has to be read in the right direction.
+    /// </summary>
+    /// <remarks>
+    /// Two sentences rather than one with a signed number, because "seven levels" reads fine
+    /// whichever way round it is meant and would be wrong half the time without anything looking
+    /// wrong.
+    /// </remarks>
+    private string LevelFitTooltipText(RankedFate entry) => entry.LevelFit == LevelFit.FarBelow
+        ? localizer.Format(StringKeys.LevelFitTooltipBelow, entry.LevelsAbove)
+        : localizer.Format(StringKeys.LevelFitTooltip, entry.LevelsBelow);
 
     /// <summary>
     /// Draws the level badge for an entry, if it has one, and hangs the explanation off it.
@@ -106,7 +127,7 @@ internal sealed class MainWindow : Window, IDisposable
 
         if (ImGui.IsItemHovered())
         {
-            ImGui.SetTooltip(localizer.Format(StringKeys.LevelFitTooltip, entry.LevelsBelow));
+            ImGui.SetTooltip(LevelFitTooltipText(entry));
         }
     }
 
@@ -987,7 +1008,7 @@ internal sealed class MainWindow : Window, IDisposable
     /// </remarks>
     private void DrawTileLevel(RankedFate entry)
     {
-        if (entry.LevelFit is not (LevelFit.Marginal or LevelFit.Tight or LevelFit.OutOfReach))
+        if (LevelFitWord(entry.LevelFit) is null)
         {
             return;
         }
@@ -1004,7 +1025,7 @@ internal sealed class MainWindow : Window, IDisposable
 
         if (ImGui.IsItemHovered())
         {
-            ImGui.SetTooltip(localizer.Format(StringKeys.LevelFitTooltip, entry.LevelsBelow));
+            ImGui.SetTooltip(LevelFitTooltipText(entry));
         }
     }
 

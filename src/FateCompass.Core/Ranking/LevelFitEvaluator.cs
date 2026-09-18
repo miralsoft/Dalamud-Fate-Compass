@@ -49,7 +49,18 @@ public static class LevelFitEvaluator
         var deficit = fate.Level - player.Level;
         if (deficit <= 0)
         {
-            return LevelFit.Comfortable;
+            // The other side of the scale, and it is off unless asked for. A FATE far under you
+            // is never a problem, so this says "probably not what you are levelling on" and
+            // nothing stronger. It is deliberately not an exclusion: at maximum level in a
+            // starter zone every FATE lands here, and those are exactly the ones somebody
+            // farming gemstones is going to.
+            if (!settings.LevelFitShowFarBelow)
+            {
+                return LevelFit.Comfortable;
+            }
+
+            var farBelow = Math.Max(settings.LevelFitFarBelowBy, 1);
+            return -deficit >= farBelow ? LevelFit.FarBelow : LevelFit.Comfortable;
         }
 
         // Both bounds come from the settings, so a player who disagrees can move them. Reading
@@ -79,5 +90,22 @@ public static class LevelFitEvaluator
         ArgumentNullException.ThrowIfNull(player);
 
         return Math.Max(fate.Level - player.Level, 0);
+    }
+
+    /// <summary>
+    /// How many levels this FATE is under the player, or zero when it is not under them.
+    /// </summary>
+    /// <remarks>
+    /// The mirror of <see cref="LevelsBelow"/>. Two methods rather than one signed number,
+    /// because a caller that wants "how far under me is this" should not have to remember which
+    /// direction the sign runs, and a tooltip that got it backwards would read perfectly well
+    /// while saying the opposite of the truth.
+    /// </remarks>
+    public static int LevelsAbove(FateSnapshot fate, PlayerSnapshot player)
+    {
+        ArgumentNullException.ThrowIfNull(fate);
+        ArgumentNullException.ThrowIfNull(player);
+
+        return Math.Max(player.Level - fate.Level, 0);
     }
 }

@@ -157,6 +157,8 @@ public static class StringKeys
     public const string LevelFitTight = "levelFit.tight";
     public const string LevelFitTooLow = "levelFit.tooLow";
     public const string LevelFitBadge = "levelFit.badge";
+    public const string LevelFitLow = "levelFit.low";
+    public const string LevelFitTooltipBelow = "levelFit.tooltipBelow";
     public const string LevelFitTooltip = "levelFit.tooltip";
 
     /// <summary>Countdown to a registration cut-off, taking one argument: the formatted time.</summary>
@@ -252,6 +254,10 @@ public static class StringKeys
     public const string SettingLevelFitTightHelp = "setting.levelFit.tight.help";
     public const string SettingLevelFitHide = "setting.levelFit.hide";
     public const string SettingLevelFitHideHelp = "setting.levelFit.hide.help";
+    public const string SettingLevelFitFarBelow = "setting.levelFit.farBelow";
+    public const string SettingLevelFitFarBelowHelp = "setting.levelFit.farBelow.help";
+    public const string SettingLevelFitFarBelowBy = "setting.levelFit.farBelowBy";
+    public const string SettingLevelFitFarBelowByHelp = "setting.levelFit.farBelowBy.help";
 
     // Command feedback
     public const string CommandAutoOn = "command.auto.on";
@@ -328,7 +334,9 @@ public static class StringKeys
         ExcludedNotJoinable, ExcludedFiltered, ExcludedNearlyComplete, ExcludedExpiringSoon,
         ExcludedUnreachable, ExcludedRegistrationClosed, ExcludedRegistrationTooLate,
         ExcludedLevelTooLow, LevelFitMarginal, LevelFitTight, LevelFitTooLow, LevelFitTooltip,
-        LevelFitBadge,
+        LevelFitBadge, LevelFitLow, LevelFitTooltipBelow,
+        SettingLevelFitFarBelow, SettingLevelFitFarBelowHelp,
+        SettingLevelFitFarBelowBy, SettingLevelFitFarBelowByHelp,
         SettingLevelFit, SettingLevelFitHint, SettingLevelFitEnabled, SettingLevelFitEnabledHelp,
         SettingLevelFitMarginal, SettingLevelFitMarginalHelp, SettingLevelFitTight,
         SettingLevelFitTightHelp, SettingLevelFitHide, SettingLevelFitHideHelp,

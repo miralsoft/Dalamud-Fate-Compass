@@ -73,6 +73,7 @@ public static class FateRanker
         // and is still perfectly worth going to.
         var fit = LevelFitEvaluator.Evaluate(fate, player, settings);
         var levelsBelow = LevelFitEvaluator.LevelsBelow(fate, player);
+        var levelsAbove = LevelFitEvaluator.LevelsAbove(fate, player);
 
         var reason = DetermineExclusion(fate, settings, travelSeconds, fit);
         if (reason != FateExclusionReason.None)
@@ -87,6 +88,7 @@ public static class FateRanker
                 ExclusionReason = reason,
                 LevelFit = fit,
                 LevelsBelow = levelsBelow,
+                LevelsAbove = levelsAbove,
             };
         }
 
@@ -100,6 +102,7 @@ public static class FateRanker
             ExclusionReason = FateExclusionReason.None,
             LevelFit = fit,
             LevelsBelow = levelsBelow,
+            LevelsAbove = levelsAbove,
         };
     }
 

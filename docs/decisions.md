@@ -540,3 +540,28 @@ Each entry: date, decision, short rationale.
   the ones at or below the player's level. It would remove the last ambiguity, but it adds a
   line to every tile in the view whose whole point is density, and the owner asked for it only
   where they are under.
+
+- (2026-09-18) **The level scale runs both ways now: a FATE well under the player is marked grey,
+  and that completes the answer to the ambiguity complaint.** Requested after using the one-sided
+  version.
+
+  With only the upper half, an empty spot still meant two things: the FATE suits you, or it is
+  under you and we said nothing. With both halves on, every FATE that is not at your level carries
+  a mark, so an empty spot means exactly one thing. That is worth more than the grey badge itself.
+
+  **Grey, quiet, and never an exclusion.** A FATE far below you is not a problem, it is just
+  probably not the one you are levelling on, and the two are different. At maximum level in a
+  starter zone every FATE in the list is far below, and those are precisely the ones somebody
+  farming bicolour gemstones is going to. A test locks that in: far below keeps its rank and stays
+  recommended.
+
+  **On by default, with the cost named rather than hidden.** In that same maximum-level starter
+  zone it marks all of them identically and therefore says nothing, which is the case to switch it
+  off for, and the help text says so instead of selling the default. P-05 does not apply: nothing
+  here reaches the game server or costs the player anything, so P-04 decides and the default is
+  the one that answers the question that was asked.
+
+  One implementation note worth keeping. The distance is exposed as two methods, `LevelsBelow` and
+  `LevelsAbove`, rather than one signed number. A tooltip that read the sign backwards would say
+  the opposite of the truth and look entirely correct doing it, and the type system cannot catch
+  that. Two names can.
