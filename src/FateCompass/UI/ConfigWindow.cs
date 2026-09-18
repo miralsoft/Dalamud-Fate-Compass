@@ -435,6 +435,14 @@ internal sealed class ConfigWindow : Window, IDisposable
                 StringKeys.SettingLevelFitFarBelow, StringKeys.SettingLevelFitFarBelowHelp,
                 settings.LevelFitShowFarBelow, value => settings.LevelFitShowFarBelow = value);
 
+            touched |= Checkbox(
+                StringKeys.SettingLevelFitOrder, StringKeys.SettingLevelFitOrderHelp,
+                settings.LevelFitOrdersList, value => settings.LevelFitOrdersList = value);
+
+            touched |= Dependent(settings.LevelFitOrdersList, () => FloatSlider(
+                StringKeys.SettingLevelFitOrderWeight, settings.Weights.LevelFit, 0f, 5f,
+                value => settings.Weights.LevelFit = value));
+
             touched |= Dependent(settings.LevelFitShowFarBelow, () =>
             {
                 var farBelow = settings.LevelFitFarBelowBy;

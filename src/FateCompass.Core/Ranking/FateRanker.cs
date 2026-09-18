@@ -96,7 +96,7 @@ public static class FateRanker
         {
             Fate = fate,
             Rank = 0,
-            Score = Score(fate, distance, speed, settings.Weights),
+            Score = Score(fate, distance, speed, settings.Weights, fit, settings.LevelFitOrdersList),
             DistanceYalms = distance,
             EstimatedTravelSeconds = travelSeconds,
             ExclusionReason = FateExclusionReason.None,
@@ -206,8 +206,39 @@ public static class FateRanker
         return Math.Clamp(spare / buffer, 0f, 1f);
     }
 
+    /// <summary>
+    /// How much the order should favour a band, before the weight scales it.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// The good band leads, and a FATE a little over the player comes next rather than first.
+    /// That ordering is a judgement and is worth naming as one: a higher FATE plausibly pays
+    /// more, but the game publishes no reward formula to read, and inventing one and then
+    /// ordering a list by it would be exactly the fabrication I-10 forbids. Best match to your
+    /// level is the honest proxy, so that is what this ranks by.
+    /// </para>
+    /// <para>
+    /// <see cref="LevelFit.NotApplicable"/> scores zero rather than anything else, which is what
+    /// keeps levelling mode out of Eureka, Bozja and the Crescent entirely: no comparison exists
+    /// there, so none may move a FATE up or down.
+    /// </para>
+    /// </remarks>
+    private static float LevelFitPreference(LevelFit fit) => fit switch
+    {
+        LevelFit.Ideal => 1f,
+        LevelFit.Marginal => 0.6f,
+        LevelFit.Tight => 0.2f,
+        LevelFit.FarBelow => -1f,
+        _ => 0f,
+    };
+
     private static float Score(
-        FateSnapshot fate, float distance, float speedYalmsPerSecond, RankingWeights weights)
+        FateSnapshot fate,
+        float distance,
+        float speedYalmsPerSecond,
+        RankingWeights weights,
+        LevelFit fit,
+        bool levellingMode)
     {
         // Half-life curve: 1 at the player's feet, 0.5 at the configured distance, never negative.
         var halfLife = MathF.Max(weights.DistanceHalfLifeYalms, 1f);
@@ -242,6 +273,14 @@ public static class FateRanker
         if (fate.Kind is FateKind.CriticalEncounter or FateKind.CriticalEngagement)
         {
             score += weights.CriticalPriorityBonus;
+        }
+
+        // Levelling mode, and only when asked for. Added last so it reads as what it is: an
+        // opinion laid on top of the ordinary order rather than a rewrite of it. A FATE that is
+        // about to expire still loses, because the time term drops faster than this can lift.
+        if (levellingMode)
+        {
+            score += LevelFitPreference(fit) * weights.LevelFit;
         }
 
         return score;
