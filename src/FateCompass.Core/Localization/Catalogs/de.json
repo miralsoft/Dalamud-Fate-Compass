@@ -108,6 +108,7 @@
   "levelFit.marginal": "knapp",
   "levelFit.tight": "hart",
   "levelFit.tooLow": "zu hoch",
+  "levelFit.badge": "St.{0}",
   "levelFit.tooltip": "{0} Stufen über dir. Das Spiel sperrt dich nicht aus, aber dein Beitrag zählt weniger, je weiter du darunter liegst. Mit anderen Spielern vor Ort geht es trotzdem.",
 
   "route.walkFaster": "Direkt hin",

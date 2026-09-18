@@ -512,3 +512,31 @@ Each entry: date, decision, short rationale.
   second copy is the one that goes stale. The section now points at the script's output and
   explains why the folder is not `bin`, so the next reader gets the reason rather than a path to
   copy.
+
+- (2026-09-18) **The compact tile shows the FATE's own level instead of a word, and shows it on
+  every band where the player is under.** Reported from use: one tile carried an orange "hard"
+  badge and the other four carried nothing, which left no way to tell which FATE suited the job
+  being levelled.
+
+  Two things were wrong, and the first was mine. The tile badge was deliberately limited to the
+  hard band, on the argument that marking every FATE a level or two above you would badge nearly
+  every tile while levelling. In use that is exactly backwards: **an absent badge is ambiguous.**
+  It reads the same whether the FATE suits you, whether it is a little above you, or whether the
+  comparison was never made at all. A mark that appears on one tile in five tells you about that
+  tile and nothing about the rest.
+
+  The second was a plain gap: the compact view showed no level anywhere. The one number that
+  answers "is this for me" was missing from the view that exists to answer it quickly, while the
+  table had it all along.
+
+  So the badge carries the level itself now, on marginal, hard and out of reach alike, and
+  nothing at all at or above the FATE's level, where it does not matter. This also keeps it
+  readable without colour, which the word did by naming a band and the number does better: a
+  player knows their own level, so "St.32" states the gap in greyscale and the amber-to-red run
+  only makes it faster to scan.
+
+  The table keeps the word beside its level column, because there the number is already in its
+  own column and the word adds something. Rejected: showing the level on every tile including
+  the ones at or below the player's level. It would remove the last ambiguity, but it adds a
+  line to every tile in the view whose whole point is density, and the owner asked for it only
+  where they are under.

@@ -955,30 +955,45 @@ internal sealed class MainWindow : Window, IDisposable
 
         ImGui.TextDisabled($"{entry.DistanceYalms:F0}{localizer.Get(StringKeys.UnitYalms)}");
 
-        // Only the hard case earns a badge here. A tile is pictures rather than words by
-        // design, and marking every FATE a level or two above you would badge nearly every tile
-        // while levelling, which is noise rather than information. Out of reach never reaches
-        // this view at all, because it is no longer a recommendation. What is left is the one
-        // state that looks like an ordinary recommendation and is not.
-        if (entry.LevelFit == LevelFit.Tight)
-        {
-            DrawTileLevelWarning(entry);
-        }
-
+        DrawTileLevel(entry);
         DrawCompass(entry, TileWidth);
     }
 
-    /// <summary>The hard-level badge under a tile, centred like everything else on it.</summary>
-    private void DrawTileLevelWarning(RankedFate entry)
+    /// <summary>
+    /// The FATE's own level under a tile, shown only while the player is below it.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// This started out as a badge carrying the word "hard", on the hard band only, on the
+    /// argument that marking every FATE a level or two above you would badge nearly every tile.
+    /// Used while levelling that turned out to be the wrong way round. One tile carried a mark
+    /// and the other four carried nothing, and nothing is ambiguous: it reads the same whether
+    /// the FATE suits you, whether it is a little above you, or whether the comparison was never
+    /// made. Meanwhile the compact view showed no level at all, so the one number that answers
+    /// "is this for me" was the one thing missing from it.
+    /// </para>
+    /// <para>
+    /// So the badge now carries the level itself, on every band where the player is under, and
+    /// nothing at all when they are at or above it, where it does not matter. The number is also
+    /// what keeps this readable without colour: a player knows their own level, so "St.32"
+    /// states the gap in greyscale, and the amber-to-red run only makes it faster to scan.
+    /// </para>
+    /// </remarks>
+    private void DrawTileLevel(RankedFate entry)
     {
-        if (LevelFitWord(entry.LevelFit) is not { } word)
+        if (entry.LevelFit is not (LevelFit.Marginal or LevelFit.Tight or LevelFit.OutOfReach))
         {
             return;
         }
 
-        var width = Widgets.BadgeWidth(word);
+        var text = localizer.Format(StringKeys.LevelFitBadge, entry.Fate.Level);
+
+        // Centred over the icon rather than over the tile, the same way the rank number above
+        // it is. The tile is as wide as its widest line of text, so centring on the tile would
+        // push this off to one side of the thing it describes.
+        var width = Widgets.BadgeWidth(text);
         ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ((TileWidth - width) * 0.5f));
-        Widgets.Badge(word, LevelFitColour(entry.LevelFit));
+        Widgets.Badge(text, LevelFitColour(entry.LevelFit));
 
         if (ImGui.IsItemHovered())
         {

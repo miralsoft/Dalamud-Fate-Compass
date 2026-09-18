@@ -156,6 +156,7 @@ public static class StringKeys
     public const string LevelFitMarginal = "levelFit.marginal";
     public const string LevelFitTight = "levelFit.tight";
     public const string LevelFitTooLow = "levelFit.tooLow";
+    public const string LevelFitBadge = "levelFit.badge";
     public const string LevelFitTooltip = "levelFit.tooltip";
 
     /// <summary>Countdown to a registration cut-off, taking one argument: the formatted time.</summary>
@@ -327,6 +328,7 @@ public static class StringKeys
         ExcludedNotJoinable, ExcludedFiltered, ExcludedNearlyComplete, ExcludedExpiringSoon,
         ExcludedUnreachable, ExcludedRegistrationClosed, ExcludedRegistrationTooLate,
         ExcludedLevelTooLow, LevelFitMarginal, LevelFitTight, LevelFitTooLow, LevelFitTooltip,
+        LevelFitBadge,
         SettingLevelFit, SettingLevelFitHint, SettingLevelFitEnabled, SettingLevelFitEnabledHelp,
         SettingLevelFitMarginal, SettingLevelFitMarginalHelp, SettingLevelFitTight,
         SettingLevelFitTightHelp, SettingLevelFitHide, SettingLevelFitHideHelp,

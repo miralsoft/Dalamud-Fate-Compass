@@ -108,6 +108,7 @@
   "levelFit.marginal": "close",
   "levelFit.tight": "hard",
   "levelFit.tooLow": "too high",
+  "levelFit.badge": "Lv{0}",
   "levelFit.tooltip": "{0} levels above you. The game does not lock you out, but your contribution counts for less the further under you are. With other players there it is still fine.",
 
   "route.walkFaster": "Go direct",
