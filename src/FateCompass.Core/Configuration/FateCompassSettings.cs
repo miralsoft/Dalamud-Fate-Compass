@@ -442,13 +442,22 @@ public sealed class FateCompassSettings
     /// <summary>Judge each FATE against the current job level and mark how it sits.</summary>
     public bool LevelFitEnabled { get; set; } = true;
 
-    /// <summary>Up to this many levels under a FATE still counts as doable.</summary>
+    /// <summary>Within this many levels of your own, either way, a FATE is the right one.</summary>
     /// <remarks>
-    /// Five by default, from the owner's own play rather than from a published figure, because
+    /// The only band the plugin marks as good rather than merely tolerable, and it is measured in
+    /// both directions because a FATE three levels under you is as much the right target as one
+    /// three levels over. Saying so out loud beats saying it by staying silent: while levelling,
+    /// "go to this one" is the answer somebody is actually looking for.
+    /// </remarks>
+    public int LevelFitIdealBand { get; set; } = 3;
+
+    /// <summary>Up to this many levels over your own still counts as doable.</summary>
+    /// <remarks>
+    /// Six by default, from the owner's own play rather than from a published figure, because
     /// there is no published figure: the game data carries no minimum level for a FATE at all.
     /// That is exactly why it is a setting and not a constant (C-12).
     /// </remarks>
-    public int LevelFitMarginalBelow { get; set; } = 5;
+    public int LevelFitMarginalBelow { get; set; } = 6;
 
     /// <summary>Beyond this many levels under, a FATE is treated as out of reach.</summary>
     /// <remarks>Ten by default. Between the two bounds a FATE is marked as hard rather than hidden.</remarks>

@@ -109,7 +109,9 @@
   "levelFit.tight": "hard",
   "levelFit.tooLow": "too high",
   "levelFit.badge": "Lv{0}",
+  "levelFit.ideal": "fits",
   "levelFit.low": "low",
+  "levelFit.tooltipIdeal": "At your level, {0} apart. These are the ones to head for while levelling.",
   "levelFit.tooltipBelow": "{0} levels below yours. Grey means far under you, not useless: for gemstones or a clearing run it may be exactly the one you want.",
   "levelFit.tooltip": "{0} levels above you. The game does not lock you out, but your contribution counts for less the further under you are. With other players there it is still fine.",
 
@@ -202,6 +204,8 @@
   "setting.levelFit.hint": "Compares every FATE against your current job level. Open world only: in Eureka, Bozja and the Crescent an elemental or resistance rank decides the fight, not your job level.",
   "setting.levelFit.enabled": "Judge FATEs against your level",
   "setting.levelFit.enabled.help": "Marks in the list how far a FATE sits above your level. Switched off, the marks go away and nothing is set aside.",
+  "setting.levelFit.ideal": "At your level, give or take",
+  "setting.levelFit.ideal.help": "This many levels either side of your own counts as the right FATE and is marked green. It is the one mark here that says something good rather than something limiting.",
   "setting.levelFit.marginal": "Still close up to",
   "setting.levelFit.marginal.help": "How many levels above you still counts as fine. The game gives no figure for this, there is simply no minimum level on a FATE. That is why the number lives here and not in the code.",
   "setting.levelFit.tight": "Not worth it beyond",

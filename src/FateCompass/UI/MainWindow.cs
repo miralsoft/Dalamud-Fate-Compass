@@ -58,6 +58,12 @@ internal sealed class MainWindow : Window, IDisposable
     /// <summary>Stands in for the rank number on a fight that is running but can no longer be joined.</summary>
     private const string SidelinedGlyph = "•";
 
+    /// <summary>
+    /// Within a few levels of your own, either way. The same green the compass needle uses for
+    /// being on course, deliberately: one colour, one meaning, "this is the one".
+    /// </summary>
+    private static readonly Vector4 LevelIdealColour = new(0.40f, 0.80f, 0.45f, 1f);
+
     /// <summary>A little over your level. Amber: worth noticing, not worth avoiding.</summary>
     private static readonly Vector4 LevelMarginalColour = new(0.85f, 0.68f, 0.22f, 1f);
 
@@ -79,6 +85,7 @@ internal sealed class MainWindow : Window, IDisposable
     /// </summary>
     private string? LevelFitWord(LevelFit fit) => fit switch
     {
+        LevelFit.Ideal => localizer.Get(StringKeys.LevelFitIdeal),
         LevelFit.Marginal => localizer.Get(StringKeys.LevelFitMarginal),
         LevelFit.Tight => localizer.Get(StringKeys.LevelFitTight),
         LevelFit.OutOfReach => localizer.Get(StringKeys.LevelFitTooLow),
@@ -88,6 +95,7 @@ internal sealed class MainWindow : Window, IDisposable
 
     private static Vector4 LevelFitColour(LevelFit fit) => fit switch
     {
+        LevelFit.Ideal => LevelIdealColour,
         LevelFit.Marginal => LevelMarginalColour,
         LevelFit.Tight => LevelTightColour,
         LevelFit.FarBelow => LevelFarBelowColour,
@@ -102,9 +110,14 @@ internal sealed class MainWindow : Window, IDisposable
     /// whichever way round it is meant and would be wrong half the time without anything looking
     /// wrong.
     /// </remarks>
-    private string LevelFitTooltipText(RankedFate entry) => entry.LevelFit == LevelFit.FarBelow
-        ? localizer.Format(StringKeys.LevelFitTooltipBelow, entry.LevelsAbove)
-        : localizer.Format(StringKeys.LevelFitTooltip, entry.LevelsBelow);
+    private string LevelFitTooltipText(RankedFate entry) => entry.LevelFit switch
+    {
+        LevelFit.Ideal => localizer.Format(
+            StringKeys.LevelFitTooltipIdeal,
+            Math.Max(entry.LevelsBelow, entry.LevelsAbove)),
+        LevelFit.FarBelow => localizer.Format(StringKeys.LevelFitTooltipBelow, entry.LevelsAbove),
+        _ => localizer.Format(StringKeys.LevelFitTooltip, entry.LevelsBelow),
+    };
 
     /// <summary>
     /// Draws the level badge for an entry, if it has one, and hangs the explanation off it.

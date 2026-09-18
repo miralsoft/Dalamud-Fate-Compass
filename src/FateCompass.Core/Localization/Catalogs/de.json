@@ -109,7 +109,9 @@
   "levelFit.tight": "hart",
   "levelFit.tooLow": "zu hoch",
   "levelFit.badge": "St.{0}",
+  "levelFit.ideal": "passt",
   "levelFit.low": "niedrig",
+  "levelFit.tooltipIdeal": "Auf deiner Stufe, {0} Stufen Abstand. Das sind die, auf die du beim Leveln zugehen willst.",
   "levelFit.tooltipBelow": "{0} Stufen unter deiner. Grau heißt weit unter dir, nicht unbrauchbar: für Edelsteine oder eine Aufräumrunde kann genau das richtig sein.",
   "levelFit.tooltip": "{0} Stufen über dir. Das Spiel sperrt dich nicht aus, aber dein Beitrag zählt weniger, je weiter du darunter liegst. Mit anderen Spielern vor Ort geht es trotzdem.",
 
@@ -202,6 +204,8 @@
   "setting.levelFit.hint": "Vergleicht jedes FATE mit der Stufe deines aktuellen Jobs. Gilt nur in der offenen Welt: in Eureka, Bozja und Crescentia entscheidet die elementare beziehungsweise Widerstandsstufe, nicht die Jobstufe.",
   "setting.levelFit.enabled": "FATEs nach deiner Stufe bewerten",
   "setting.levelFit.enabled.help": "Markiert in der Liste, wie weit ein FATE über deiner Stufe liegt. Aus geschaltet verschwinden die Markierungen und es wird nichts aussortiert.",
+  "setting.levelFit.ideal": "Auf deiner Stufe bis plus/minus",
+  "setting.levelFit.ideal.help": "So viele Stufen um deine eigene herum, nach oben wie nach unten, gilt ein FATE als genau das richtige und wird grün markiert. Das ist die einzige Markierung, die etwas Gutes sagt statt etwas Einschränkendes.",
   "setting.levelFit.marginal": "Bis hierhin noch knapp",
   "setting.levelFit.marginal.help": "So viele Stufen über dir gelten noch als gut machbar. Das Spiel gibt dafür keine Zahl her, es gibt schlicht keine Mindeststufe für ein FATE. Darum steht die Zahl hier und nicht im Code.",
   "setting.levelFit.tight": "Ab hier nicht mehr sinnvoll",

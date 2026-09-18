@@ -378,10 +378,33 @@ internal sealed class ConfigWindow : Window, IDisposable
         {
             var touched = false;
 
+            var ideal = settings.LevelFitIdealBand;
+            if (IntSliderRaw(StringKeys.SettingLevelFitIdeal, ref ideal, 0, 15))
+            {
+                settings.LevelFitIdealBand = ideal;
+
+                // The bands above it are pushed out of the way rather than allowed to overlap.
+                // A marginal bound inside the green band would describe levels that are already
+                // spoken for, and the window would show no sign of why it never appears.
+                if (settings.LevelFitMarginalBelow <= ideal)
+                {
+                    settings.LevelFitMarginalBelow = ideal + 1;
+                }
+
+                if (settings.LevelFitTightBelow < settings.LevelFitMarginalBelow)
+                {
+                    settings.LevelFitTightBelow = settings.LevelFitMarginalBelow;
+                }
+
+                touched = true;
+            }
+
+            HelpMarker(StringKeys.SettingLevelFitIdealHelp);
+
             var marginal = settings.LevelFitMarginalBelow;
             if (IntSliderRaw(StringKeys.SettingLevelFitMarginal, ref marginal, 1, 30))
             {
-                settings.LevelFitMarginalBelow = marginal;
+                settings.LevelFitMarginalBelow = Math.Max(marginal, settings.LevelFitIdealBand + 1);
 
                 // The upper bound is pushed along rather than allowed to fall below the lower
                 // one. Letting them cross would silently swallow the middle band, and the
