@@ -36,12 +36,21 @@ version number, the changelog and the release notes, which are set once at the e
 .\build.ps1
 ```
 
-Runs the format check, the build, and the tests, then prints the path to register under
-`/xlsettings` in Dalamud, Experimental, Dev Plugin Locations:
+Runs the format check, the build, and the tests, then **prints the path to register** under
+`/xlsettings` in Dalamud, Experimental, Dev Plugin Locations. Take it from that output rather
+than from here: this file used to name the path itself, the build script moved it, and the copy
+here went stale without anything saying so.
 
-```
-src\FateCompass\bin\Release\FateCompass.dll
-```
+**It is the `dist` staging folder, never `bin`.** The plugin ships two assemblies, and the
+host reloads as soon as the main one changes on disk. MSBuild writes them into `bin` one after
+another, so a reload fires while the main assembly is new and `FateCompass.Core.dll` is still the
+old one, or still being written. `build.ps1` copies everything into `dist` with the main
+assembly last, which is the only reason the reload ever sees a complete set.
+
+That is not a hypothetical. Pointing at `bin` and rebuilding produced exactly the failure it
+was written to prevent: the two assemblies were written two minutes apart, the reload fired on
+the first, and a whole feature living in the core never arrived, with the plugin reporting no
+error at all.
 
 Registering it once is enough. After every later build, reload the plugin from the dev section
 of `/xlplugins`. Nothing needs pushing to test.

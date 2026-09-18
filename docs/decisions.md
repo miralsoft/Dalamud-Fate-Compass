@@ -495,3 +495,20 @@ Each entry: date, decision, short rationale.
 
   Neither was found by looking for defects. Both came out of establishing what a field means
   before building on it, which is the argument for doing that first rather than after.
+
+- (2026-09-18) **The dev plugin path is taken from `build.ps1` and named nowhere else.**
+  `status.md` carried its own copy of the path and still said `bin\Release`, from before the
+  staging folder existed. The build script has printed the `dist` path for a while and even warns
+  about the old one, but a reader who follows the handover document rather than the script output
+  never sees that warning.
+
+  It cost a real debugging session. Registering `bin` means the host watches the main assembly
+  while MSBuild writes two of them, and yesterday's build wrote them two minutes apart: the reload
+  fired on the first, the core assembly arrived afterwards and triggered nothing, and a feature
+  that lives almost entirely in the core simply was not there. Nothing reported an error, because
+  from the host's point of view nothing went wrong.
+
+  This is C-12 with a scar: a value that can be derived was written down a second time, and the
+  second copy is the one that goes stale. The section now points at the script's output and
+  explains why the folder is not `bin`, so the next reader gets the reason rather than a path to
+  copy.
