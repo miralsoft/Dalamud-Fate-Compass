@@ -565,3 +565,27 @@ Each entry: date, decision, short rationale.
   `LevelsAbove`, rather than one signed number. A tooltip that read the sign backwards would say
   the opposite of the truth and look entirely correct doing it, and the type system cannot catch
   that. Two names can.
+
+- (2026-09-18) **The scale gained a good band, green, measured in both directions.** Requested
+  after using the version that only warned: three levels either side of your own is the right
+  FATE, then four to six over, then seven to ten, then out of reach.
+
+  The change worth recording is not the numbers, it is the direction of the statement. Every mark
+  before this one said something limiting, and the answer to "which one should I go to" was
+  assembled by elimination: find the tiles with no mark. That works and it reads badly, because
+  the most useful thing the plugin knows was the one thing it would not say out loud. Green says
+  it.
+
+  Measured in both directions because the good band is the only one where that is true. A FATE
+  three levels under you is as much the right target as one three levels over, while four over
+  and four under are not the same thing at all, which is why every other band stays one-sided.
+
+  The bands cannot overlap: a marginal bound set inside the green band would describe levels the
+  green band has already claimed, and the amber mark would then never appear with nothing on
+  screen explaining why. The evaluator holds each bound above the one below it and the settings
+  window pushes the others along when the green band widens. Two tests cover it, one for the
+  evaluator and one for a good band of zero, which marks only an exact match.
+
+  The default marginal bound moved from five to six to make room. Nothing has shipped with the
+  old value, so there is no migration to write (D-11 has nothing to correct); the owner's own
+  development configuration may still hold five and the slider shows it.

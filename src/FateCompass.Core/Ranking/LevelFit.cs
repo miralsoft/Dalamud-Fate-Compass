@@ -32,6 +32,12 @@ public enum LevelFit
     Comfortable,
 
     /// <summary>
+    /// Within a few levels of the FATE in either direction. The one band that is worth saying
+    /// out loud rather than by staying silent: while levelling, these are the ones to go to.
+    /// </summary>
+    Ideal,
+
+    /// <summary>
     /// Well under the player's own level. Shown greyed out where it is shown at all, and never
     /// set aside: a FATE far below you is not a problem, it is just probably not the one you are
     /// levelling on. For gemstones or a clearing run it may be exactly the one you want.

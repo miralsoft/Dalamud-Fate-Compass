@@ -29,12 +29,14 @@ public sealed class LevelFitTests
 {
     private static FateCompassSettings Settings(
         bool enabled = true,
-        int marginal = 5,
+        int ideal = 3,
+        int marginal = 6,
         int tight = 10,
         bool showFarBelow = false,
         int farBelowBy = 10) => new()
         {
             LevelFitEnabled = enabled,
+            LevelFitIdealBand = ideal,
             LevelFitMarginalBelow = marginal,
             LevelFitTightBelow = tight,
 
@@ -46,21 +48,71 @@ public sealed class LevelFitTests
         };
 
     [Theory]
-    [InlineData(100, LevelFit.Comfortable)]   // exactly at it
-    [InlineData(120, LevelFit.Comfortable)]   // far above, level sync handles it
-    [InlineData(99, LevelFit.Marginal)]       // one under
-    [InlineData(95, LevelFit.Marginal)]       // five under, the last of the band
-    [InlineData(94, LevelFit.Tight)]          // six under, the first of the next
+    [InlineData(103, LevelFit.Ideal)]         // three over the FATE, the far edge of the good band
+    [InlineData(100, LevelFit.Ideal)]         // exactly at it
+    [InlineData(97, LevelFit.Ideal)]          // three under, the near edge
+    [InlineData(96, LevelFit.Marginal)]       // four under, the first past the good band
+    [InlineData(94, LevelFit.Marginal)]       // six under, the last of that band
+    [InlineData(93, LevelFit.Tight)]          // seven under, the first of the next
     [InlineData(90, LevelFit.Tight)]          // ten under, the last of that band
     [InlineData(89, LevelFit.OutOfReach)]     // eleven under
     [InlineData(1, LevelFit.OutOfReach)]
-    public void BandsAreDecidedByHowFarUnderThePlayerIs(ushort playerLevel, LevelFit expected)
+    [InlineData(104, LevelFit.Comfortable)]   // four over, past the good band but nothing to say
+    [InlineData(120, LevelFit.Comfortable)]   // far over, and far below is off in this fixture
+    public void BandsAreDecidedByHowFarTheFateSitsFromThePlayer(ushort playerLevel, LevelFit expected)
     {
         // The Serpentlord Seethes: level 100, band to 104.
         var fate = TestData.Fate(level: 100, maxLevel: 104);
         var player = TestData.Player(level: playerLevel);
 
         Assert.Equal(expected, LevelFitEvaluator.Evaluate(fate, player, Settings()));
+    }
+
+    [Fact]
+    public void TheGoodBandIsSymmetricAroundThePlayer()
+    {
+        // The one band measured in both directions. A FATE three levels under you is as much the
+        // right target as one three levels over, so both edges have to answer the same.
+        var settings = Settings(ideal: 3);
+        var fate = TestData.Fate(level: 50);
+
+        Assert.Equal(
+            LevelFit.Ideal,
+            LevelFitEvaluator.Evaluate(fate, TestData.Player(level: 47), settings));
+        Assert.Equal(
+            LevelFit.Ideal,
+            LevelFitEvaluator.Evaluate(fate, TestData.Player(level: 53), settings));
+    }
+
+    [Fact]
+    public void AGoodBandOfZeroMarksOnlyAnExactMatch()
+    {
+        var settings = Settings(ideal: 0);
+        var fate = TestData.Fate(level: 50);
+
+        Assert.Equal(
+            LevelFit.Ideal,
+            LevelFitEvaluator.Evaluate(fate, TestData.Player(level: 50), settings));
+        Assert.Equal(
+            LevelFit.Marginal,
+            LevelFitEvaluator.Evaluate(fate, TestData.Player(level: 49), settings));
+    }
+
+    [Fact]
+    public void AMarginalBoundInsideTheGoodBandCannotSwallowIt()
+    {
+        // Set the good band wider than the band above it and the two describe the same levels.
+        // The good band wins and the next one starts immediately after it, rather than the
+        // window quietly never showing an amber badge again.
+        var settings = Settings(ideal: 5, marginal: 2, tight: 4);
+        var fate = TestData.Fate(level: 50);
+
+        Assert.Equal(
+            LevelFit.Ideal,
+            LevelFitEvaluator.Evaluate(fate, TestData.Player(level: 45), settings));
+        Assert.Equal(
+            LevelFit.Marginal,
+            LevelFitEvaluator.Evaluate(fate, TestData.Player(level: 44), settings));
     }
 
     [Theory]
@@ -137,7 +189,7 @@ public sealed class LevelFitTests
     {
         // The bands follow the settings rather than the shipped defaults, which is the whole
         // reason they are settings: there is no published figure to hard-code.
-        var settings = Settings(marginal: 2, tight: 4);
+        var settings = Settings(ideal: 1, marginal: 2, tight: 4);
         var fate = TestData.Fate(level: 50);
 
         Assert.Equal(
@@ -152,7 +204,7 @@ public sealed class LevelFitTests
     }
 
     [Theory]
-    [InlineData(100, LevelFit.Comfortable)]   // at it
+    [InlineData(100, LevelFit.Ideal)]         // at it, which is the good band rather than silence
     [InlineData(105, LevelFit.Comfortable)]   // five over, still your level in practice
     [InlineData(109, LevelFit.Comfortable)]   // nine over, the last of that band
     [InlineData(110, LevelFit.FarBelow)]      // ten over, the first that counts as far below

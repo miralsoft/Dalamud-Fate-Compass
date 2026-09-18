@@ -47,6 +47,16 @@ public static class LevelFitEvaluator
         }
 
         var deficit = fate.Level - player.Level;
+
+        // The good band, and the only one measured in both directions. Checked before anything
+        // else because it overlaps both halves of the scale: a FATE three levels under you is as
+        // much the right target as one three levels over, and neither is worth a warning.
+        var ideal = Math.Max(settings.LevelFitIdealBand, 0);
+        if (Math.Abs(deficit) <= ideal)
+        {
+            return LevelFit.Ideal;
+        }
+
         if (deficit <= 0)
         {
             // The other side of the scale, and it is off unless asked for. A FATE far under you
@@ -63,10 +73,11 @@ public static class LevelFitEvaluator
             return -deficit >= farBelow ? LevelFit.FarBelow : LevelFit.Comfortable;
         }
 
-        // Both bounds come from the settings, so a player who disagrees can move them. Reading
-        // them in the wrong order would silently swallow one band, so the upper is held at or
-        // above the lower rather than trusted.
-        var marginal = Math.Max(settings.LevelFitMarginalBelow, 1);
+        // Every bound comes from the settings, so a player who disagrees can move them. Read in
+        // the wrong order they would silently swallow a band, so each is held at or above the one
+        // below it rather than trusted. The ideal band is the floor here: a marginal bound inside
+        // it would describe levels the check above has already claimed.
+        var marginal = Math.Max(settings.LevelFitMarginalBelow, ideal + 1);
         var tight = Math.Max(settings.LevelFitTightBelow, marginal);
 
         if (deficit <= marginal)
