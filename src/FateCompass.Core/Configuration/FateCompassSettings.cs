@@ -494,6 +494,26 @@ public sealed class FateCompassSettings
     /// <summary>How many levels under your own a FATE must be to count as well under it.</summary>
     public int LevelFitFarBelowBy { get; set; } = 10;
 
+    /// <summary>
+    /// Levelling mode: let the level fit decide the order, not just the colour.
+    /// </summary>
+    /// <remarks>
+    /// <para>
+    /// Off by default, because it changes what the numbered order means. Without it the order
+    /// answers "what is worth going to from here", weighing distance, time left and progress.
+    /// With it on, that question gains "and what actually advances the job I am levelling", which
+    /// is the right question while levelling and the wrong one while farming a zone for gemstones.
+    /// A mode rather than a permanent behaviour, because both of those are real.
+    /// </para>
+    /// <para>
+    /// This was turned down once, on the grounds that a weight makes the decision and hides the
+    /// fact behind it. That objection has been answered by the badges rather than argued away:
+    /// every entry now shows its own band, so a FATE that moved up or down says why it did, in
+    /// the same glance. Recorded in `decisions.md` as superseding the earlier entry.
+    /// </para>
+    /// </remarks>
+    public bool LevelFitOrdersList { get; set; }
+
     // --- Notifications ---------------------------------------------------------------
 
     public bool PlaySoundOnNewFate { get; set; } = true;

@@ -589,3 +589,31 @@ Each entry: date, decision, short rationale.
   The default marginal bound moved from five to six to make room. Nothing has shipped with the
   old value, so there is no migration to write (D-11 has nothing to correct); the owner's own
   development configuration may still hold five and the slider shows it.
+
+- (2026-09-18) **Levelling mode: the level fit may order the list, not only colour it. This
+  supersedes the entry of 2026-09-16 that turned the idea down.** Requested by the owner after
+  using the marker-only version.
+
+  The earlier refusal said: a weight makes the decision and hides the fact behind it. That was
+  the right objection at the time and it has been answered by what was built since rather than
+  argued away. Every entry now carries its own band as a badge, so a FATE that moved up or down
+  says why in the same glance. The condition the refusal rested on no longer holds, which is a
+  better reason to change a decision than being asked twice.
+
+  Two limits keep it honest. It is **a mode, off by default**, because it changes what the
+  numbered order means: without it the order answers what is worth going to from here, with it on
+  the question gains what advances the job being levelled. Both are real, and gemstone farming
+  wants the first. And it is **added on top of the ordinary score** rather than replacing it, so a
+  FATE about to expire still loses however well its level fits. A test locks that in, because the
+  help text makes that claim to the player.
+
+  **What it ranks by, and what it deliberately does not.** Best match to your own level leads,
+  then a little above, then further above. The tempting alternative was to prefer the highest
+  FATE the player can still manage, on the theory that a higher one pays more. That theory may
+  well be right, and the game publishes no reward formula to check it against, so ordering a list
+  by it would be inventing a number and then acting on it. `LevelFitPreference` says so where it
+  is written.
+
+  `NotApplicable` scores zero rather than anything else, which is what keeps the mode out of
+  Eureka, Bozja and the Crescent: no comparison exists there, so none may move a FATE. A test
+  compares the order with the mode on and off in an exploratory zone and requires them to match.

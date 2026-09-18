@@ -258,6 +258,9 @@ public static class StringKeys
     public const string SettingLevelFitTightHelp = "setting.levelFit.tight.help";
     public const string SettingLevelFitHide = "setting.levelFit.hide";
     public const string SettingLevelFitHideHelp = "setting.levelFit.hide.help";
+    public const string SettingLevelFitOrder = "setting.levelFit.order";
+    public const string SettingLevelFitOrderHelp = "setting.levelFit.order.help";
+    public const string SettingLevelFitOrderWeight = "setting.levelFit.orderWeight";
     public const string SettingLevelFitFarBelow = "setting.levelFit.farBelow";
     public const string SettingLevelFitFarBelowHelp = "setting.levelFit.farBelow.help";
     public const string SettingLevelFitFarBelowBy = "setting.levelFit.farBelowBy";
@@ -340,6 +343,8 @@ public static class StringKeys
         ExcludedLevelTooLow, LevelFitMarginal, LevelFitTight, LevelFitTooLow, LevelFitTooltip,
         LevelFitBadge, LevelFitLow, LevelFitTooltipBelow,
         LevelFitIdeal, LevelFitTooltipIdeal, SettingLevelFitIdeal, SettingLevelFitIdealHelp,
+        SettingLevelFitOrder, SettingLevelFitOrderHelp,
+        SettingLevelFitOrderWeight,
         SettingLevelFitFarBelow, SettingLevelFitFarBelowHelp,
         SettingLevelFitFarBelowBy, SettingLevelFitFarBelowByHelp,
         SettingLevelFit, SettingLevelFitHint, SettingLevelFitEnabled, SettingLevelFitEnabledHelp,

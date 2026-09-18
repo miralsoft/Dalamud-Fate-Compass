@@ -72,5 +72,15 @@ public sealed class RankingWeights
     /// </summary>
     public float RegistrationOpenBonus { get; set; } = 2.0f;
 
+    /// <summary>
+    /// How strongly the level fit pulls a FATE up or down the order, while levelling mode is on.
+    /// </summary>
+    /// <remarks>
+    /// Sits at the same magnitude as the other two bonuses, so it can outweigh a moderate walk
+    /// without ever outweighing a FATE that is about to expire. It does nothing at all unless
+    /// <c>LevelFitOrdersList</c> is on, which is what keeps the ordinary order ordinary.
+    /// </remarks>
+    public float LevelFit { get; set; } = 2.0f;
+
     public static RankingWeights Default => new();
 }
