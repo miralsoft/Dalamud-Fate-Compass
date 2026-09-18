@@ -109,6 +109,8 @@
   "levelFit.tight": "hard",
   "levelFit.tooLow": "too high",
   "levelFit.badge": "Lv{0}",
+  "levelFit.low": "low",
+  "levelFit.tooltipBelow": "{0} levels below yours. Grey means far under you, not useless: for gemstones or a clearing run it may be exactly the one you want.",
   "levelFit.tooltip": "{0} levels above you. The game does not lock you out, but your contribution counts for less the further under you are. With other players there it is still fine.",
 
   "route.walkFaster": "Go direct",
@@ -205,6 +207,10 @@
   "setting.levelFit.tight": "Not worth it beyond",
   "setting.levelFit.tight.help": "Past this a FATE moves out of the running order to the end. In between it is marked as hard and stays where it is.",
   "setting.levelFit.hide": "Hide FATEs above that entirely",
+  "setting.levelFit.farBelow": "Also mark FATEs far below you",
+  "setting.levelFit.farBelow.help": "Shows the level in grey where a FATE sits well under yours. Every FATE that is not at your level then carries a mark, so an empty spot means one definite thing: this one suits you. At maximum level in a starter zone that covers all of them and stops saying anything, which is the case to switch this off for.",
+  "setting.levelFit.farBelowBy": "Counts as far below from",
+  "setting.levelFit.farBelowBy.help": "How many levels under yours a FATE has to be to count as well under it. Nothing is ever excluded by this.",
   "setting.levelFit.hide.help": "Normally they sit greyed out at the end rather than disappearing. For an open-world FATE the game reports no participant count, so the plugin cannot tell an empty field from twenty people, and with twenty people a much higher FATE is fine.",
 
   "command.auto.on": "Automatic preparation is now on.",

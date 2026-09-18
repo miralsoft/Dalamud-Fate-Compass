@@ -31,6 +31,13 @@ public enum LevelFit
     /// <summary>At or above the FATE's level. Level sync handles the rest, and it already does.</summary>
     Comfortable,
 
+    /// <summary>
+    /// Well under the player's own level. Shown greyed out where it is shown at all, and never
+    /// set aside: a FATE far below you is not a problem, it is just probably not the one you are
+    /// levelling on. For gemstones or a clearing run it may be exactly the one you want.
+    /// </summary>
+    FarBelow,
+
     /// <summary>A little under. Doable, and the usual case while levelling.</summary>
     Marginal,
 

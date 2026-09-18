@@ -30,11 +30,19 @@ public sealed class LevelFitTests
     private static FateCompassSettings Settings(
         bool enabled = true,
         int marginal = 5,
-        int tight = 10) => new()
+        int tight = 10,
+        bool showFarBelow = false,
+        int farBelowBy = 10) => new()
         {
             LevelFitEnabled = enabled,
             LevelFitMarginalBelow = marginal,
             LevelFitTightBelow = tight,
+
+            // Off unless a test is about it, so every other test in this file keeps stating the
+            // one thing it is about. Its shipped default is on, and T-05 asks a test to own the
+            // values its verdict rests on rather than to inherit them.
+            LevelFitShowFarBelow = showFarBelow,
+            LevelFitFarBelowBy = farBelowBy,
         };
 
     [Theory]
@@ -143,6 +151,66 @@ public sealed class LevelFitTests
             LevelFitEvaluator.Evaluate(fate, TestData.Player(level: 45), settings));
     }
 
+    [Theory]
+    [InlineData(100, LevelFit.Comfortable)]   // at it
+    [InlineData(105, LevelFit.Comfortable)]   // five over, still your level in practice
+    [InlineData(109, LevelFit.Comfortable)]   // nine over, the last of that band
+    [InlineData(110, LevelFit.FarBelow)]      // ten over, the first that counts as far below
+    [InlineData(140, LevelFit.FarBelow)]
+    public void FarBelowIsItsOwnBandOnTheOtherSide(ushort playerLevel, LevelFit expected)
+    {
+        var fate = TestData.Fate(level: 100, maxLevel: 104);
+        var player = TestData.Player(level: playerLevel);
+
+        Assert.Equal(
+            expected,
+            LevelFitEvaluator.Evaluate(fate, player, Settings(showFarBelow: true)));
+    }
+
+    [Fact]
+    public void FarBelowSaysNothingWhileItIsSwitchedOff()
+    {
+        var fate = TestData.Fate(level: 20);
+        var player = TestData.Player(level: 100);
+
+        Assert.Equal(
+            LevelFit.Comfortable,
+            LevelFitEvaluator.Evaluate(fate, player, Settings(showFarBelow: false)));
+    }
+
+    [Fact]
+    public void FarBelowIsNeverAnExclusion()
+    {
+        // The gemstone case. At maximum level in a starter zone every FATE is far below, and
+        // those are exactly the ones somebody farming gemstones is going to. Marking them is
+        // fine; taking them out of the running order would not be.
+        var fate = TestData.Fate(level: 20);
+        var player = TestData.Player(level: 100);
+
+        var ranked = FateRanker.Rank([fate], player, Settings(showFarBelow: true)).Single();
+
+        Assert.Equal(FateExclusionReason.None, ranked.ExclusionReason);
+        Assert.True(ranked.IsRecommended);
+        Assert.Equal(1, ranked.Rank);
+        Assert.Equal(LevelFit.FarBelow, ranked.LevelFit);
+        Assert.Equal(80, ranked.LevelsAbove);
+        Assert.Equal(0, ranked.LevelsBelow);
+    }
+
+    [Theory]
+    [InlineData(ContentKind.Eureka)]
+    [InlineData(ContentKind.Bozja)]
+    [InlineData(ContentKind.OccultCrescent)]
+    public void FarBelowIsNotJudgedInExploratoryZonesEither(ContentKind content)
+    {
+        var fate = TestData.Fate(level: 20);
+        var player = TestData.Player(level: 100, content: content);
+
+        Assert.Equal(
+            LevelFit.NotApplicable,
+            LevelFitEvaluator.Evaluate(fate, player, Settings(showFarBelow: true)));
+    }
+
     [Fact]
     public void LevelsBelowCountsOnlyDownwards()
     {
@@ -151,6 +219,18 @@ public sealed class LevelFitTests
         Assert.Equal(12, LevelFitEvaluator.LevelsBelow(fate, TestData.Player(level: 88)));
         Assert.Equal(0, LevelFitEvaluator.LevelsBelow(fate, TestData.Player(level: 100)));
         Assert.Equal(0, LevelFitEvaluator.LevelsBelow(fate, TestData.Player(level: 120)));
+    }
+
+    [Fact]
+    public void LevelsAboveIsTheMirrorAndCountsOnlyUpwards()
+    {
+        // Two methods rather than one signed number, because a tooltip that reads the sign
+        // backwards says the opposite of the truth and looks perfectly fine doing it.
+        var fate = TestData.Fate(level: 20);
+
+        Assert.Equal(80, LevelFitEvaluator.LevelsAbove(fate, TestData.Player(level: 100)));
+        Assert.Equal(0, LevelFitEvaluator.LevelsAbove(fate, TestData.Player(level: 20)));
+        Assert.Equal(0, LevelFitEvaluator.LevelsAbove(fate, TestData.Player(level: 5)));
     }
 
     [Fact]
