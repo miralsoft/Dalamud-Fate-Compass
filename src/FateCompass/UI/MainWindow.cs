@@ -955,8 +955,14 @@ internal sealed class MainWindow : Window, IDisposable
 
         ImGui.TextDisabled($"{entry.DistanceYalms:F0}{localizer.Get(StringKeys.UnitYalms)}");
 
-        DrawTileLevel(entry);
+        // The needle goes first and the level badge last, and the order is the whole point. Every
+        // line above the needle is the same height on every tile, so the needles land on one line
+        // and read as a row, which is what their own centring exists for. Putting the badge in
+        // front of the needle broke that: a tile carrying one pushed its needle down while its
+        // neighbours' stayed put, and the row turned into a stagger. Below the needle the badge
+        // changes a tile's total height and nothing else's position.
         DrawCompass(entry, TileWidth);
+        DrawTileLevel(entry);
     }
 
     /// <summary>
@@ -988,9 +994,10 @@ internal sealed class MainWindow : Window, IDisposable
 
         var text = localizer.Format(StringKeys.LevelFitBadge, entry.Fate.Level);
 
-        // Centred over the icon rather than over the tile, the same way the rank number above
-        // it is. The tile is as wide as its widest line of text, so centring on the tile would
-        // push this off to one side of the thing it describes.
+        // Centred on the icon's width, which is what the rank number at the top and the needle
+        // directly above are centred on as well. Three marks stacked down the middle of a tile
+        // have to share one centre line, and that line is the icon's rather than the tile's,
+        // because the tile is as wide as its widest line of text.
         var width = Widgets.BadgeWidth(text);
         ImGui.SetCursorPosX(ImGui.GetCursorPosX() + ((TileWidth - width) * 0.5f));
         Widgets.Badge(text, LevelFitColour(entry.LevelFit));
